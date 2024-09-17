@@ -26,7 +26,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # COPY nginx.conf /etc/nginx/nginx.conf
 
 # 10. 포트 설정 (Nginx 기본 포트 80)
-EXPOSE 80
+EXPOSE 5173
 
 # 11. Nginx 시작
 CMD ["nginx", "-g", "daemon off;"]
