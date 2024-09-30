@@ -6,7 +6,7 @@
     <h1 class="text-center">설문조사</h1>
 
     <div v-if="question" class="question-container">
-      <h2>질문{{ questionId }}</h2>
+      <h2>질문 {{ questionId }}</h2>
       <p>{{ question.content }}</p>
 
       <div class="options">
@@ -38,50 +38,60 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { fetchQuestion, submitAnswer } from '../services/surveyService';
 
 export default {
   data() {
     return {
-      question: null,  // 서버에서 받아온 질문과 옵션 저장
-      questionId: 1,   // 현재 보여줄 질문의 ID
-      maxQuestions: 7, // 총 질문의 개수
-      selectedOption: null, // 선택한 옵션 저장
+      question: null,
+      questionId: 1,
+      maxQuestions: 7,
+      selectedOption: null,
     };
   },
   computed: {
     progressPercentage() {
       return (this.questionId / this.maxQuestions) * 100;
-    }
+    },
   },
   created() {
-    this.fetchQuestion();
+    this.loadQuestion();  // 설문 질문을 불러옵니다
   },
   methods: {
-    async fetchQuestion() {
+    async loadQuestion() {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/survey/question/${this.questionId}`);
-        this.question = response.data;
-        this.selectedOption = null; // 다음 질문으로 넘어갈 때 선택한 옵션 초기화
+        this.question = await fetchQuestion(this.questionId);
       } catch (error) {
-        console.error("질문을 불러오는데 문제가 발생했습니다.", error);
+        console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
       }
     },
-    prevQuestion() {
+    async prevQuestion() {
       if (this.questionId > 1) {
         this.questionId--;
-        this.fetchQuestion();  // 이전 질문을 다시 가져오기
+        await this.loadQuestion();  // 이전 질문을 불러옵니다
       }
     },
-    nextQuestion() {
-      if (this.questionId < this.maxQuestions) {
-        this.questionId++;
-        this.fetchQuestion();  // 다음 질문을 다시 가져오기
+    async nextQuestion() {
+      if (this.selectedOption) {
+        const userId = "testUser1";  // userId 설정
+        await submitAnswer(userId, this.questionId, this.selectedOption);  // 사용자 답변을 제출합니다
+
+        if (this.questionId < this.maxQuestions) {
+          this.questionId++;
+          await this.loadQuestion();  // 다음 질문을 불러옵니다
+        } else {
+          alert("설문조사가 완료되었습니다!");
+        }
       }
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style scoped>
+/* 스타일 코드 여기에... */
+</style>
+
 
 <style scoped>
 .survey-container {
