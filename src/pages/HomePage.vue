@@ -1,7 +1,9 @@
 <template>
-    <div>
-        <router-link to="/example">예시</router-link>
-    </div>
+  <div>
+    <router-link to="/example">
+      예시
+    </router-link>
+  </div>
 </template>
 
 <script setup>

@@ -1,7 +1,5 @@
 <template>
-    <div>
-
-    </div>
+  <div />
 </template>
 
 <script setup>
@@ -16,7 +14,6 @@ const load = async () => {
         const response = await axios.get(BASE)
 
         Object.assign(example, response.data)
-
         console.log("Example.vue : ", example)
     } catch (err) {
         console.log("Example.vue : ", err.message)
