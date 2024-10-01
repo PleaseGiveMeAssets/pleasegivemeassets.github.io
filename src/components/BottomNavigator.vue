@@ -16,14 +16,14 @@ import { reactive } from "vue";
 
 const menuItems = reactive([
   { name: "홈", path: "/", icon: "fas fa-home" },
-  { name: "검색", path: "/search", icon: "fas fa-search" },
-  { name: "프로필", path: "/profile", icon: "fas fa-user" },
+  { name: "리포트", path: "/report", icon: "fas fa-search" },
+  { name: "포트폴리오", path: "/portfolio", icon: "fas fa-user" },
+  { name: "설정", path: "/setting", icon: "fas fa-user" },
 ]);
 </script>
 
 <style scoped>
 .bottom-nav {
-  max-width: 600px;
   position: fixed;
   margin: 0 auto;
   bottom: 0;

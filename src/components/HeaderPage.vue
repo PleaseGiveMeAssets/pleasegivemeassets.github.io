@@ -4,7 +4,7 @@
     <button v-if="showBackButton" class="back-button" @click="goBack">
       뒤로
     </button>
-    <h1>{{ pageTitle }}</h1>
+    <h1>{{ currentTitle }}</h1>
     <div class="header-actions"></div>
   </header>
 </template>
@@ -12,37 +12,35 @@
 <script setup>
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useHeaderStore } from "@/stores/headerStore";
 
 const router = useRouter();
 const route = useRoute();
 
-const pageTitle = computed(() => {
-  return route.meta.title || "앱 이름";
-});
+const headerStore = useHeaderStore();
+
+const { title } = headerStore;
 
 const showBackButton = computed(() => {
   return router.currentRoute.value.name !== "home";
 });
+
+const currentTitle = computed(() => headerStore.title);
 
 const goBack = () => router.back();
 </script>
 
 <style scoped>
 .header {
+  height: 48px;
   position: fixed;
-  width: 600px;
   margin: 0 auto;
-  top: 0;
   left: 0;
   right: 0;
-  height: 60px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  background: white;
+  background-color: #f8f9fa;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 100;
 }
 
 .back-button {

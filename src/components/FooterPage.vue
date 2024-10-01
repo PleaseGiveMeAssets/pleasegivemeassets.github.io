@@ -6,7 +6,6 @@
 
 <style scoped>
 div {
-  width: 100%;
-  height: 56px;
+  height: 48px;
 }
 </style>

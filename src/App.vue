@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="container">
     <Header />
-    <router-view />
+    <router-view class="content" />
     <Footer />
-    <BottomNavigator />
+    <BottomNavigator class="bottom-nav-bar" />
   </div>
 </template>
 
@@ -17,5 +17,12 @@ import BottomNavigator from "./components/BottomNavigator.vue";
 div {
   max-width: 600px;
   margin: 0 auto;
+}
+
+.content {
+  padding-top: 60px;
+  padding-bottom: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 </style>
