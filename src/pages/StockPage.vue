@@ -1,12 +1,18 @@
 <template>
   <div>
     <h2>Post ID: {{ stockId }}</h2>
+    <StockChart :stock-id="stockId" />
+    <MyPortfolio :stock-id="stockId" />
+    <StockIndex :stock-id="stockId" />
   </div>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
 import { useHeaderStore } from "@/stores/headerStore";
+import StockChart from "@/components/stock/StockChart.vue";
+import MyPortfolio from "@/components/stock/StockPortfolio.vue";
+import StockIndex from "@/components/stock/StockIndex.vue";
 const props = defineProps({
   stockId: {
     type: String,
