@@ -1,0 +1,14 @@
+:root {
+  --primary-color: #0066ff;
+  --secondary-color: #4f4f4f;
+  --active-button-grey: #4f4f4f;
+  --active-button-inner-grey: #ffffff;
+  --active-button-blue: #0066ff;
+  --active-button-inner-blue: #ffffff;
+  --inactive-button: #b0b0b0;
+  --inactive-button-inner: #d8d8d8;
+  --error-color: #ff4d4f;
+  --check-color: #0066ff;
+  --bull-color: #ff5252;
+  --bear-color: #0a7df3;
+}
