@@ -1,14 +1,28 @@
 <template>
-  <div>
+  <div class="container">
     <Header />
-    <router-view></router-view>
+    <router-view class="content" />
     <Footer />
+    <BottomNavigator class="bottom-nav-bar" />
   </div>
 </template>
 
 <script setup>
-import Footer from './components/Footer.vue';
-import Header from './components/Header.vue';
+import Footer from "./components/FooterPage.vue";
+import Header from "./components/HeaderPage.vue";
+import BottomNavigator from "./components/BottomNavigator.vue";
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+div {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.content {
+  padding-top: 60px;
+  padding-bottom: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+</style>
