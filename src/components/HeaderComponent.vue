@@ -4,7 +4,7 @@
     <button v-if="showBackButton" class="back-button" @click="goBack">
       뒤로
     </button>
-    <h1>{{ currentTitle }}</h1>
+    <div class="title">{{ currentTitle }}</div>
     <div class="header-actions"></div>
   </header>
 </template>
@@ -18,8 +18,6 @@ const router = useRouter();
 const route = useRoute();
 
 const headerStore = useHeaderStore();
-
-const { title } = headerStore;
 
 const showBackButton = computed(() => {
   return router.currentRoute.value.name !== "home";
@@ -35,12 +33,12 @@ const goBack = () => router.back();
   height: 48px;
   position: fixed;
   margin: 0 auto;
+  background-color: white;
   left: 0;
   right: 0;
   display: flex;
   justify-content: space-between;
-  background-color: #f8f9fa;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
 }
 
 .back-button {
@@ -48,5 +46,12 @@ const goBack = () => router.back();
   background: none;
   border: none;
   font-size: 16px;
+}
+
+.title {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  color: black;
 }
 </style>

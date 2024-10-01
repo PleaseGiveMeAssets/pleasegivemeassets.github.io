@@ -8,21 +8,13 @@
 </template>
 
 <script setup>
-import Footer from "./components/FooterPage.vue";
-import Header from "./components/HeaderPage.vue";
+import Footer from "./components/FooterComponent.vue";
+import Header from "./components/HeaderComponent.vue";
 import BottomNavigator from "./components/BottomNavigator.vue";
 </script>
 
 <style scoped>
-div {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
 .content {
-  padding-top: 60px;
-  padding-bottom: 30px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-top: 48px;
 }
 </style>
