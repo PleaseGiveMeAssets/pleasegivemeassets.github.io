@@ -2,7 +2,7 @@ import App from '@/App.vue';
 import Example from '@/pages/ExamplePage.vue';
 import Home from '@/pages/HomePage.vue';
 import StockPage from '@/pages/StockPage.vue';
-import Survey from '@/pages/Survey.vue';
+import SurveyPage from '@/pages/SurveyPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -15,7 +15,7 @@ const router = createRouter({
       component: StockPage,
       props: true,
     },
-    { path: '/survey', component: Survey }, // Survey 경로 추가
+    { path: '/survey', component: SurveyPage }, // Survey 경로 추가
   ],
 });
 
