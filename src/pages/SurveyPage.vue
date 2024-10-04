@@ -1,7 +1,14 @@
 <template>
   <div class="container mt-5 survey-container">
     <div class="progress mb-4">
-      <div class="progress-bar" role="progressbar" :style="{ width: progressPercentage + '%' }" aria-valuenow="progressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+      <div
+        class="progress-bar"
+        role="progressbar"
+        :style="{ width: progressPercentage + '%' }"
+        aria-valuenow="progressPercentage"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      ></div>
     </div>
     <h1 class="text-center">설문조사</h1>
 
@@ -12,10 +19,22 @@
       <div class="options">
         <label>선택지</label>
         <ul class="list-group">
-          <li v-for="option in question.options" :key="option.questionOptionId" class="list-group-item">
+          <li
+            v-for="option in question.options"
+            :key="option.questionOptionId"
+            class="list-group-item"
+          >
             <div class="form-check">
-              <input class="form-check-input" type="radio" :id="option.questionOptionId" :value="option.questionOptionId" v-model="selectedOption" />
-              <label class="form-check-label" :for="option.questionOptionId">{{ option.content }}</label>
+              <input
+                :id="option.questionOptionId"
+                v-model="selectedOption"
+                class="form-check-input"
+                type="radio"
+                :value="option.questionOptionId"
+              />
+              <label class="form-check-label" :for="option.questionOptionId">{{
+                option.content
+              }}</label>
             </div>
           </li>
         </ul>
@@ -28,17 +47,29 @@
 
     <div class="row mt-4">
       <div class="col">
-        <button @click="prevQuestion" :disabled="questionId === 1" class="btn btn-secondary w-100">이전</button>
+        <button
+          :disabled="questionId === 1"
+          class="btn btn-secondary w-100"
+          @click="prevQuestion"
+        >
+          이전
+        </button>
       </div>
       <div class="col">
-        <button @click="nextQuestion" :disabled="!selectedOption" class="btn btn-primary w-100">다음</button>
+        <button
+          :disabled="!selectedOption"
+          class="btn btn-primary w-100"
+          @click="nextQuestion"
+        >
+          다음
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { fetchQuestion, submitAnswer } from '../services/surveyService';
+import { fetchQuestion, submitAnswer } from "../services/surveyService";
 
 export default {
   data() {
@@ -55,7 +86,7 @@ export default {
     },
   },
   created() {
-    this.loadQuestion();  // 설문 질문을 불러옵니다
+    this.loadQuestion(); // 설문 질문을 불러옵니다
   },
   methods: {
     async loadQuestion() {
@@ -68,17 +99,17 @@ export default {
     async prevQuestion() {
       if (this.questionId > 1) {
         this.questionId--;
-        await this.loadQuestion();  // 이전 질문을 불러옵니다
+        await this.loadQuestion(); // 이전 질문을 불러옵니다
       }
     },
     async nextQuestion() {
       if (this.selectedOption) {
-        const userId = "testUser1";  // userId 설정
-        await submitAnswer(userId, this.questionId, this.selectedOption);  // 사용자 답변을 제출합니다
+        const userId = "testUser1"; // userId 설정
+        await submitAnswer(userId, this.questionId, this.selectedOption); // 사용자 답변을 제출합니다
 
         if (this.questionId < this.maxQuestions) {
           this.questionId++;
-          await this.loadQuestion();  // 다음 질문을 불러옵니다
+          await this.loadQuestion(); // 다음 질문을 불러옵니다
         } else {
           alert("설문조사가 완료되었습니다!");
         }
@@ -91,7 +122,6 @@ export default {
 <style scoped>
 /* 스타일 코드 여기에... */
 </style>
-
 
 <style scoped>
 .survey-container {
