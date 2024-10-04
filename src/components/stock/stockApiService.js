@@ -2,7 +2,7 @@
 import axios from "axios";
 
 class ApiService {
-  async fetchStockPrice() {
+  async fetchStockPrice(stockId) {
     if (import.meta.env.VITE_USE_API === "true") {
       try {
         const response = await axios.get(
@@ -18,7 +18,7 @@ class ApiService {
     }
   }
 
-  async fetchPortfolioSummary() {
+  async fetchPortfolioSummary(stockId) {
     if (import.meta.env.VITE_USE_API === "true") {
       try {
         const response = await axios.get(
