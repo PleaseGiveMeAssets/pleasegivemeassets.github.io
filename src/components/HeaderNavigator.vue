@@ -19,8 +19,6 @@ const route = useRoute();
 
 const headerStore = useHeaderStore();
 
-const { title } = headerStore;
-
 const showBackButton = computed(() => {
   return router.currentRoute.value.name !== "home";
 });
@@ -69,5 +67,12 @@ p {
   flex: none;
   order: 1;
   flex-grow: 0;
+}
+
+.title {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  color: black;
 }
 </style>
