@@ -12,6 +12,8 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
+    "highcharts": "^11.4.8",
+    "highcharts-vue": "^2.0.1",
     "pinia": "^2.2.3",
     "vite-plugin-pwa": "^0.20.5",
     "vue": "^3.4.29",
