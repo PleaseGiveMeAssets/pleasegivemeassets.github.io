@@ -1,7 +1,7 @@
 // src/pages/surveyService.js
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = '/api/survey';
+const API_BASE_URL = "/api/survey";
 
 export async function fetchQuestion(questionId) {
   const response = await axios.get(`${API_BASE_URL}/question/${questionId}`);

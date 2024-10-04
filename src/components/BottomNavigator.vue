@@ -24,7 +24,7 @@ const menuItems = reactive([
   { name: "홈", path: "/", icon: homeIcon },
   { name: "리포트", path: "/report", icon: reportIcon },
   { name: "포트폴리오", path: "/portfolio", icon: portfolioIcon },
-  { name: "MY", path: "/my", icon: myIcon },
+  { name: "MY", path: "/myProfile", icon: myIcon },
 ]);
 </script>
 

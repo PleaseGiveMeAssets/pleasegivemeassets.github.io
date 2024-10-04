@@ -42,7 +42,7 @@ p {
   gap: 8px;
   isolation: isolate;
   height: 48px;
-  background-color: #f8f9fa;
+  background-color: var(--main-background-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: fixed;
   left: 0;
