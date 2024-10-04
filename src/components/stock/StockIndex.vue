@@ -1,20 +1,34 @@
 <template>
-  <div>StockIndex{{ stockId }}</div>
+  <div>
+    <h3>Stock Index</h3>
+    <p>Market Capitalization: {{ indexData.marketCapitalization }}</p>
+    <p>PER: {{ indexData.per }}</p>
+    <p>PBR: {{ indexData.pbr }}</p>
+    <p>ROE: {{ indexData.roe }}</p>
+    <p>PSR: {{ indexData.psr }}</p>
+    <p>BPS: {{ indexData.bps }}</p>
+  </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import apiService from "./StockApiService";
+
 const props = defineProps({
   stockId: {
     type: String,
     required: true,
   },
 });
-async function fetchStockIndexData() {
-  const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/stock/${props.stockId}/index`
-  );
-  return response.data;
-}
+const indexData = ref({});
+
+const fetchIndexData = async () => {
+  indexData.value = await apiService.fetchStockIndex(props.stockId);
+};
+
+onMounted(() => {
+  fetchIndexData();
+});
 </script>
 
 <style scoped>

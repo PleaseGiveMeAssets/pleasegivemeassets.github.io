@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>Post ID: {{ stockId }}</h2>
     <StockChart :stock-id="stockId" />
     <MyPortfolio :stock-id="stockId" />
     <StockIndex :stock-id="stockId" />
