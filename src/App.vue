@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Header />
+    <HeaderNavigator />
     <router-view class="content" />
     <Footer />
     <BottomNavigator class="bottom-nav-bar" />
@@ -8,8 +8,7 @@
 </template>
 
 <script setup>
-import Footer from "./components/FooterPage.vue";
-import Header from "./components/HeaderPage.vue";
+import HeaderNavigator from "./components/HeaderNavigator.vue";
 import BottomNavigator from "./components/BottomNavigator.vue";
 </script>
 
