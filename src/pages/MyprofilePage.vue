@@ -19,6 +19,7 @@
         </p>
       </div>
     </div>
+    <img :src="graphIcon" alt="그래프" class="graph-icon" />
     <!-- 자산 총액 -->
     <p class="total-assets">
       포트폴리오 자산 총액: {{ userData.totalAssets.toLocaleString() }} 원
@@ -70,6 +71,7 @@ import notificationIcon from "@/assets/icons/notification-icon.svg";
 import profileEditIcon from "@/assets/icons/profile-edit-icon.svg";
 import savedIcon from "@/assets/icons/saved-icon.svg";
 import settingsIcon from "@/assets/icons/settings-icon.svg";
+import graphIcon from "@/assets/icons/graph-icon.svg";
 
 const route = useRoute();
 const router = useRouter();
