@@ -68,60 +68,58 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from "vue";
 import { fetchQuestion, submitAnswer } from "../services/surveyService";
 
-export default {
-  data() {
-    return {
-      question: null,
-      questionId: 1,
-      maxQuestions: 7,
-      selectedOption: null,
-    };
-  },
-  computed: {
-    progressPercentage() {
-      return (this.questionId / this.maxQuestions) * 100;
-    },
-  },
-  created() {
-    this.loadQuestion(); // 설문 질문을 불러옵니다
-  },
-  methods: {
-    async loadQuestion() {
-      try {
-        this.question = await fetchQuestion(this.questionId);
-      } catch (error) {
-        console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
-      }
-    },
-    async prevQuestion() {
-      if (this.questionId > 1) {
-        this.questionId--;
-        await this.loadQuestion(); // 이전 질문을 불러옵니다
-      }
-    },
-    async nextQuestion() {
-      if (this.selectedOption) {
-        const userId = "testUser1"; // userId 설정
-        await submitAnswer(userId, this.questionId, this.selectedOption); // 사용자 답변을 제출합니다
+// 상태 변수 선언
+const question = ref(null);
+const questionId = ref(1);
+const maxQuestions = 7;
+const selectedOption = ref(null);
 
-        if (this.questionId < this.maxQuestions) {
-          this.questionId++;
-          await this.loadQuestion(); // 다음 질문을 불러옵니다
-        } else {
-          alert("설문조사가 완료되었습니다!");
-        }
-      }
-    },
-  },
+// 진행률 계산
+const progressPercentage = computed(() => {
+  return (questionId.value / maxQuestions) * 100;
+});
+
+// 설문 질문 불러오기 함수
+const loadQuestion = async () => {
+  try {
+    question.value = await fetchQuestion(questionId.value);
+  } catch (error) {
+    console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
+  }
 };
-</script>
 
-<style scoped>
-/* 스타일 코드 여기에... */
-</style>
+// 이전 질문으로 이동
+const prevQuestion = async () => {
+  if (questionId.value > 1) {
+    questionId.value--;
+    await loadQuestion();
+  }
+};
+
+// 다음 질문으로 이동 및 답변 제출
+const nextQuestion = async () => {
+  if (selectedOption.value) {
+    const userId = "testUser1"; // userId 설정
+    await submitAnswer(userId, questionId.value, selectedOption.value);
+
+    if (questionId.value < maxQuestions) {
+      questionId.value++;
+      await loadQuestion();
+    } else {
+      alert("설문조사가 완료되었습니다!");
+    }
+  }
+};
+
+// 컴포넌트가 마운트될 때 첫 질문을 로드
+onMounted(() => {
+  loadQuestion();
+});
+</script>
 
 <style scoped>
 .survey-container {
