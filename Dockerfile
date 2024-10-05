@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 4. 의존성 설치
-RUN npm install
+RUN npm install --production
 
 # 5. 애플리케이션 소스 코드 복사
 COPY . .
@@ -26,7 +26,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # COPY nginx.conf /etc/nginx/nginx.conf
 
 # 10. 포트 설정 (Nginx 기본 포트 80)
-EXPOSE 5173
+EXPOSE 80
 
 # 11. Nginx 시작
 CMD ["nginx", "-g", "daemon off;"]
