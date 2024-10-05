@@ -12,7 +12,7 @@ const props = defineProps({
 
 async function fetchStockPortfolioDetailData() {
   const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/portfolio/${props.stockId}/order`
+    `${import.meta.env.VITE_API_URL}/portfolio/${props.stockId}/order`,
   );
   return response.data;
 }
