@@ -15,4 +15,7 @@ import BottomNavigator from "./components/BottomNavigator.vue";
 .content {
   padding-top: 48px;
 }
+.container {
+  font-family: "Pretendard-Medium";
+}
 </style>
