@@ -47,6 +47,9 @@ const toggleCategories = () => {
 </script>
 
 <style scoped>
+body {
+  font-family: "Pretendard Medium", sans-serif;
+}
 .category-container {
   position: absolute;
   width: 390px;
