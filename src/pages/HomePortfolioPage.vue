@@ -17,7 +17,7 @@ import {
 } from "chart.js";
 import axios from "axios";
 
-const BASE = "/api/stockportfolio";
+const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
 const portfolio = reactive([]);
 const token = localStorage.getItem("token");
 
