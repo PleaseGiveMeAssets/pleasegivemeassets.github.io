@@ -1,6 +1,9 @@
 <template>
   <div>
-    <StockChart :stock-id="stockId" />
+    <StockChart
+      :fetch-stock-price="(stockId) => apiService.fetchStockPrice(stockId)"
+      :stock-id="stockId"
+    />
     <MyPortfolio :stock-id="stockId" />
     <StockIndex :stock-id="stockId" />
   </div>
@@ -12,6 +15,8 @@ import { useHeaderStore } from "@/stores/headerStore";
 import StockChart from "@/components/stock/StockChart.vue";
 import MyPortfolio from "@/components/stock/StockPortfolio.vue";
 import StockIndex from "@/components/stock/StockIndex.vue";
+import apiService from "@/services/stockApiService";
+
 const props = defineProps({
   stockId: {
     type: String,

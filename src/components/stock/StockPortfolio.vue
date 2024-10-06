@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <loading v-if="isLoading || !Object.keys(portfolioData).length" />
+
+  <div v-if="!isLoading && Object.keys(portfolioData).length">
     <p class="title">내 포트폴리오</p>
     <!-- <p>Stock Name: {{ portfolioData.name }}</p> -->
     <div>
@@ -17,7 +19,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import apiService from "./stockApiService";
+import apiService from "../../services/stockApiService";
+import { useLoadingStore } from "@/stores/loadingStore";
+import Loading from "@/components/LoadingComponent.vue";
+
+const loadingStore = useLoadingStore();
+const isLoading = loadingStore.isLoading;
 const props = defineProps({
   stockId: {
     type: String,

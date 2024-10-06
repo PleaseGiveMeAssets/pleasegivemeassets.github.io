@@ -1,15 +1,24 @@
 <template>
-  <div>
+  <loading v-if="isLoading || chartOptions.series[0].data.length == 0" />
+
+  <div v-if="!isLoading && chartOptions.series[0].data.length != 0">
     <highcharts ref="highchartsRef" :options="chartOptions"></highcharts>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import apiService from "./stockApiService";
-import axios from "axios";
+import { useLoadingStore } from "@/stores/loadingStore";
+import Loading from "@/components/LoadingComponent.vue";
+
+const loadingStore = useLoadingStore();
+const isLoading = loadingStore.isLoading;
 
 const props = defineProps({
+  fetchStockPrice: {
+    type: Function,
+    required: true,
+  },
   stockId: {
     type: String,
     required: true,
@@ -41,7 +50,9 @@ const chartOptions = ref({
 
 // 데이터를 가져와서 차트 업데이트
 const fetchStockChartData = async () => {
-  const data = await apiService.fetchStockPrice(props.stockId);
+  const data = await props.fetchStockPrice();
+
+  console.log(data);
   const parsedData = data.map((item) => {
     const date = new Date(
       item.stockHistoryId.slice(0, 4),
