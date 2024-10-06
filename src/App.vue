@@ -12,16 +12,10 @@ import BottomNavigator from "./components/BottomNavigator.vue";
 </script>
 
 <style scoped>
-@font-face {
-  font-family: "MyCustomFont";
-  src: url("@/assets/fonts/Pretendard-Bold.ttf");
-  font-weight: normal;
-  font-style: normal;
-}
-body {
-  font-family: "Pretendard-Bold", sans-serif;
-}
 .content {
   padding-top: 48px;
+}
+.container {
+  font-family: "Pretendard-Medium";
 }
 </style>
