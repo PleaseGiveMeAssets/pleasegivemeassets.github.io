@@ -8,7 +8,6 @@ dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === "production" ? "/FrontEnd/" : "/", // GitHub Pages 경로 설정
   plugins: [
     vue(),
     VitePWA({
