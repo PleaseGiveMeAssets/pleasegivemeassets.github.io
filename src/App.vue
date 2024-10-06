@@ -24,4 +24,7 @@ body {
 .content {
   padding-top: 48px;
 }
+.container {
+  font-family: "Pretendard-Medium";
+}
 </style>
