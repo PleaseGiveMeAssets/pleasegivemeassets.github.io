@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import apiService from "../../services/stockApiService";
+import apiService from "../../services/stockService";
 import { useLoadingStore } from "@/stores/loadingStore";
 import Loading from "@/components/LoadingComponent.vue";
 

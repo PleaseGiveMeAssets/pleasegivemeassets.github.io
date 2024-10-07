@@ -15,7 +15,7 @@ import { useHeaderStore } from "@/stores/headerStore";
 import StockChart from "@/components/stock/StockChart.vue";
 import MyPortfolio from "@/components/stock/StockPortfolio.vue";
 import StockIndex from "@/components/stock/StockIndex.vue";
-import apiService from "@/services/stockApiService";
+import apiService from "@/services/stockService";
 
 const props = defineProps({
   stockId: {
