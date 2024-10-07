@@ -61,7 +61,7 @@ const fetchStockChartData = async () => {
       item.stockHistoryId.slice(8, 10),
       item.stockHistoryId.slice(10, 12),
     ).getTime();
-    return [date, parseFloat(item.price)];
+    return [date, parseFloat(item.closedPrice)];
   });
   chartOptions.value.series[0].data = parsedData;
 };
