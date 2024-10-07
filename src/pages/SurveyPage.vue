@@ -32,9 +32,9 @@
                 type="radio"
                 :value="option.questionOptionId"
               />
-              <label class="form-check-label" :for="option.questionOptionId">{{
-                option.content
-              }}</label>
+              <label class="form-check-label" :for="option.questionOptionId">
+                {{ option.content }}
+              </label>
             </div>
           </li>
         </ul>
@@ -70,6 +70,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { fetchQuestion, submitAnswer } from "../services/surveyService";
 
 // 상태 변수 선언
@@ -77,6 +78,7 @@ const question = ref(null);
 const questionId = ref(1);
 const maxQuestions = 7;
 const selectedOption = ref(null);
+const router = useRouter();
 
 // 진행률 계산
 const progressPercentage = computed(() => {
@@ -110,7 +112,8 @@ const nextQuestion = async () => {
       questionId.value++;
       await loadQuestion();
     } else {
-      alert("설문조사가 완료되었습니다!");
+      // 설문조사가 완료되면 결과 페이지로 이동
+      router.push("/survey-result");
     }
   }
 };
