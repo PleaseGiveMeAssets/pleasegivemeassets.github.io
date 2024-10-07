@@ -13,6 +13,7 @@ import BottomNavigator from "./components/BottomNavigator.vue";
 
 <style scoped>
 .content {
+  background-color: var(--main-background-color);
   padding-top: 48px;
 }
 .container {

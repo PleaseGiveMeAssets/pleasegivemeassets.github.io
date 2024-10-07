@@ -40,7 +40,7 @@ p {
   gap: 8px;
   isolation: isolate;
   height: 48px;
-  background-color: var(--main-background-color);
+  background-color: var(--main-card-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: fixed;
   left: 0;
