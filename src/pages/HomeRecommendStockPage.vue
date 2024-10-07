@@ -21,13 +21,13 @@
 
 <script setup>
 import axios from "axios";
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
 const token = localStorage.getItem("token");
 
-const load = async (date) => {
+const createRecommendStock = async (date) => {
   try {
     const response = await axios.get(date ? `${BASE}/${date}` : BASE, {
       headers: {
@@ -36,13 +36,14 @@ const load = async (date) => {
     });
 
     Object.assign(dailyRecommendStock, response.data);
-
-    console.log("load dailyRecommendStock : ", dailyRecommendStock);
   } catch (err) {
-    console.log("load err : ", err.message);
+    console.log("createRecommendStock err : ", err.message);
   }
 };
-load();
+
+onMounted(() => {
+  createRecommendStock();
+});
 </script>
 
 <style scoped>
