@@ -22,8 +22,8 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
 const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
 const portfolio = reactive([]);
-let chartInstance = null; // 차트 인스턴스 관리
 const token = localStorage.getItem("token");
+let chartInstance = null; // 차트 인스턴스 관리
 
 const createPortfolio = async () => {
   try {
