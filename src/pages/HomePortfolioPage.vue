@@ -43,6 +43,23 @@ const createPortfolio = async () => {
   }
 };
 
+// 데이터 로드 함수 호출
+onMounted(() => {
+  createPortfolio();
+});
+
+// 랜덤 배경색을 생성하는 함수
+const generateColors = (numColors) => {
+  const colors = [];
+  for (let i = 0; i < numColors; i++) {
+    const hue = Math.floor((i * 360) / numColors); // 색상 값 (0-360도 사이로 균등 분포)
+    const saturation = 70 + Math.random() * 10; // 채도 (70% 이상)
+    const lightness = 50 + Math.random() * 10; // 밝기 (50% 이상)
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+  }
+  return colors;
+};
+
 // 차트 생성 함수
 const createChart = () => {
   const canvasElement = document.getElementById("homePortfolioPage");
@@ -59,19 +76,15 @@ const createChart = () => {
       (item) => item.totalPrice * item.totalQuantity,
     );
 
+    // 동적으로 색상 배열 생성
+    const backgroundColors = generateColors(stockName.length);
+
     const chartData = {
       labels: stockName,
       datasets: [
         {
           data: totalValue,
-          backgroundColor: [
-            "#4A90E2",
-            "#9013FE",
-            "#50E3C2",
-            "#B8E986",
-            "#E4B8F0",
-            "#9B9B9B",
-          ],
+          backgroundColor: backgroundColors, // 동적으로 생성된 색상을 차트에 적용
         },
       ],
     };
@@ -94,11 +107,6 @@ const createChart = () => {
     console.log("포트폴리오 데이터가 비어 있습니다.");
   }
 };
-
-// 데이터 로드 함수 호출
-onMounted(() => {
-  createPortfolio();
-});
 </script>
 
 <style scoped>
