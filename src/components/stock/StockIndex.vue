@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <!-- 로딩 상태가 true일 때 로딩 컴포넌트 표시 -->
-    <loading v-if="isLoading || !indexData" />
+  <!-- 로딩 상태가 true일 때 로딩 컴포넌트 표시 -->
+  <loading v-if="isLoading || !indexData" />
 
-    <!-- 데이터가 로드되면 표시할 콘텐츠 -->
-    <div v-if="!isLoading && indexData">
+  <!-- 데이터가 로드되면 표시할 콘텐츠 -->
+  <div v-if="!isLoading && indexData">
+    <div class="card-ui">
       <h3>Stock Index</h3>
       <p>Market Capitalization: {{ indexData.marketCapitalization }}</p>
       <p>PER: {{ indexData.per }}</p>
@@ -45,5 +45,16 @@ onMounted(() => {
 <style scoped>
 div {
   height: 48px;
+}
+
+body {
+  height: 10000px;
+}
+.card-ui {
+  background-color: var(--main-card-color);
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 </style>

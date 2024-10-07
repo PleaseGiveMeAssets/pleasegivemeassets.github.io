@@ -1,7 +1,9 @@
 <template>
-  <h2>포트폴리오</h2>
-  <div class="home-portfolio-page">
-    <canvas id="homePortfolioPage"></canvas>
+  <div class="card-ui">
+    <h2>포트폴리오</h2>
+    <div class="home-portfolio-page">
+      <canvas id="homePortfolioPage"></canvas>
+    </div>
   </div>
 </template>
 
@@ -78,5 +80,13 @@ onMounted(() => {
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
+}
+
+.card-ui {
+  background-color: var(--main-card-color);
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 </style>

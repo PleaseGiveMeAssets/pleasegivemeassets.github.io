@@ -1,13 +1,15 @@
 <template>
-  <h2>일일추천종목</h2>
-  <div class="home-recommend-stock-page">
-    <div v-for="(stock, index) in stocks" :key="index" class="stock-item">
-      <div class="stock-name">{{ stock.name }}</div>
-      <div class="stock-price">{{ stock.price }}원</div>
-      <div class="stock-change" :class="stock.change > 0 ? 'up' : 'down'">
-        {{ stock.change > 0 ? "+" : "" }}{{ stock.change }}원 ({{
-          stock.changePercentage
-        }}%)
+  <div class="card-ui">
+    <h2>일일추천종목</h2>
+    <div class="home-recommend-stock-page">
+      <div v-for="(stock, index) in stocks" :key="index" class="stock-item">
+        <div class="stock-name">{{ stock.name }}</div>
+        <div class="stock-price">{{ stock.price }}원</div>
+        <div class="stock-change" :class="stock.change > 0 ? 'up' : 'down'">
+          {{ stock.change > 0 ? "+" : "" }}{{ stock.change }}원 ({{
+            stock.changePercentage
+          }}%)
+        </div>
       </div>
     </div>
   </div>
@@ -51,6 +53,13 @@ const stocks = ref([
 </script>
 
 <style scoped>
+.card-ui {
+  background-color: var(--main-card-color);
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
 .home-recommend-stock-page {
   display: flex;
   flex-direction: column;
