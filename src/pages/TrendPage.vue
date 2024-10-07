@@ -1,26 +1,24 @@
 <template>
+  <section class="pgma-logo">
+    <h2>PGMA(로고)</h2>
+    <img
+      src="https://via.placeholder.com/300x100?text=표지+그림+들어갈+곳+위딩+:+일일+종목+동향"
+      alt="표지 그림"
+    />
+  </section>
+
   <section class="latest-trend">
     <h2>PGMA(로고)</h2>
-    <h3>최신 동향</h3>
+    <h3>{{ trend.recentTrendTitle }}</h3>
     <p>
-      어제 금융 시장에서는 미국 연방준비제도(Fed)의 금리 동결 전망과 인플레이션
-      완화 기대가 맞물리면서 글로벌 증시가 혼조세를 보였습니다. 미국 국채
-      수익률이 하락함에 따라 기술주가 소폭 상승하였으나, 에너지 및 금융주는
-      약세를 보였습니다. 또한, 유럽중앙은행(ECB)은 향후 금리 인상을 두고 신중한
-      태도를 유지할 것으로 보이며, 이는 유로존 경기 침체 우려를 완화시켰습니다.
+      {{ trend.recentTrendContent }}
     </p>
   </section>
 
   <section class="stock-trend">
-    <h3>종목 동향</h3>
-    <p>사용자가 투자한 종목(CONL) 이슈</p>
+    <h3>{{ trend.stockTrendTitle }}</h3>
     <p>
-      CONL(Corporation of North Limited)은 최근 전략적 파트너십 확대와 신기술
-      도입을 발표하면서 시장의 긍정적인 반응을 이끌어냈습니다. 특히 AI 기반
-      자동화 솔루션의 적용으로 운영 효율성을 높일 계획을 밝혀, 기업 수익성
-      향상에 대한 기대감이 높아지고 있습니다. 그러나 경쟁사들이 유사한 기술을
-      적극적으로 도입하고 있어 향후 시장 경쟁이 치열해질 가능성이 제기되고
-      있습니다.
+      {{ trend.stockTrendContent }}
     </p>
   </section>
 
@@ -29,27 +27,31 @@
     <div class="index-cards">
       <div class="index-card">
         <h4>코스닥</h4>
-        <p class="price">$5000</p>
-        <p class="change up">+10%</p>
+        <p class="price">{{ trend.kosdaqPrice }}</p>
+        <p class="change" :class="trend.kosdaqProfitRate < 0 ? 'down' : 'up'">
+          {{ trend.kosdaqProfitRate }}%
+        </p>
       </div>
       <div class="index-card">
         <h4>코스피</h4>
-        <p class="price">100</p>
-        <p class="change down">-5%</p>
+        <p class="price">{{ trend.kospiPrice }}</p>
+        <p class="change" :class="trend.kospiProfitRate < 0 ? 'down' : 'up'">
+          {{ trend.kospiProfitRate }}%
+        </p>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 import axios from "axios";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const trend = reactive([]);
 const token = localStorage.getItem("token");
 
-const load = async () => {
+const createTrend = async () => {
   try {
     const response = await axios.get(BASE, {
       headers: {
@@ -58,13 +60,14 @@ const load = async () => {
     });
 
     Object.assign(trend, response.data);
-
-    console.log("load trend : ", trend);
   } catch (err) {
-    console.log("load err : ", err.message);
+    console.log("createTrend err : ", err.message);
   }
 };
-load();
+
+onMounted(() => {
+  createTrend();
+});
 </script>
 
 <style scoped>
@@ -100,5 +103,10 @@ load();
 
 .change.down {
   color: red;
+}
+
+.pgma-logo img {
+  margin: 20px 0;
+  width: 100%;
 }
 </style>
