@@ -1,21 +1,27 @@
 <template>
-  <h2>일일추천종목</h2>
-  <div class="home-recommend-stock-page">
-    <div v-for="(stock, index) in stocks" :key="index" class="stock-item">
-      <div class="stock-name">{{ stock.name }}</div>
-      <div class="stock-price">{{ stock.price }}원</div>
-      <div class="stock-change" :class="stock.change > 0 ? 'up' : 'down'">
-        {{ stock.change > 0 ? "+" : "" }}{{ stock.change }}원 ({{
-          stock.changePercentage
-        }}%)
+  <section class="recommendations">
+    <h2>일일추천종목</h2>
+    <div class="home-recommend-stock-page">
+      <div
+        v-for="(stock, index) in dailyRecommendStock"
+        :key="index"
+        class="stock-item"
+      >
+        <div class="stock-name">{{ stock.stockName }}</div>
+        <div class="stock-price">{{ stock.price }}원</div>
+        <div class="stock-change" :class="stock.change > 0 ? 'up' : 'down'">
+          {{ stock.change > 0 ? "+" : "" }}{{ stock.change }}원 ({{
+            stock.changePercentage
+          }}%)
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
 import axios from "axios";
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
@@ -37,17 +43,6 @@ const load = async (date) => {
   }
 };
 load();
-
-const stocks = ref([
-  {
-    name: "삼성전자",
-    price: 66700,
-    change: -100,
-    changePercentage: -0.02,
-  },
-  { name: "엘지전자", price: 633300, change: 6000, changePercentage: 2 },
-  { name: "삼성증권", price: 10000, change: 100, changePercentage: 0.1 },
-]);
 </script>
 
 <style scoped>
@@ -82,5 +77,11 @@ const stocks = ref([
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
+}
+
+.recommendations {
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  padding-top: 15px;
 }
 </style>
