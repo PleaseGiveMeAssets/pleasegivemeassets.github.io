@@ -126,7 +126,7 @@ p {
 }
 .notification-page {
   position: relative;
-  padding-top: 80px;
+  padding-top: 70px;
   width: 100%;
 }
 
@@ -144,7 +144,7 @@ p {
 .notification-list {
   display: flex;
   flex-direction: column;
-  margin-left: -22px;
+  margin-left: -12px;
   width: 100vw;
 }
 

@@ -1,61 +1,72 @@
 <template>
-  <!-- 사용자 데이터가 존재하고 로딩이 완료되었을 때 렌더링 -->
   <div
     v-if="!isLoading && userData && Object.keys(userData).length"
     class="user-profile"
   >
-    <!-- 프로필 사진과 사용자 정보 -->
-    <div class="profile-info">
-      <div
-        class="avatar"
-        :style="{ backgroundImage: `url(${userData.profileImageUrl})` }"
-      ></div>
-      <div class="info">
-        <p class="nickname">
-          <span class="nickname-highlight">{{ userData.nickname }}</span> 님
-        </p>
-        <p class="investment-type">
-          당신의 투자성향은 {{ userData.investmentTypeName }} 입니다.
-        </p>
-      </div>
+    <!-- 겹쳐진 카드 배경 -->
+    <div class="highlight-card">
+      <p class="highlight-text">Neogul</p>
     </div>
-    <img :src="graphIcon" alt="그래프" class="graph-icon" />
-    <!-- 자산 총액 -->
-    <p class="total-assets">
-      포트폴리오 자산 총액: {{ userData.totalAssets.toLocaleString() }} 원
-    </p>
+    <!-- 프로필 카드 -->
+    <div class="profile-card">
+      <div class="profile-info">
+        <div
+          class="avatar"
+          :style="{ backgroundImage: `url(${userData.profileImageUrl})` }"
+        ></div>
+        <div class="info">
+          <p class="nickname">{{ userData.nickname }} 님</p>
+          <p class="investment-type">
+            당신의 투자성향은 {{ userData.investmentTypeName }}입니다.
+          </p>
+        </div>
+        <!-- 수정 버튼 -->
+        <p class="edit-text" @click="navigateTo('/profile-edit')">수정</p>
+      </div>
+      <p class="total-assets">
+        <span>포트폴리오 자산 총액 </span>
+        <span>{{ userData.totalAssets.toLocaleString() }}원</span>
+      </p>
+    </div>
 
     <!-- 페이지 이동 버튼 -->
     <div class="navigation-buttons">
-      <div class="nav-item" @click="navigateTo('/interest')">
-        <img :src="interestIcon" alt="관심항목" class="nav-icon" />
-        <p>관심항목</p>
+      <div class="nav-item">
+        <p class="nav-title">관심 항목</p>
+        <img :src="heartIcon" alt="관심 항목" class="nav-icon" />
+        <p class="sub-text">
+          백정현님이 관심 있어 할만한<br />
+          주식을 찾아보세요
+        </p>
+        <button class="find-button" @click="navigateTo('/interest')">
+          찾아보기
+        </button>
       </div>
-      <div class="nav-item" @click="navigateTo('/investment')">
-        <img :src="investmentIcon" alt="투자성향" class="nav-icon" />
-        <p>투자성향</p>
-      </div>
-      <div class="nav-item" @click="navigateTo('/notifications')">
-        <img :src="notificationIcon" alt="알림함" class="nav-icon" />
-        <p>알림함</p>
-      </div>
-      <div class="nav-item" @click="navigateTo('/profile-edit')">
-        <img :src="profileEditIcon" alt="프로필편집" class="nav-icon" />
-        <p>프로필 편집</p>
-      </div>
-      <div class="nav-item" @click="navigateTo('/saved')">
-        <img :src="savedIcon" alt="Saved" class="nav-icon" />
-        <p>Saved</p>
-      </div>
-      <div class="nav-item" @click="navigateTo('/settings')">
-        <img :src="settingsIcon" alt="설정" class="nav-icon" />
-        <p>설정</p>
+      <div class="circle-navigation">
+        <div class="circle-item">
+          <div class="circle-box" @click="navigateTo('/investment')">
+            <img :src="investmentIcon" alt="투자성향" class="circle-icon" />
+          </div>
+          <p class="circle-text">투자성향</p>
+        </div>
+
+        <div class="circle-item">
+          <div class="circle-box" @click="navigateTo('/saved')">
+            <img :src="savedIcon" alt="스크랩" class="circle-icon" />
+          </div>
+          <p class="circle-text">스크랩</p>
+        </div>
+
+        <div class="circle-item">
+          <div class="circle-box" @click="navigateTo('/settings')">
+            <img :src="settingsIcon" alt="설정" class="circle-icon" />
+          </div>
+          <p class="circle-text">설정</p>
+        </div>
       </div>
     </div>
   </div>
-  <!-- 데이터 로딩 중 표시 -->
   <div v-else-if="isLoading">데이터 로딩 중...</div>
-  <!-- 데이터가 없을 때 표시 -->
   <div v-else>사용자 데이터를 불러오지 못했습니다.</div>
 </template>
 
@@ -64,14 +75,11 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getUserProfile } from "@/services/myProfileService";
 
-// 아이콘 파일 import
-import interestIcon from "@/assets/icons/interest-icon.svg";
+import heartIcon from "@/assets/icons/heartArrow-icon.svg";
 import investmentIcon from "@/assets/icons/investment-icon.svg";
-import notificationIcon from "@/assets/icons/notification-icon.svg";
 import profileEditIcon from "@/assets/icons/profile-edit-icon.svg";
 import savedIcon from "@/assets/icons/saved-icon.svg";
 import settingsIcon from "@/assets/icons/settings-icon.svg";
-import graphIcon from "@/assets/icons/graph-icon.svg";
 
 const route = useRoute();
 const router = useRouter();
@@ -79,13 +87,11 @@ const userId = route.params.userId;
 const userData = ref(null);
 const isLoading = ref(true);
 
-// 사용자 프로필 데이터를 가져오는 함수
 const fetchUserData = async () => {
   isLoading.value = true;
   try {
     const data = await getUserProfile(userId);
     userData.value = data;
-    console.log(userData.value);
   } catch (error) {
     console.error("Failed to fetch user profile:", error);
   } finally {
@@ -93,7 +99,6 @@ const fetchUserData = async () => {
   }
 };
 
-// 페이지 이동 함수
 const navigateTo = (path) => {
   router.push(path);
 };
@@ -105,86 +110,197 @@ onMounted(fetchUserData);
 body {
   font-family: "Pretendard Medium", sans-serif;
 }
-p {
-  margin: 0px;
-  padding: 0px;
-}
 
 .user-profile {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 100px 20px 20px 20px;
-  gap: 20px;
-  border-radius: 10px;
+  padding-top: 80px;
+  position: relative;
+}
+
+.highlight-card {
+  background-color: #6e2ff4;
+  border-radius: 16px;
+  width: 340px;
+  height: 100px;
+  margin-top: 80px;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  transform: translateY(20px);
+}
+
+.profile-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  width: 340px;
+  position: relative;
+  z-index: 1;
+  margin-top: 50px;
+}
+.highlight-text {
+  color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-size: 12px;
+  margin-top: 6px;
+  margin-left: 12px;
+  font-weight: bold;
 }
 
 .profile-info {
   display: flex;
   align-items: center;
-  gap: 20px;
+  max-width: 340px;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.edit-text {
+  position: absolute;
+  top: 8px;
+  right: 15px;
+  font-size: 14px;
+  color: #b0b0b0;
+  cursor: pointer;
 }
 
 .avatar {
-  width: 83px;
-  height: 83px;
+  width: 70px;
+  height: 70px;
   background-size: cover;
   border-radius: 50%;
   border: 2px solid #dcdcdc;
-  align-self: center;
 }
 
 .info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  text-align: left;
 }
 
 .nickname {
   font-size: 30px;
+  color: #49454f;
+  margin: 0;
 }
-
-.nickname-highlight {
-  color: var(--primary-color);
-}
-
 .investment-type {
   font-size: 11px;
-  color: #666;
+  color: #757575;
 }
 
 .total-assets {
+  display: flex;
+  justify-content: space-between;
   font-size: 16px;
-  color: var(--main-text-black);
-  margin-top: 20px; /* 자산 총액과 다른 요소 간의 간격을 추가 */
+  color: #49454f;
+  font-weight: bold;
+  margin-top: 10px;
 }
 
 .navigation-buttons {
-  position: fixed;
-  bottom: 120px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  width: 100%;
-  justify-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 340px;
+  margin-top: 20px;
 }
 
 .nav-item {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  width: 340px;
+  margin: 10px 0;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
-  text-align: center;
-  padding: 30px 10px;
-  cursor: pointer;
+  gap: 10px;
+  transition: transform 0.2s;
+  position: relative;
+}
+.nav-title {
+  position: absolute;
+  top: 12px;
+  left: 18px;
+  font-size: 15px !important;
+  font-weight: bold;
+  color: #49454f;
 }
 
 .nav-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 10px;
+  width: 55px;
+  height: 55px;
+  margin-top: 25px;
 }
+.sub-text {
+  font-size: 14px;
+  color: #49454f;
+  text-align: center;
+  margin: 10px 0;
+}
+
 .nav-item p {
   font-size: 13px;
+  color: #333;
+  margin: 0;
+}
+.find-button {
+  width: 100%;
+  max-width: 309px;
+  height: 44px;
+  background-color: #6e2ff4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.find-button:hover {
+  background-color: #5b23c4;
+}
+.circle-navigation {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 340px;
+  margin-top: 50px;
+}
+
+.circle-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.circle-box {
+  width: 65px;
+  height: 65px;
+  background-color: #f4f4ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.circle-box:hover {
+  transform: scale(1.1);
+}
+
+.circle-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.circle-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #49454f;
+  text-align: center;
 }
 </style>
