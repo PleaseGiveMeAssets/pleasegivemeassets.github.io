@@ -10,7 +10,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
+import apiService from "../../services/stockService";
+import { useLoadingStore } from "@/stores/loadingStore"; // Pinia 스토어 가져오기
+import Loading from "@/components/LoadingComponent.vue"; // 로딩 컴포넌트 가져오기
+
+const loadingStore = useLoadingStore();
+const isLoading = loadingStore.isLoading;
 
 const props = defineProps({
   data: {

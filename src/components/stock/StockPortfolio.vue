@@ -16,7 +16,10 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { ref, onMounted, computed } from "vue";
+import apiService from "../../services/stockService";
+import { useLoadingStore } from "@/stores/loadingStore";
+import Loading from "@/components/LoadingComponent.vue";
 
 const props = defineProps({
   data: {
