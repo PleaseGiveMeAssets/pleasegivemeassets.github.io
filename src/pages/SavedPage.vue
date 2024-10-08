@@ -30,7 +30,6 @@
               <h4>{{ item.recentTrendTitle }}</h4>
               <h4>{{ item.stockTrendTitle }}</h4>
             </div>
-            <img :src="item.imageUrl" alt="대표 이미지" class="thumbnail" />
           </div>
           <div class="delete-button-container">
             <button
@@ -68,7 +67,7 @@
               <h4>{{ item.title }}</h4>
               <p>{{ item.source }}</p>
             </div>
-            <img :src="item.imageUrl" alt="대표 이미지" class="thumbnail" />
+            <img :src="item.image" alt="대표 이미지" class="thumbnail" />
           </div>
           <div class="delete-button-container">
             <button class="delete-button" @click="deleteSavedNews(item.newsId)">
@@ -106,9 +105,10 @@ const setActiveTab = (tab) => {
 
 const fetchSavedNews = async () => {
   try {
+    console.log(`${API_BASE_URL}/saved-news/${userId}`);
     const response = await axios.get(`${API_BASE_URL}/saved-news/${userId}`);
-    console.log("Fetched news list:", response.data); // 로드된 데이터 구조 확인
     newsList.value = response.data;
+    console.log(newsList.value);
   } catch (error) {
     console.error("저장된 뉴스를 불러오는데 실패했습니다:", error);
   }
@@ -124,7 +124,6 @@ const fetchSavedReports = async () => {
 };
 
 const deleteSavedNews = async (newsId) => {
-  console.log("Attempting to delete news with ID:", newsId); // newsId 로그 추가
   if (!newsId) {
     console.error("Invalid newsId:", newsId);
     return;
@@ -138,7 +137,6 @@ const deleteSavedNews = async (newsId) => {
 };
 
 const deleteSavedReport = async (dailyReportId) => {
-  console.log("Attempting to delete report with ID:", dailyReportId); // dailyReportId 로그 추가
   if (!dailyReportId) {
     console.error("Invalid dailyReportId:", dailyReportId);
     return;
@@ -224,7 +222,8 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 330px;
+  height: 70px;
   background-color: #ffffff;
   padding: 10px;
   border-bottom: 1px solid #ddd;
@@ -281,25 +280,36 @@ onMounted(() => {
 }
 
 .text-content {
-  flex: 1;
+  flex-grow: 1;
+  width: 246px;
+  height: 51px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  margin-right: 10px;
 }
 
-.text-content h4 {
+.text-content h4,
+.text-content p {
   margin: 0;
   font-size: 16px;
   color: #000;
-}
-
-.text-content p {
-  margin: 0;
-  font-size: 12px;
-  color: #757575;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .thumbnail {
-  width: 60px;
+  width: 63px;
   height: 60px;
-  border-radius: 8px;
+  border-radius: 10px;
   object-fit: cover;
+  margin-left: auto;
 }
 </style>
