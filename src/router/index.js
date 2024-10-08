@@ -1,6 +1,6 @@
 import StockPage from "@/pages/StockPage.vue";
 import SurveyPage from "@/pages/SurveyPage.vue";
-import MyprofilePage from "@/pages/MyprofilePage.vue";
+import MyprofilePage from "@/pages/MyProfilePage.vue";
 import InterestPage from "@/pages/InterestPage.vue";
 import NotificationsPage from "@/pages/NotificationsPage.vue";
 import ProfileEditPage from "@/pages/ProfileEditPage.vue";
@@ -8,6 +8,7 @@ import SavedPage from "@/pages/SavedPage.vue";
 import SettingsPage from "@/pages/SettingsPage.vue";
 import DailyReportPage from "@/pages/DailyReportPage.vue";
 import HomePage from "@/pages/HomePage.vue";
+import AccountManagement from "@/pages/AccountManagement.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -31,6 +32,7 @@ const router = createRouter({
     { path: "/saved", component: SavedPage }, // Saved 경로 추가
     { path: "/settings", component: SettingsPage }, // Settings 경로 추가
     { path: "/dailyreport", component: DailyReportPage },
+    { path: "/account-management", component: AccountManagement },
   ],
 });
 
