@@ -9,6 +9,9 @@ class ApiService {
         return response.data;
       } catch (error) {
         console.error("API fetch error, using mock data", error);
+        if (error.status == 404) {
+          return { status: error.status };
+        }
         return this.getMockStockPrice();
       }
     } else {

@@ -1,26 +1,16 @@
 <template>
-  <loading v-if="isLoading || chartOptions.series[0].data.length == 0" />
-
-  <div v-if="!isLoading && chartOptions.series[0].data.length != 0">
+  <div v-if="chartOptions.series[0].data !== null">
     <highcharts ref="highchartsRef" :options="chartOptions"></highcharts>
   </div>
+  <div v-else class="chartSkeleton card-ui">데이터가 없습니다.</div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useLoadingStore } from "@/stores/loadingStore";
-import Loading from "@/components/LoadingComponent.vue";
-
-const loadingStore = useLoadingStore();
-const isLoading = loadingStore.isLoading;
+import { ref, computed, onMounted } from "vue";
 
 const props = defineProps({
-  fetchStockPrice: {
-    type: Function,
-    required: true,
-  },
-  stockId: {
-    type: String,
+  data: {
+    type: Object,
     required: true,
   },
 });
@@ -47,13 +37,9 @@ const chartOptions = ref({
     },
   ],
 });
-
-// 데이터를 가져와서 차트 업데이트
-const fetchStockChartData = async () => {
-  const data = await props.fetchStockPrice();
-
-  console.log(data);
-  const parsedData = data.map((item) => {
+chartOptions.value.series[0].data = computed(() => {
+  if (Object.keys(props.data).length === 0) return null;
+  const parsedData = props.data.map((item) => {
     const date = new Date(
       item.stockHistoryId.slice(0, 4),
       item.stockHistoryId.slice(4, 6) - 1,
@@ -63,10 +49,7 @@ const fetchStockChartData = async () => {
     ).getTime();
     return [date, parseFloat(item.price)];
   });
-  chartOptions.value.series[0].data = parsedData;
-};
-onMounted(() => {
-  fetchStockChartData();
+  return parsedData;
 });
 </script>
 
@@ -74,5 +57,11 @@ onMounted(() => {
 div {
   height: 400px;
   width: 100%;
+}
+.chartSkeleton {
+  display: flex;
+  justify-content: center; /* 좌우 가운데 정렬 */
+  align-items: center; /* 상하 가운데 정렬 */
+  background-color: white;
 }
 </style>

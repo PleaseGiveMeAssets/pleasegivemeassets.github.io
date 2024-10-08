@@ -1,15 +1,16 @@
 <template>
   <div class="card-ui">
-    <h2>포트폴리오</h2>
-    <div class="home-portfolio-page">
-      <canvas id="homePortfolioPage"></canvas>
-    </div>
+    <section class="portfolio">
+      <h2>포트폴리오</h2>
+      <div class="home-portfolio-page">
+        <canvas id="homePortfolioPage"></canvas>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { onMounted } from "vue";
+import { reactive, onMounted, nextTick } from "vue";
 import {
   Chart,
   DoughnutController,
@@ -19,11 +20,14 @@ import {
 } from "chart.js";
 import axios from "axios";
 
-const BASE = "/api/stockportfolio";
+Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
+
+const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
 const portfolio = reactive([]);
 const token = localStorage.getItem("token");
+let chartInstance = null; // 차트 인스턴스 관리
 
-const load = async () => {
+const createPortfolio = async () => {
   try {
     const response = await axios.get(BASE, {
       headers: {
@@ -31,44 +35,80 @@ const load = async () => {
       },
     });
 
-    Object.assign(portfolio, response.data);
+    portfolio.push(...response.data); // reactive 객체에 데이터를 추가
 
-    console.log("load portfolio : ", portfolio);
+    // 차트가 그려질 수 있도록 데이터 로드 후 차트 초기화
+    await nextTick(); // DOM 업데이트 후 차트를 생성하기 위함
+    createChart(); // 차트를 그리는 함수 호출
   } catch (err) {
-    console.log("load err : ", err.message);
+    console.log("createPortfolio error : ", err.message);
   }
 };
-load();
 
-// Chart.js에 필요한 요소들을 등록합니다.
-Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
-
+// 데이터 로드 함수 호출
 onMounted(() => {
-  const ctx = document.getElementById("homePortfolioPage").getContext("2d");
-  new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["엔비디아", "NAVER", "대한항공", "페이스북", "애플", "제일제당"],
+  createPortfolio();
+});
+
+// 랜덤 배경색을 생성하는 함수
+const generateColors = (numColors) => {
+  const colors = [];
+  for (let i = 0; i < numColors; i++) {
+    const hue = Math.floor((i * 360) / numColors); // 색상 값 (0-360도 사이로 균등 분포)
+    const saturation = 70 + Math.random() * 10; // 채도 (70% 이상)
+    const lightness = 50 + Math.random() * 10; // 밝기 (50% 이상)
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+  }
+  return colors;
+};
+
+// 차트 생성 함수
+const createChart = () => {
+  const canvasElement = document.getElementById("homePortfolioPage");
+  if (!canvasElement) {
+    console.log("캔버스 데이터를 찾을 수 없습니다.");
+    return;
+  }
+
+  const ctx = canvasElement.getContext("2d");
+
+  if (portfolio.length > 0) {
+    const stockName = portfolio.map((item) => item.stockName);
+    const totalValue = portfolio.map(
+      (item) => item.totalPrice * item.totalQuantity,
+    );
+
+    // 동적으로 색상 배열 생성
+    const backgroundColors = generateColors(stockName.length);
+
+    const chartData = {
+      labels: stockName,
       datasets: [
         {
-          data: [30, 25, 15, 9, 8, 6],
-          backgroundColor: [
-            "#4A90E2",
-            "#9013FE",
-            "#50E3C2",
-            "#B8E986",
-            "#E4B8F0",
-            "#9B9B9B",
-          ],
+          data: totalValue,
+          backgroundColor: backgroundColors, // 동적으로 생성된 색상을 차트에 적용
         },
       ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-    },
-  });
-});
+    };
+
+    // 기존 차트가 있으면 먼저 삭제
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    // 새로운 차트를 생성하고 인스턴스 저장
+    chartInstance = new Chart(ctx, {
+      type: "doughnut",
+      data: chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+  } else {
+    console.log("포트폴리오 데이터가 비어 있습니다.");
+  }
+};
 </script>
 
 <style scoped>
@@ -88,5 +128,10 @@ h2 {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+.portfolio {
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  padding-top: 15px;
 }
 </style>

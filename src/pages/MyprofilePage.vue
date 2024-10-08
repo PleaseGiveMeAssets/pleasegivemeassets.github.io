@@ -102,6 +102,9 @@ onMounted(fetchUserData);
 </script>
 
 <style scoped>
+body {
+  font-family: "Pretendard Medium", sans-serif;
+}
 p {
   margin: 0px;
   padding: 0px;

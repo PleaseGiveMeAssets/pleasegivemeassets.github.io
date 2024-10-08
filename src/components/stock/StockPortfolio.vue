@@ -1,66 +1,44 @@
 <template>
-  <loading v-if="isLoading || !Object.keys(portfolioData).length" />
-  <div v-if="!isLoading && Object.keys(portfolioData).length">
-    <div class="card-ui">
-      <p class="title">내 포트폴리오</p>
-      <!-- <p>Stock Name: {{ portfolioData.name }}</p> -->
-      <div>
-        <div class="grid-container">
-          <div class="left-column">
-            {{ totalPrice }}
-          </div>
-          <div class="right-column">{{ portfolioData.quantity }}주</div>
-          <div class="delta">왼쪽 항목 2</div>
-          <div class="right-column">{{ portfolioData.price }}원</div>
+  <div v-if="data" :key="forceRerender" class="card-ui">
+    <p class="title">내 포트폴리오</p>
+    <p>Stock Name: {{ data.name }}</p>
+    <div>
+      <div class="grid-container">
+        <div class="left-column">
+          {{ totalPrice }}
         </div>
+        <div class="right-column">{{ data.quantity }}주</div>
+        <div class="delta">왼쪽 항목 2</div>
+        <div class="right-column">{{ data.price }}원</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import apiService from "../../services/stockApiService";
-import { useLoadingStore } from "@/stores/loadingStore";
-import Loading from "@/components/LoadingComponent.vue";
+import { computed, ref } from "vue";
 
-const loadingStore = useLoadingStore();
-const isLoading = loadingStore.isLoading;
 const props = defineProps({
-  stockId: {
-    type: String,
+  data: {
+    type: Object,
     required: true,
   },
 });
-const portfolioData = ref({});
-
-const fetchPortfolioData = async () => {
-  portfolioData.value = await apiService.fetchPortfolioSummary(props.stockId);
-};
 
 const totalPrice = computed(() => {
-  return (
-    (
-      portfolioData.value.price * portfolioData.value.quantity
-    ).toLocaleString() + "원"
-  );
+  if (!props.data || !props.data.price || !props.data.quantity) {
+    return "0원"; // 기본값
+  }
+  return (props.data.price * props.data.quantity).toLocaleString() + "원";
 });
-onMounted(() => {
-  fetchPortfolioData();
-});
+const forceRerender = ref(0);
 </script>
 
 <style scoped>
 .title {
   font-weight: bold;
 }
-.card-ui {
-  background-color: var(--main-card-color);
-  border: 1px solid #e0e0e0;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
+
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr; /* 두 개의 열을 동일한 비율로 */

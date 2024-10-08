@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <HeaderNavigator />
-    <router-view class="content" />
+    <div class="content">
+      <router-view />
+    </div>
     <BottomNavigator class="bottom-nav-bar" />
   </div>
 </template>
@@ -15,7 +17,6 @@ import BottomNavigator from "./components/BottomNavigator.vue";
 .content {
   padding: 48 12 0 12;
 }
-
 .container {
   font-family: "Pretendard-Medium";
 }
