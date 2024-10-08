@@ -1,6 +1,7 @@
 import StockPage from "@/pages/StockPage.vue";
 import SurveyPage from "@/pages/SurveyPage.vue";
-import MyprofilePage from "@/pages/MyProfilePage.vue";
+import SurveyResultPage from "@/pages/SurveyResultPage.vue";
+import MyprofilePage from "@/pages/MyprofilePage.vue";
 import InterestPage from "@/pages/InterestPage.vue";
 import NotificationsPage from "@/pages/NotificationsPage.vue";
 import ProfileEditPage from "@/pages/ProfileEditPage.vue";
@@ -21,6 +22,7 @@ const router = createRouter({
       props: true,
     },
     { path: "/survey", component: SurveyPage }, // Survey 경로 추가
+    { path: "/survey-result", component: SurveyResultPage }, // SurveyResult 경로추가
     {
       path: "/myProfile", // MyProfile 경로 추가
       component: MyprofilePage,
