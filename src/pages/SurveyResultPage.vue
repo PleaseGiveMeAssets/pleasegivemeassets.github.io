@@ -37,12 +37,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { fetchSurveyResult } from '../services/surveyService';
+import { ref, onMounted } from "vue";
+import { fetchSurveyResult } from "../services/surveyService";
 
 // 상태 변수 선언
 const investmentType = ref(null);
-const userName = ref('홍길동'); // 실제 사용자 이름을 사용할 수 있도록 수정
+const userName = ref("홍길동"); // 실제 사용자 이름을 사용할 수 있도록 수정
 
 // 설문 결과 불러오기 함수
 const loadSurveyResult = async () => {
@@ -51,8 +51,8 @@ const loadSurveyResult = async () => {
     investmentType.value = result;
   } catch (error) {
     console.error(
-      '설문 결과를 불러오는 중 오류가 발생했습니다.',
-      error.response?.data || error.message
+      "설문 결과를 불러오는 중 오류가 발생했습니다.",
+      error.response?.data || error.message,
     );
   }
 };
