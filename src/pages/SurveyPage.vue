@@ -32,9 +32,9 @@
                 type="radio"
                 :value="option.questionOptionId"
               />
-              <label class="form-check-label" :for="option.questionOptionId">
-                {{ option.content }}
-              </label>
+              <label class="form-check-label" :for="option.questionOptionId">{{
+                option.content
+              }}</label>
             </div>
           </li>
         </ul>
@@ -69,16 +69,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { fetchQuestion, submitAnswer } from "../services/surveyService";
+import { ref, computed, onMounted } from 'vue';
+import { fetchQuestion, submitAnswer } from '../services/surveyService';
 
 // 상태 변수 선언
 const question = ref(null);
 const questionId = ref(1);
 const maxQuestions = 7;
-const selectedOption = ref(null);
-const router = useRouter();
+const selectedOption = ref(null); // 선택된 옵션 상태 초기화
 
 // 진행률 계산
 const progressPercentage = computed(() => {
@@ -89,8 +87,9 @@ const progressPercentage = computed(() => {
 const loadQuestion = async () => {
   try {
     question.value = await fetchQuestion(questionId.value);
+    selectedOption.value = null; // 질문이 로드될 때마다 선택 옵션 초기화
   } catch (error) {
-    console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
+    console.error('질문을 불러오는 중 오류가 발생했습니다.', error);
   }
 };
 
@@ -105,15 +104,14 @@ const prevQuestion = async () => {
 // 다음 질문으로 이동 및 답변 제출
 const nextQuestion = async () => {
   if (selectedOption.value) {
-    const userId = "testUser1"; // userId 설정
+    const userId = 'testUser1'; // userId 설정
     await submitAnswer(userId, questionId.value, selectedOption.value);
 
     if (questionId.value < maxQuestions) {
       questionId.value++;
       await loadQuestion();
     } else {
-      // 설문조사가 완료되면 결과 페이지로 이동
-      router.push("/survey-result");
+      alert('설문조사가 완료되었습니다!');
     }
   }
 };
