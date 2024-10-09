@@ -16,6 +16,7 @@ import HomeRecommendStock from "../components/home/HomeRecommendStock.vue";
 
 <style scoped>
 .home {
-  padding: 20px;
+  padding-top: 100px;
+  padding-bottom: 100px;
 }
 </style>
