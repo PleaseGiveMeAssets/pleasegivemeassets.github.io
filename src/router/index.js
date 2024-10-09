@@ -11,6 +11,7 @@ import DailyReportPage from "@/pages/DailyReportPage.vue";
 import HomePage from "@/pages/HomePage.vue";
 import AccountManagement from "@/pages/AccountManagement.vue";
 import { createRouter, createWebHistory } from "vue-router";
+import RecommendStockPage from "@/pages/RecommendStockPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,6 +36,7 @@ const router = createRouter({
     { path: "/settings", component: SettingsPage }, // Settings 경로 추가
     { path: "/dailyreport", component: DailyReportPage },
     { path: "/account-management", component: AccountManagement },
+    { path: "/recommendstock", component: RecommendStockPage },
   ],
 });
 

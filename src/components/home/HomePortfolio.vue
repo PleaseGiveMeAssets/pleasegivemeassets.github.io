@@ -2,8 +2,8 @@
   <div class="card-ui">
     <section class="portfolio">
       <h2>포트폴리오</h2>
-      <div class="home-portfolio-page">
-        <canvas id="homePortfolioPage"></canvas>
+      <div class="home-portfolio">
+        <canvas id="homePortfolio"></canvas>
       </div>
     </section>
   </div>
@@ -64,7 +64,7 @@ const generateColors = (numColors) => {
 
 // 차트 생성 함수
 const createChart = () => {
-  const canvasElement = document.getElementById("homePortfolioPage");
+  const canvasElement = document.getElementById("homePortfolio");
   if (!canvasElement) {
     console.log("캔버스 데이터를 찾을 수 없습니다.");
     return;
@@ -112,7 +112,7 @@ const createChart = () => {
 </script>
 
 <style scoped>
-.home-portfolio-page {
+.home-portfolio {
   width: 100%;
   height: 300px;
 }
