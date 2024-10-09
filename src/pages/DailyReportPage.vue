@@ -1,12 +1,12 @@
 <template>
   <div class="daily-trend">
-    <Trend />
+    <TrendStock />
     <RecommendStock />
   </div>
 </template>
 
 <script setup>
-import Trend from "../components/dailyreport/Trend.vue";
+import TrendStock from "../components/dailyreport/TrendStock.vue";
 import RecommendStock from "../components/dailyreport/RecommendStock.vue";
 </script>
 
