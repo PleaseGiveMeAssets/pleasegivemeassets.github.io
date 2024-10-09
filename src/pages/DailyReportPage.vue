@@ -1,13 +1,13 @@
 <template>
   <div class="daily-trend">
-    <TrendPage />
-    <RecommendStockPage />
+    <Trend />
+    <RecommendStock />
   </div>
 </template>
 
 <script setup>
-import TrendPage from "./TrendPage.vue";
-import RecommendStockPage from "./RecommendStockPage.vue";
+import Trend from "../components/dailyreport/Trend.vue";
+import RecommendStock from "../components/dailyreport/RecommendStock.vue";
 </script>
 
 <style scoped>
