@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loadingStore.isLoading" class="loading-spinner"></div>
+  <div class="loading-spinner"></div>
 </template>
 
 <script setup>

@@ -1,7 +1,7 @@
 // apiService.js
 import axiosInstance from "@/axios.js";
 
-class ApiService {
+class StockService {
   async fetchStockPrice(stockId) {
     if (import.meta.env.VITE_API_URL) {
       try {
@@ -19,7 +19,9 @@ class ApiService {
   async fetchPortfolioSummary(stockId) {
     if (import.meta.env.VITE_API_URL) {
       try {
-        const response = await axiosInstance.get(`stock/${stockId}/summary`);
+        const response = await axiosInstance.get(
+          `portfolio/${stockId}/summary`,
+        );
         return response.data;
       } catch (error) {
         console.error("API fetch error, using mock data", error);
@@ -175,4 +177,4 @@ class ApiService {
   }
 }
 
-export default new ApiService();
+export default new StockService();
