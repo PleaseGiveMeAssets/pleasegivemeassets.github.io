@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
-    "chart.js": "^3.9.1",
+    "chart.js": "^4.4.4",
     "dotenv": "^16.4.5",
     "flatpickr": "^4.6.13",
     "highcharts": "^11.4.8",
@@ -21,6 +21,7 @@
     "pinia": "^2.2.3",
     "vite-plugin-pwa": "^0.20.5",
     "vue": "^3.4.29",
+    "vue-chartjs": "^5.3.1",
     "vue-flatpickr-component": "^11.0.5",
     "vue-router": "^4.4.3",
     "vue3-datepicker": "^0.4.0"

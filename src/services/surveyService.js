@@ -1,9 +1,9 @@
 // src/services/surveyService.js
-import axios from "axios";
+import axios from 'axios';
 
 // 환경변수에서 API URL 불러오기
 const BASE = `${import.meta.env.VITE_API_URL}`;
-const token = localStorage.getItem("token");
+const token = localStorage.getItem('token');
 
 // 설문 질문 불러오기 함수
 export async function fetchQuestion(questionId) {
@@ -21,16 +21,6 @@ export async function submitAnswer(userId, questionId, optionId) {
   await axios.post(`${BASE}/survey/answer/${questionId}`, userAnswerDTO);
 }
 
-// // 최종 점수 가져오기 함수
-// export async function fetchTotalScore(userId) {
-//   console.log('Fetching survey result for userId: ', userId); // 로그 추가
-//   const response = await axios.get(
-//     `${BASE}/survey-result/total-score/${userId}`
-//   );
-//   return response.data;
-// }
-
-// 설문 결과 불러오기 함수
 export async function fetchSurveyResult() {
   const response = await axios.get(
     `${BASE}/survey-result/investment-type/details`,
@@ -38,7 +28,7 @@ export async function fetchSurveyResult() {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    },
+    }
   );
   return response.data; // 총 점수와 투자 유형 정보 반환
 }

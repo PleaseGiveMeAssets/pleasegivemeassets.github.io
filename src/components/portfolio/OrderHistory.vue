@@ -2,36 +2,41 @@
   <div class="card-ui">
     <p class="title">매수 내역</p>
     <table>
-      <div
-        v-for="(order, index) in Object.values(data)"
-        :key="order.orderId"
-        class="orderItem"
-      >
-        <tr>
-          <td>
-            <span v-if="!isSameAsPrevious(index)">
-              {{ formatDate(order.orderedAt) }}
-            </span>
-            <span v-else></span>
-          </td>
-          <td>
-            <span
-              :class="{
-                sellText: order.type === 'B',
-                buyText: order.type !== 'B',
-              }"
-            >
-              {{ order.type === "B" ? "매도" : "매수" }} {{ order.quantity }}주
-            </span>
-          </td>
-          <td>{{ (order.price * order.quantity || 0).toLocaleString() }} 원</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>{{ (order.price || 0).toLocaleString() }}원</td>
-          <td>메모</td>
-        </tr>
-      </div>
+      <tbody>
+        <div
+          v-for="(order, index) in Object.values(data)"
+          :key="order.orderId"
+          class="orderItem"
+        >
+          <tr>
+            <td>
+              <span v-if="!isSameAsPrevious(index)">
+                {{ formatDate(order.orderedAt) }}
+              </span>
+              <span v-else></span>
+            </td>
+            <td>
+              <span
+                :class="{
+                  sellText: order.type === 'B',
+                  buyText: order.type !== 'B',
+                }"
+              >
+                {{ order.type === "B" ? "매도" : "매수" }}
+                {{ order.quantity }}주
+              </span>
+            </td>
+            <td>
+              {{ (order.price * order.quantity || 0).toLocaleString() }} 원
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>{{ (order.price || 0).toLocaleString() }}원</td>
+            <td>메모</td>
+          </tr>
+        </div>
+      </tbody>
     </table>
   </div>
 </template>
