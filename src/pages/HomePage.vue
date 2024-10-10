@@ -1,8 +1,8 @@
 <template>
-  <div class="home">
-    <HomeDailyTrend />
-
+  <div>
     <HomePortfolio />
+
+    <HomeDailyTrend />
 
     <HomeRecommendStock />
   </div>
@@ -14,9 +14,4 @@ import HomePortfolio from "../components/home/HomePortfolio.vue";
 import HomeRecommendStock from "../components/home/HomeRecommendStock.vue";
 </script>
 
-<style scoped>
-.home {
-  padding-top: 100px;
-  padding-bottom: 100px;
-}
-</style>
+<style scoped></style>

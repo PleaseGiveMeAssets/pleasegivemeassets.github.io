@@ -1,7 +1,11 @@
 <template>
+  <div class="recommend-stock">
+    <h2>일일추천종목</h2>
+    <p class="ai-stock">AI 추천 종목 현황</p>
+    <img class="next-button" src="@/assets/icons/nextButton-icon.svg" />
+  </div>
   <div class="card-ui">
     <section>
-      <h2>일일추천종목</h2>
       <div class="home-recommend-stock">
         <div
           v-for="(stock, sIndex) in dailyRecommendStock"
@@ -25,12 +29,18 @@
                 class="stock-change"
                 :class="recommendStock.changeAmount > 0 ? 'up' : 'down'"
               >
-                {{ recommendStock.changeAmount }}원
+                {{ recommendStock.changeAmount > 0 ? "▲" : "▼"
+                }}{{ Math.abs(recommendStock.changeAmount) }}원
               </div>
             </div>
             <div
-              class="stock-change-rate"
-              :class="recommendStock.changeAmountRate > 0 ? 'up' : 'down'"
+              :class="
+                recommendStock.changeAmountRate > 0
+                  ? 'stock-change-rate up'
+                  : recommendStock.changeAmountRate < 0
+                    ? 'stock-change-rate down'
+                    : 'stock-change-rate'
+              "
             >
               {{ recommendStock.changeAmountRate }}%
             </div>
@@ -72,7 +82,7 @@ onMounted(createRecommendStock);
 <style scoped>
 .card-ui {
   background-color: var(--main-card-color);
-  padding: 20px;
+  padding: 15px;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -81,6 +91,7 @@ onMounted(createRecommendStock);
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
+  padding-top: 10px;
 }
 
 .home-recommend-stock {
@@ -91,7 +102,6 @@ h2 {
 .stock-item {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
 }
 
 .stock-price-info {
@@ -112,7 +122,8 @@ h2 {
 
 .price-change-container {
   flex: 1;
-  text-align: center; /* 중앙 정렬 */
+  text-align: right;
+  margin-right: 20px;
 }
 
 .stock-price {
@@ -132,15 +143,39 @@ h2 {
 }
 
 .stock-change-rate {
-  flex: 1;
-  text-align: right; /* 우측 정렬 */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: gray;
+  color: white;
 }
 
 .stock-change-rate.up {
-  color: red; /* 상승 */
+  background-color: red;
 }
 
 .stock-change-rate.down {
-  color: blue; /* 하락 */
+  background-color: blue;
+}
+
+.short-code {
+  color: #888;
+  font-size: 14px;
+  margin-left: auto;
+}
+
+.recommend-stock {
+  display: flex;
+}
+
+.ai-stock {
+  font-size: 16px;
+  margin-left: auto;
+  padding-top: 10px;
+}
+
+.next-button {
+  margin-left: 10px;
+  padding-bottom: 5px;
 }
 </style>

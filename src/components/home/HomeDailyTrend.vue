@@ -1,14 +1,14 @@
 <template>
+  <div class="daily-report">
+    <h2>일일 동향 요약</h2>
+    <p class="report-time">
+      다음 리포트까지 {{ dailyTrendSummarized.hour }}시간 남았어요!
+    </p>
+  </div>
   <div class="card-ui">
-    <h1>PGMA(로고)</h1>
-    <p class="report-time">다음 리포트까지 23시간 남았어요!</p>
-
-    <section class="summary">
-      <h2>일일 동향 요약</h2>
-      <p>
-        {{ dailyTrendSummarized.dailyTrendSummarizedTitle }}<br />
-        {{ dailyTrendSummarized.dailyTrendSummarizedContent }}
-      </p>
+    <section>
+      <p>{{ dailyTrendSummarized.dailyTrendSummarizedTitle }}</p>
+      <p>{{ dailyTrendSummarized.dailyTrendSummarizedContent }}</p>
     </section>
   </div>
 </template>
@@ -42,22 +42,25 @@ onMounted(createDailyTrend);
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
+  padding-top: 10px;
 }
 
 .card-ui {
   background-color: var(--main-card-color);
-  padding: 20px;
+  padding: 15px;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.summary {
-  margin-top: 20px;
-}
-
 .report-time {
   color: #888;
   font-size: 14px;
+  margin-left: auto;
+  padding-top: 10px;
+}
+
+.daily-report {
+  display: flex;
 }
 </style>

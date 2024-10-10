@@ -43,7 +43,7 @@
         :x="centerX"
         :y="centerY - 5"
         text-anchor="middle"
-        font-size="16"
+        font-size="14"
         font-weight="bold"
       >
         총액
@@ -52,7 +52,7 @@
         :x="centerX"
         :y="centerY + 15"
         text-anchor="middle"
-        font-size="16"
+        font-size="14"
         font-weight="bold"
       >
         {{ totalFormatted }}
@@ -60,7 +60,7 @@
 
       <!-- 항목 영역 -->
       <g
-        :transform="`translate(${width * 0.7}, ${
+        :transform="`translate(${width * 0.6}, ${
           height / 2 - (chartData.length * 25) / 2 - 10
         })`"
       >
@@ -112,13 +112,13 @@ const COLORS = [
 
 const animationProgress = ref(0);
 // 차트 기본 두께 설정, 0.2 곱하기 값을 변경하면 기본 두께가 변경 됩니다
-const innerRadius = computed(() => Math.min(props.width, props.height) * 0.2);
+const innerRadius = computed(() => Math.min(props.width, props.height) * 0.18);
 const normalThickness = computed(
-  () => Math.min(props.width, props.height) * 0.15,
+  () => Math.min(props.width, props.height) * 0.13,
 );
 // 제일 가격이 큰 차트의 두께를 조절 합니다. 1.05 파트를 수정 하면 됩니다!
 const emphasizedThickness = computed(() => normalThickness.value * 1.05);
-const centerX = computed(() => props.width * 0.33);
+const centerX = computed(() => props.width * 0.29);
 const centerY = computed(() => props.height / 2);
 
 const chartData = computed(() => {
