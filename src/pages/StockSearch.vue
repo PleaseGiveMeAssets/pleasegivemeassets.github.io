@@ -167,4 +167,47 @@ button {
   font-weight: bold;
   color: #000;
 }
+@keyframes borderPulse {
+  0% {
+    border-color: #ccc;
+  }
+  25% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #00ff00;
+  }
+  75% {
+    border-color: #0000ff;
+  }
+  100% {
+    border-color: #ccc;
+  }
+}
+@keyframes textColorPulse {
+  0% {
+    color: #ff5722; /* 시작 색상 */
+  }
+  25% {
+    color: #0909e3; /* 시작 색상 */
+  }
+  50% {
+    color: #ccc; /* 중간 색상 */
+  }
+  75% {
+    color: #00ff00; /* 중간 색상 */
+  }
+  100% {
+    color: #ff5722; /* 끝 색상 (원래 색상) */
+  }
+}
+/* 모든 요소의 border에 애니메이션을 적용 */
+* {
+  border: 2px solid #ccc; /* 기본 테두리 설정 */
+  animation: borderPulse 1s infinite;
+}
+/* 모든 요소의 텍스트에 애니메이션 적용 */
+* {
+  animation: textColorPulse 1s infinite;
+}
 </style>

@@ -8,7 +8,6 @@
           <p class="stock-id">{{ stock.shortCode }}</p>
         </div>
       </div>
-      <!-- 평가손익과 수익률을 한 div로 묶음 -->
       <div class="header-item stock-prices">
         <div class="evaluation-group">
           <div class="evaluation-item">
