@@ -1,5 +1,6 @@
 <template>
-  <div class="container">
+  <Loading v-if="isLoading" />
+  <div v-if="!isLoading" class="container">
     <OrderSummary :data="orderSummaryData" />
 
     <OrderHistory :data="orderHistoryData" />
@@ -27,6 +28,7 @@ import OrderSummary from "@/components/portfolio/OrderSummary.vue";
 import OrderHistory from "@/components/portfolio/OrderHistory.vue";
 import OrderForm from "@/components/OrderForm.vue";
 import stockPortfolioService from "@/services/stockPortfolioService";
+import Loading from "@/components/LoadingComponent.vue";
 
 const props = defineProps({
   stockId: {
@@ -36,8 +38,10 @@ const props = defineProps({
 });
 const headerStore = useHeaderStore();
 
+const isLoading = ref(true);
 const isFormVisible = ref(false);
 const formType = ref("");
+
 const isCloseClicked = () => {
   isFormVisible.value = false;
 };
@@ -97,14 +101,17 @@ const isStockButtonVisible = computed(() => headerStore.isStockButtonVisible);
 const fetchStockPortfolioData = async () => {
   return await stockPortfolioService.fetchStockOrder(props.stockId);
 };
+
 async function updateData() {
   Object.assign(stockPortfolioData.value, await fetchStockPortfolioData());
 }
+
 onMounted(async () => {
   await updateData();
   fetchStockName(stockPortfolioData.value.name);
   fetchShortCode(props.stockId);
   setHeaderButton();
+  isLoading.value = false;
 });
 </script>
 

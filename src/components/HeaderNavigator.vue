@@ -19,7 +19,9 @@
       v-if="isStockPortfolioPage == true"
       class="stock-edit-icon"
       @click="toggleModal"
-    ></button>
+    >
+      <img src="@/assets/icons/edit-form-icon.svg" />
+    </button>
   </header>
   <div v-if="isModalVisible" class="modal-overlay" @click="toggleModal">
     <div class="modal-content" @click.stop>
@@ -143,6 +145,8 @@ p {
   width: 22px;
   position: absolute;
   right: 10%;
+  background: none;
+  border: none;
 }
 .modal-overlay {
   position: fixed;

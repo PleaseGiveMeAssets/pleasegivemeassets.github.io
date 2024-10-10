@@ -12,7 +12,7 @@
         }}
       </div>
       <button class="submit-button" type="submit" @click="submitOrderForm">
-        제출
+        <SaveFormIcon />
       </button>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="data" class="orderForm">
@@ -74,7 +74,7 @@
 <script setup>
 import { reactive, ref, computed } from "vue";
 import stockPortfolioService from "@/services/stockPortfolioService";
-
+// import SaveFormIcon from "@/assets/icons/portfolio-form-save-icon.svg";
 const props = defineProps({
   data: {
     type: Object,
