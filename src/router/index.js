@@ -9,6 +9,9 @@ import SavedPage from "@/pages/SavedPage.vue";
 import SettingsPage from "@/pages/SettingsPage.vue";
 import DailyReportPage from "@/pages/DailyReportPage.vue";
 import HomePage from "@/pages/HomePage.vue";
+import StockPortfolioPage from "@/pages/StockPortfolio.vue";
+import StockSearchPage from "@/pages/StockSearch.vue";
+import MyStockListViewPage from "@/pages/MyStockListViewPage.vue";
 import AccountManagement from "@/pages/AccountManagement.vue";
 import StockPortfolioDetailPage from "@/pages/StockPortfolioDetailPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -41,9 +44,12 @@ const router = createRouter({
     { path: "/saved", component: SavedPage }, // Saved 경로 추가
     { path: "/settings", component: SettingsPage }, // Settings 경로 추가
     { path: "/dailyreport", component: DailyReportPage },
+
+    { path: "/portfolio", component: StockPortfolioPage },
+    { path: "/stocksearch", component: StockSearchPage },
+    { path: "/myStocklist", component: MyStockListViewPage },
     { path: "/account-management", component: AccountManagement },
     { path: "/recommendstock", component: RecommendStockPage },
   ],
 });
-
 export default router;
