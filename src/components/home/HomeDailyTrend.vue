@@ -1,7 +1,7 @@
 <template>
   <div class="card-ui">
-      <h1>PGMA(로고)</h1>
-      <p class="report-time">다음 리포트까지 23시간 남았어요!</p>
+    <h1>PGMA(로고)</h1>
+    <p class="report-time">다음 리포트까지 23시간 남았어요!</p>
 
     <section class="summary">
       <h2>일일 동향 요약</h2>
@@ -17,27 +17,25 @@
 import axios from "axios";
 import { onMounted, reactive } from "vue";
 
+// 기본 URL과 동향 요약 데이터 설정
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
-const dailyTrendSummarized = reactive([]);
+const dailyTrendSummarized = reactive({});
 const token = localStorage.getItem("token");
 
+// 동향 요약 데이터 불러오기
 const createDailyTrend = async () => {
   try {
     const response = await axios.get(BASE, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
-
     Object.assign(dailyTrendSummarized, response.data);
   } catch (err) {
-    console.log("createDailyTrend err : ", err.message);
+    console.error("createDailyTrend 에러: ", err.message);
   }
 };
 
-onMounted(() => {
-  createDailyTrend();
-});
+// 컴포넌트 마운트 시 API 호출
+onMounted(createDailyTrend);
 </script>
 
 <style scoped>
@@ -45,6 +43,7 @@ h2 {
   font-size: 18px;
   margin-bottom: 10px;
 }
+
 .card-ui {
   background-color: var(--main-card-color);
   padding: 20px;
