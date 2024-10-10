@@ -1,10 +1,18 @@
 <template>
   <div class="stock-portfolio">
-    <div v-if="stocks.length > 0">
-      <StockList :stocks="stocks" />
+    <div v-if="loading" class="loading-containerList">
+      <!-- 로딩 중일 때 보여줄 내용 (로딩 스피너나 메시지) -->
+      <img
+        src="/public/images/spinNuguri.png"
+        alt="loading"
+        class="loading-image"
+      />
     </div>
+
     <div v-else>
-      <p>보유한 주식이 없습니다.</p>
+      <div v-if="stocks.length > 0">
+        <StockList :stocks="stocks" />
+      </div>
     </div>
   </div>
 </template>
@@ -15,7 +23,7 @@ import axios from "axios";
 import StockList from "@/components/StockList.vue";
 
 const stocks = ref([]);
-
+const loading = ref(true); // 데이터를 불러오는 중인지 여부를 추적하는 변수
 onMounted(() => {
   axios
     .get("/api/stock")
@@ -24,6 +32,9 @@ onMounted(() => {
     })
     .catch((error) => {
       console.error("Error fetching stock data:", error);
+    })
+    .finally(() => {
+      loading.value = false; // 로딩이 완료되면 false로 설정
     });
 });
 </script>
@@ -39,47 +50,18 @@ h1 {
   font-size: 24px;
   margin-bottom: 20px;
 }
-@keyframes borderPulse {
-  0% {
-    border-color: #ccc;
-  }
-  25% {
-    border-color: #ff0000;
-  }
-  50% {
-    border-color: #00ff00;
-  }
-  75% {
-    border-color: #0000ff;
-  }
-  100% {
-    border-color: #ccc;
-  }
+.loading-image {
+  padding-top: 200px;
+  width: 200px; /* 원하는 크기로 설정 */
+  animation: spin 0.5s linear infinite;
 }
-@keyframes textColorPulse {
-  0% {
-    color: #ff5722; /* 시작 색상 */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  25% {
-    color: #0909e3; /* 시작 색상 */
+  to {
+    transform: rotate(360deg);
   }
-  50% {
-    color: #ccc; /* 중간 색상 */
-  }
-  75% {
-    color: #00ff00; /* 중간 색상 */
-  }
-  100% {
-    color: #ff5722; /* 끝 색상 (원래 색상) */
-  }
-}
-/* 모든 요소의 border에 애니메이션을 적용 */
-* {
-  border: 2px solid #ccc; /* 기본 테두리 설정 */
-  animation: borderPulse 1s infinite;
-}
-/* 모든 요소의 텍스트에 애니메이션 적용 */
-* {
-  animation: textColorPulse 1s infinite;
 }
 </style>

@@ -13,61 +13,61 @@
     <!-- 날짜 선택 부분 -->
     <div class="date-picker">
       <!-- 일 선택기 -->
-      <flat-pickr
+      <input
         v-if="selectedUnit === 'day'"
         v-model="currentDate"
-        :config="dayPickerConfig"
-        @on-change="handleDateChange"
+        type="date"
+        @change="handleDateChange"
       />
       <!-- 월 선택기 -->
-      <flat-pickr
+      <input
         v-if="selectedUnit === 'month'"
         v-model="currentMonth"
-        :config="monthPickerConfig"
-        @on-change="handleMonthChange"
+        type="month"
+        @change="handleMonthChange"
       />
     </div>
 
     <!-- 종목 리스트 -->
     <div class="recommendations">
       <div
-        v-for="(stockGroup, index) in stockGroups"
-        :key="index"
+        v-for="(stock, sIndex) in recommendStock"
+        :key="sIndex"
         class="stock-group"
       >
-        <h2>{{ stockGroup.date }}</h2>
         <div
-          v-for="(stock, sIndex) in stockGroup.stocks"
-          :key="sIndex"
+          v-for="(rs, rsIndex) in stock.dailyRecommendStockDTOList"
+          :key="rsIndex"
           class="stock-item"
         >
+          <h2>{{ rs.day }}일</h2>
           <div class="stock-info">
-            <div class="stock-name">{{ stock.name }}</div>
+            <div class="stock-name">{{ stock.stockName }}</div>
             <div class="short-code">{{ stock.shortCode }}</div>
           </div>
           <div class="stock-price-info">
-            <div class="stock-price">{{ stock.price }}원</div>
+            <div class="stock-price">{{ rs.price }}원</div>
             <div
               class="stock-change"
               :class="
-                stock.changeAmount > 0
-                  ? 'up'
-                  : stock.changeAmount < 0
-                    ? 'down'
-                    : ''
+                rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
               "
             >
-              {{ stock.changeAmount > 0 ? "▲" : "▼"
-              }}{{ Math.abs(stock.changeAmount) }}원
+              {{ rs.changeAmount > 0 ? "▲" : "▼"
+              }}{{ Math.abs(rs.changeAmount) }}원
             </div>
           </div>
           <div
             class="stock-change-rate"
             :class="
-              stock.changeRate > 0 ? 'up' : stock.changeRate < 0 ? 'down' : ''
+              rs.changeAmountRate > 0
+                ? 'up'
+                : rs.changeAmountRate < 0
+                  ? 'down'
+                  : ''
             "
           >
-            {{ stock.changeRate }}%
+            {{ rs.changeAmountRate }}%
           </div>
         </div>
       </div>
@@ -76,18 +76,41 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import FlatPickr from "vue-flatpickr-component"; // Flatpickr import
-import "flatpickr/dist/flatpickr.css"; // Flatpickr CSS import
+import axios from "axios";
+import { onMounted, reactive, ref } from "vue";
 
 // 현재 날짜와 주식 데이터를 관리하는 ref
-const currentDate = ref(new Date()); // 현재 날짜
-const currentMonth = ref(new Date()); // 현재 월
+const currentDate = ref(new Date().toISOString().slice(0, 10)); // 현재 날짜
+const currentMonth = ref(new Date().toISOString().slice(0, 7)); // 현재 월
 const selectedUnit = ref("day"); // 'day' 또는 'month' 선택을 위한 ref
+
+const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
+const recommendStock = reactive([]);
+const token = localStorage.getItem("token");
+
+const createRecommendStock = async (date) => {
+  try {
+    const response = await axios.get(BASE + `/${date}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    Object.assign(recommendStock, response.data);
+
+    console.log("Hi : ", recommendStock);
+  } catch (err) {
+    console.log("createRecommendStock err : ", err.message);
+  }
+};
+
+onMounted(() => {
+  createRecommendStock(currentDate.value);
+});
 
 const stockGroups = ref([
   {
-    date: "13일",
+    date: "2024-10-13",
     stocks: [
       {
         name: "삼성전자",
@@ -113,7 +136,7 @@ const stockGroups = ref([
     ],
   },
   {
-    date: "12일",
+    date: "2024-10-12",
     stocks: [
       {
         name: "에스케이텔레콤",
@@ -132,7 +155,7 @@ const stockGroups = ref([
     ],
   },
   {
-    date: "11일",
+    date: "2024-10-11",
     stocks: [
       {
         name: "대우전자",
@@ -145,42 +168,22 @@ const stockGroups = ref([
   },
 ]);
 
-// 일 선택기 설정
-const dayPickerConfig = computed(() => {
-  return {
-    dateFormat: "Y-m-d",
-    enable: [(date) => true],
-    disable: [],
-  };
-});
-
-// 월 선택기 설정
-const monthPickerConfig = computed(() => {
-  return {
-    dateFormat: "Y-m",
-    enable: [(date) => true],
-    disable: [],
-  };
-});
-
 // 날짜 변경 핸들러
-const handleDateChange = (selectedDates) => {
-  if (selectedDates.length) {
-    currentDate.value = selectedDates[0];
-  }
+const handleDateChange = (event) => {
+  currentDate.value = event.target.value;
+  createRecommendStock(currentDate.value);
 };
 
 // 월 변경 핸들러
-const handleMonthChange = (selectedDates) => {
-  if (selectedDates.length) {
-    currentMonth.value = selectedDates[0];
-    // 여기서 선택한 월에 맞는 데이터 필터링 등을 수행할 수 있습니다.
-  }
+const handleMonthChange = (event) => {
+  currentMonth.value = event.target.value;
+  createRecommendStock(currentMonth.value);
 };
 </script>
 
 <style scoped>
 .recommendations-page {
+  padding-top: 100px;
   font-family: Arial, sans-serif;
 }
 

@@ -1,12 +1,18 @@
 <template>
   <div class="chart-container">
-    <div v-if="loading">
+    <div v-if="loading" class="loading-container">
       <!-- 로딩 중일 때 보여줄 내용 (로딩 스피너나 메시지) -->
-      <p>자산 데이터를 불러오는 중입니다...</p>
+      <img
+        src="/public/images/spinNuguri.png"
+        alt="loading"
+        class="loading-image"
+      />
     </div>
 
     <div v-else>
+      <!-- 우측 상단 편집 버튼 -->
       <div v-if="hasAssetData">
+        <button class="edit-button" @click="goToEditPage">편집</button>
         <!-- 도넛 차트 -->
         <div class="chart-content" @click="goToStockSearchList">
           <DoughnutChart
@@ -94,6 +100,10 @@ const router = useRouter();
 // 클릭 시 페이지 이동 함수
 const goToStockSearchList = () => {
   router.push({ path: "/myStocklist" });
+};
+// 클릭 시 편집 페이지로 이동 함수
+const goToEditPage = () => {
+  router.push({ path: "/edit" });
 };
 
 const assetData = ref({
@@ -198,13 +208,28 @@ onMounted(async () => {
 
 <style scoped>
 .chart-container {
+  position: relative; /* 편집 버튼을 절대 위치로 설정하기 위해 부모를 상대 위치로 */
   width: 100%;
   margin: 0 auto;
   text-align: center;
   padding-top: 10px;
   padding-left: 8px;
 }
-
+.edit-button {
+  position: absolute;
+  top: 60px;
+  right: 15px;
+  font-size: 12px;
+  padding: 4px 8px;
+  background-color: #ccc;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.edit-button:hover {
+  background-color: #bbb;
+}
 .chart-content {
   display: flex;
   justify-content: center;
@@ -288,48 +313,18 @@ h6 {
   color: #000;
   font-weight: bold;
 }
+.loading-image {
+  padding-top: 200px;
+  width: 200px; /* 원하는 크기로 설정 */
+  animation: spin 0.5s linear infinite;
+}
 
-@keyframes borderPulse {
-  0% {
-    border-color: #ccc;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  25% {
-    border-color: #ff0000;
+  to {
+    transform: rotate(360deg);
   }
-  50% {
-    border-color: #00ff00;
-  }
-  75% {
-    border-color: #0000ff;
-  }
-  100% {
-    border-color: #ccc;
-  }
-}
-@keyframes textColorPulse {
-  0% {
-    color: #ff5722; /* 시작 색상 */
-  }
-  25% {
-    color: #0909e3; /* 시작 색상 */
-  }
-  50% {
-    color: #ccc; /* 중간 색상 */
-  }
-  75% {
-    color: #00ff00; /* 중간 색상 */
-  }
-  100% {
-    color: #ff5722; /* 끝 색상 (원래 색상) */
-  }
-}
-/* 모든 요소의 border에 애니메이션을 적용 */
-* {
-  border: 2px solid #ccc; /* 기본 테두리 설정 */
-  animation: borderPulse 1s infinite;
-}
-/* 모든 요소의 텍스트에 애니메이션 적용 */
-* {
-  animation: textColorPulse 1s infinite;
 }
 </style>

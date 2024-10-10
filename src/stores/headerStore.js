@@ -4,13 +4,21 @@ export const useHeaderStore = defineStore("headerStore", {
   state: () => ({
     stockName: "",
     shortCode: "",
+    isStockPortfolioPage: false,
+    isStockButtonVisible: true,
   }),
   actions: {
-    setStockName(stockName) {
+    setStockTitle(stockName) {
       this.stockName = stockName;
     },
-    setShortCode(shortCode) {
+    setStockSubtitle(shortCode) {
       this.shortCode = shortCode;
+    },
+    setStockPortfolioHeaderButton(isStockPortfolioPage) {
+      this.isStockPortfolioPage = isStockPortfolioPage;
+    },
+    setStockButtonVisible() {
+      this.isStockButtonVisible = !this.isStockButtonVisible;
     },
   },
 });

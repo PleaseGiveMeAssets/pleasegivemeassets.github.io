@@ -1,7 +1,10 @@
 <template>
-  <div class="stock">
+  <Loading v-if="isLoading" />
+  <div v-if="!isLoading" class="stock">
     <StockChart :data="stockPriceData" />
-    <MyPortfolio :data="portfolioData" />
+    <router-link :to="`/stock/${stockId}/portfolio`" class="noUnderline">
+      <MyPortfolio :data="portfolioData" />
+    </router-link>
     <StockIndex :data="indexData" />
     <NewsList :data="newsData" />
   </div>
@@ -16,6 +19,7 @@ import StockIndex from "@/components/stock/StockIndex.vue";
 import NewsList from "@/components/news/NewsList.vue";
 import newsService from "@/services/newsService";
 import stockService from "@/services/stockService";
+import Loading from "@/components/LoadingComponent.vue";
 
 const props = defineProps({
   stockId: {
@@ -27,19 +31,18 @@ const props = defineProps({
 // store 가져오기
 const headerStore = useHeaderStore();
 
-// 타이틀 변경 함수
+// 헤더 변경 함수
 const fetchShortCode = (stockId) => {
-  console.log(stockId);
-  headerStore.setShortCode(stockId);
+  headerStore.setStockSubtitle(stockId);
 };
 const fetchStockName = (stockName) => {
-  console.log(stockName);
-  headerStore.setStockName(stockName);
+  headerStore.setStockTitle(stockName);
 };
 const portfolioData = ref({});
 const indexData = ref({});
 const stockPriceData = ref({});
 const newsData = ref({});
+const isLoading = ref(true);
 
 const fetchIndexData = async () => {
   return await stockService.fetchStockIndex(props.stockId);
@@ -60,6 +63,7 @@ onMounted(async () => {
   Object.assign(newsData.value, await fetchNewsData());
   fetchShortCode(props.stockId);
   fetchStockName(portfolioData.value.name);
+  isLoading.value = false;
 });
 </script>
 
@@ -67,6 +71,10 @@ onMounted(async () => {
 .stock {
   padding-top: 48px;
   padding-bottom: 48px;
+}
+.noUnderline {
+  text-decoration: none;
+  color: black;
 }
 .card-ui {
   background-color: var(--main-card-color);

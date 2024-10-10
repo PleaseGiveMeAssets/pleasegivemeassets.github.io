@@ -18,24 +18,6 @@ const goToAssetInput = () => {
 </script>
 
 <style scoped>
-/* 테두리 애니메이션 */
-@keyframes borderPulse {
-  0% {
-    border-color: #ccc;
-  }
-  25% {
-    border-color: #ff0000;
-  }
-  50% {
-    border-color: #00ff00;
-  }
-  75% {
-    border-color: #0000ff;
-  }
-  100% {
-    border-color: #ccc;
-  }
-}
 .empty-asset-box {
   display: flex;
   flex-direction: column;
@@ -47,9 +29,6 @@ const goToAssetInput = () => {
   color: #999;
   cursor: pointer;
   margin-top: 50px;
-
-  /* 애니메이션 추가 */
-  animation: borderPulse 2s infinite;
 }
 
 .empty-asset-content {
@@ -57,7 +36,14 @@ const goToAssetInput = () => {
 }
 
 .empty-asset-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
   font-size: 36px;
   color: #999;
+  border: 5px dashed #ccc;
+  border-radius: 50%;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="card-ui">
-    <section class="portfolio">
+    <section>
       <h2>포트폴리오</h2>
       <div class="home-portfolio">
         <canvas id="homePortfolio"></canvas>
@@ -128,10 +128,5 @@ h2 {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-.portfolio {
-  margin-top: 20px;
-  border-top: 1px solid #ccc;
-  padding-top: 15px;
 }
 </style>

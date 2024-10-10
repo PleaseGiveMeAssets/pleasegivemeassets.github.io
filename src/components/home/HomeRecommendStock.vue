@@ -1,6 +1,6 @@
 <template>
   <div class="card-ui">
-    <section class="recommendations">
+    <section>
       <h2>일일추천종목</h2>
       <div class="home-recommend-stock">
         <div
@@ -75,12 +75,6 @@ onMounted(() => {
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.recommendations {
-  margin-top: 20px;
-  border-top: 1px solid #ccc;
-  padding-top: 15px;
 }
 
 .home-recommend-stock {
