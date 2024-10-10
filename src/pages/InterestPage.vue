@@ -1,76 +1,168 @@
 <template>
-  <div class="category-container" :class="{ active: showCategories }">
+  <div
+    class="category-container"
+    :class="{ active: showCategories && !selectedCategory }"
+  >
     <button class="toggle-button" @click="toggleCategories"></button>
-    <p class="category-text">카테고리를 선택해주세요</p>
-    <div class="grid-container">
+    <p v-if="!selectedCategory" class="category-text">
+      카테고리를 선택해주세요
+    </p>
+    <p v-else class="sub-category-text">
+      <span class="back-button" @click="goBack">&lt;</span> 세부 카테고리를
+      선택해주세요
+    </p>
+
+    <!-- 메인 카테고리 목록 -->
+    <div v-if="!selectedCategory" class="grid-container">
       <div
-        v-for="(category, index) in categories"
+        v-for="(category, index) in mainCategories"
         :key="index"
-        class="category-card"
+        class="main-category-item"
+        @click="selectCategory(category)"
       >
-        <img :src="category.icon" :alt="category.name" />
-        <span>{{ category.name }}</span>
+        <img :src="category.icon" alt="" class="category-icon" />
+        <span class="category-name">{{ category.name }}</span>
+      </div>
+    </div>
+
+    <!-- 세부 카테고리 목록 -->
+    <div v-else class="list-container">
+      <div
+        v-for="(subcategory, index) in subCategories"
+        :key="index"
+        :class="[
+          'subcategory-item',
+          { 'selected-border': selectedSubcategory.includes(subcategory.id) },
+        ]"
+        @click="toggleSubcategorySelect(subcategory.id)"
+      >
+        <span class="subcategory-name">{{ subcategory.name }}</span>
+        <SelectIcon
+          :is-selected="selectedSubcategory.includes(subcategory.id)"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import techIcon from "@/assets/interest-icons/tech-icon.svg";
+import { ref, onMounted } from "vue";
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+import accomodationIcon from "@/assets/interest-icons/accomodation-icon.svg";
 import energyIcon from "@/assets/interest-icons/energy-icon.svg";
-import financeIcon from "@/assets/interest-icons/finance-icon.svg";
-import realEstateIcon from "@/assets/interest-icons/real-estate-icon.svg";
-import manufacturingIcon from "@/assets/interest-icons/manufacturing-icon.svg";
-import healthcareIcon from "@/assets/interest-icons/healthcare-icon.svg";
 import entertainmentIcon from "@/assets/interest-icons/entertainment-icon.svg";
-import esgIcon from "@/assets/interest-icons/esg-icon.svg";
-import securityIcon from "@/assets/interest-icons/security-icon.svg";
+import financeIcon from "@/assets/interest-icons/finance-icon.svg";
+import healthcareIcon from "@/assets/interest-icons/healthcare-icon.svg";
+import manufacturingIcon from "@/assets/interest-icons/manufacturing-icon.svg";
+import resourcesIcon from "@/assets/interest-icons/resources-icon.svg";
+import techIcon from "@/assets/interest-icons/tech-icon.svg";
+import transportIcon from "@/assets/interest-icons/transport-icon.svg";
+import SelectIcon from "@/components/SelectIcon.vue";
 
-const categories = [
-  { name: "기술 및 IT", icon: techIcon },
-  { name: "에너지 및 환경", icon: energyIcon },
-  { name: "금융 및 투자", icon: financeIcon },
-  { name: "부동산 및 건설", icon: realEstateIcon },
-  { name: "산업 및 제조", icon: manufacturingIcon },
-  { name: "헬스케어 및 바이오", icon: healthcareIcon },
-  { name: "엔터테인먼트", icon: entertainmentIcon },
-  { name: "ESG", icon: esgIcon },
-  { name: "보안 및 결제", icon: securityIcon },
-];
+const iconMap = {
+  "숙박 및 음식": accomodationIcon,
+  "건설 및 에너지": energyIcon,
+  "미디어 서비스": entertainmentIcon,
+  "금융 및 보험": financeIcon,
+  "의료 및 제약": healthcareIcon,
+  "산업 및 제조": manufacturingIcon,
+  "농업 및 자원": resourcesIcon,
+  "통신 및 IT": techIcon,
+  "운송 및 물류": transportIcon,
+};
 
-const showCategories = ref(false); // 기본적으로 보이도록 설정
+const mainCategories = ref([]);
+const subCategories = ref([]);
+const showCategories = ref(false);
+const selectedCategory = ref(null);
 
 const toggleCategories = () => {
-  showCategories.value = !showCategories.value;
+  if (selectedCategory.value) {
+    selectedCategory.value = null;
+    subCategories.value = [];
+  } else {
+    showCategories.value = !showCategories.value;
+  }
 };
+
+const selectCategory = async (category) => {
+  if (!selectedCategory.value) {
+    selectedCategory.value = category;
+    await loadSubCategories(category.id);
+  } else {
+    console.log(`${category.name} 세부 카테고리 선택됨`);
+  }
+};
+
+const goBack = () => {
+  selectedCategory.value = null; // 메인 카테고리로 돌아가기
+};
+
+const loadMainCategories = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/category`);
+    mainCategories.value = response.data.map((category) => ({
+      id: category.mainCategoryId,
+      name: category.mainCategoryName,
+      icon: iconMap[category.mainCategoryName] || null,
+    }));
+  } catch (error) {
+    console.error("메인 카테고리를 불러오는 중 오류 발생:", error);
+  }
+};
+
+const loadSubCategories = async (mainCategoryId) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/category/subcategory/${mainCategoryId}`,
+    );
+    subCategories.value = response.data.map((subCategory) => ({
+      id: subCategory.subCategoryId,
+      name: subCategory.subCategoryName,
+    }));
+  } catch (error) {
+    console.error("세부 카테고리를 불러오는 중 오류 발생:", error);
+  }
+};
+
+const selectedSubcategory = ref([]); // 선택 상태를 저장하는 배열
+
+const toggleSubcategorySelect = (subcategoryId) => {
+  if (selectedSubcategory.value.includes(subcategoryId)) {
+    selectedSubcategory.value = selectedSubcategory.value.filter(
+      (id) => id !== subcategoryId,
+    );
+  } else {
+    selectedSubcategory.value.push(subcategoryId);
+  }
+};
+
+onMounted(() => {
+  loadMainCategories();
+});
 </script>
 
 <style scoped>
-body {
-  font-family: "Pretendard Medium", sans-serif;
-}
 .category-container {
   position: absolute;
   width: 390px;
-  height: 421px;
+  height: 431px;
   left: calc(50% - 390px / 2);
   bottom: 0;
   margin-bottom: 67px;
+  padding-bottom: 10px;
   background: #e5e5e5;
   border-radius: 30px 30px 0 0;
-  transition: transform 0.5s ease-in-out;
-  transform: translateY(0); /* 기본적으로 카드가 화면에 보이도록 */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition: transform 0.5s ease-in-out;
 }
-
-.category-container.active {
-  transform: translateY(
-    100%
-  ); /* active 클래스가 있을 때 카드를 화면 아래로 숨김 */
+.content {
+  padding: 0;
 }
 
 .toggle-button {
@@ -83,50 +175,93 @@ body {
   border: none;
   border-radius: 2px;
   cursor: pointer;
-  z-index: 2; /* z-index를 높게 설정하여 버튼이 보이도록 */
+  z-index: 2;
 }
 
 .category-text {
   font-size: 18px;
   font-weight: bold;
+  margin: 15px 10px;
+  padding-left: 30px;
   text-align: left;
-  padding-left: 20px;
-  margin-bottom: 20px;
   width: 100%;
+}
+.sub-category-text {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 15px 10px;
+  padding-left: 30px;
+  text-align: left;
+  width: 100%;
+}
+
+.back-button {
+  font-size: 18px;
+  cursor: pointer;
+  margin-right: 5px;
 }
 
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  justify-items: center;
-  padding: 20px;
-  padding-top: 0;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 20px;
+  box-sizing: border-box;
 }
 
-.category-card {
-  width: 100px;
-  height: 100px;
+.list-container {
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  height: 358px;
+  overflow-y: auto;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-category-item {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  cursor: default;
 }
 
-.category-card img {
+.category-icon {
   width: 40px;
   height: 40px;
   margin-bottom: 8px;
 }
 
-.category-card span {
-  font-size: 13px;
+.category-name {
+  font-size: 12px;
   color: #333;
+}
+
+.subcategory-item {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 15px 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 2px solid transparent;
+}
+
+.subcategory-name {
+  font-size: 16px;
+  color: #333;
+}
+.selected-border {
+  border-color: var(--primary-color);
 }
 </style>
