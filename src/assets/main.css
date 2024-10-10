@@ -1,6 +1,7 @@
 :root {
   --primary-color: #6e2ff4;
-  --main-background-color: #ffffff;
+  --main-background-color: #f0f0f0;
+  --main-card-color: #ffffff;
   --main-text-black: #000000;
   --sub-text-gray: #49454f;
   --point-color-pink: #fe446f;
@@ -15,6 +16,9 @@
   --check-color: #6e2ff4;
   --bull-color: #ff5252;
   --bear-color: #0a7df3;
+  --sell-button-color: #0066FF;
+  --buy-button-color: #FF4D4F;
+  --warning-color: #FF0003;
 }
 
 @font-face {

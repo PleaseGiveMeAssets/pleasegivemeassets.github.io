@@ -1,66 +1,70 @@
 <template>
-  <div>
-    <p class="title">내 포트폴리오</p>
-    <!-- <p>Stock Name: {{ portfolioData.name }}</p> -->
-    <div>
-      <div class="grid-container">
-        <div class="left-column">
-          {{ totalPrice }}
-        </div>
-        <div class="right-column">{{ portfolioData.quantity }}주</div>
-        <div class="delta">왼쪽 항목 2</div>
-        <div class="right-column">{{ portfolioData.price }}원</div>
-      </div>
+  <div v-if="data" :key="forceRerender" class="card-ui">
+    <div class="portfolio">
+      <table>
+        <tr>
+          <td class="totalPrice">{{ (totalPrice || 0).toLocaleString() }}원</td>
+          <td>{{ data.quantity }}주</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="price">{{ (data.price || 0).toLocaleString() }}원</td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import apiService from "./stockApiService";
+
 const props = defineProps({
-  stockId: {
-    type: String,
+  data: {
+    type: Object,
     required: true,
   },
 });
-const portfolioData = ref({});
-
-const fetchPortfolioData = async () => {
-  portfolioData.value = await apiService.fetchPortfolioSummary(props.stockId);
-};
 
 const totalPrice = computed(() => {
-  return (
-    (
-      portfolioData.value.price * portfolioData.value.quantity
-    ).toLocaleString() + "원"
-  );
+  if (!props.data || !props.data.price || !props.data.quantity) {
+    return 0; // 기본값
+  }
+  return props.data.price * props.data.quantity;
 });
-onMounted(() => {
-  fetchPortfolioData();
-});
+const forceRerender = ref(0);
 </script>
 
 <style scoped>
 .title {
-  font-weight: bold;
+  font-family: "Pretendard-Bold";
+  font-size: 18px;
 }
-.grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 두 개의 열을 동일한 비율로 */
-  gap: 10px; /* 항목 사이 간격 */
-  border: none; /* 그리드의 테두리 없앰 */
+.card-ui {
+  font-family: "Pretendard-Bold";
 }
-
-.left-column {
-  text-align: left; /* 왼쪽 정렬 */
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.delta {
-  color: red;
+.portfolio {
+  padding-right: 24px;
 }
-.right-column {
-  text-align: right; /* 오른쪽 정렬 */
+th,
+td {
+  /* border: 1px solid #ddd; */
+  line-height: 1.6;
 }
-/* 필요에 따라 스타일 추가 */
+.totalPrice {
+  letter-spacing: -0.3px;
+}
+.price {
+  color: #4f4f4f;
+}
+td:nth-child(1) {
+  text-align: center;
+  padding-right: 70px;
+}
+td:nth-child(2) {
+  text-align: right;
+}
 </style>

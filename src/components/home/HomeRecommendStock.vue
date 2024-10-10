@@ -1,53 +1,69 @@
 <template>
-  <section class="recommendations">
+  <div class="recommend-stock">
     <h2>일일추천종목</h2>
-    <div class="home-recommend-stock-page">
-      <div
-        v-for="(stock, sIndex) in dailyRecommendStock"
-        :key="sIndex"
-        class="stock-item"
-      >
+    <p class="ai-stock">AI 추천 종목 현황</p>
+    <img class="next-button" src="@/assets/icons/nextButton-icon.svg" />
+  </div>
+  <div class="card-ui">
+    <section>
+      <div class="home-recommend-stock">
         <div
-          v-for="(recommendStock, rsIndex) in stock.dailyRecommendStockDTOList"
-          :key="rsIndex"
-          class="stock-price-info"
+          v-for="(stock, sIndex) in dailyRecommendStock"
+          :key="sIndex"
+          class="stock-item"
         >
-          <div class="stock-info">
-            <div class="stock-name">{{ stock.stockName }}</div>
-            <div class="short-code">{{ stock.shortCode }}</div>
-          </div>
-          <div class="price-change-container">
-            <div class="stock-price">{{ recommendStock.price }}원</div>
-            <div
-              class="stock-change"
-              :class="recommendStock.changeAmount > 0 ? 'up' : 'down'"
-            >
-              {{ recommendStock.changeAmount }}원
-            </div>
-          </div>
           <div
-            class="stock-change-rate"
-            :class="recommendStock.changeAmountRate > 0 ? 'up' : 'down'"
+            v-for="(
+              recommendStock, rsIndex
+            ) in stock.dailyRecommendStockDTOList"
+            :key="rsIndex"
+            class="stock-price-info"
           >
-            {{ recommendStock.changeAmountRate }}%
+            <div class="stock-info">
+              <div class="stock-name">{{ stock.stockName }}</div>
+              <div class="short-code">{{ stock.shortCode }}</div>
+            </div>
+            <div class="price-change-container">
+              <div class="stock-price">{{ recommendStock.price }}원</div>
+              <div
+                class="stock-change"
+                :class="recommendStock.changeAmount > 0 ? 'up' : 'down'"
+              >
+                {{ recommendStock.changeAmount > 0 ? "▲" : "▼"
+                }}{{ Math.abs(recommendStock.changeAmount) }}원
+              </div>
+            </div>
+            <div
+              :class="
+                recommendStock.changeAmountRate > 0
+                  ? 'stock-change-rate up'
+                  : recommendStock.changeAmountRate < 0
+                    ? 'stock-change-rate down'
+                    : 'stock-change-rate'
+              "
+            >
+              {{ recommendStock.changeAmountRate }}%
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script setup>
 import axios from "axios";
 import { onMounted, reactive } from "vue";
 
+// 추천 종목 데이터를 불러오기 위한 기본 URL 설정
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
 const token = localStorage.getItem("token");
 
-const createRecommendStock = async (date) => {
+// 추천 종목 API 호출 함수
+const createRecommendStock = async () => {
   try {
-    const response = await axios.get(date ? `${BASE}/${date}` : BASE, {
+    const response = await axios.get(BASE, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -55,58 +71,111 @@ const createRecommendStock = async (date) => {
 
     Object.assign(dailyRecommendStock, response.data);
   } catch (err) {
-    console.log("createRecommendStock err : ", err.message);
+    console.error("createRecommendStock 에러: ", err.message);
   }
 };
 
-onMounted(() => {
-  createRecommendStock();
-});
+// 컴포넌트 마운트 시 추천 종목 데이터를 불러오기 위한 API 호출
+onMounted(createRecommendStock);
 </script>
 
 <style scoped>
+.card-ui {
+  background-color: var(--main-card-color);
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+}
+
+.home-recommend-stock {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-item {
+  display: flex;
+  justify-content: space-between;
+}
+
 .stock-price-info {
   display: flex;
-  justify-content: space-between; /* 좌측 끝, 중앙, 우측 끝으로 배치 */
+  justify-content: space-between; /* 좌, 중, 우 배치 */
   align-items: center; /* 수직 중앙 정렬 */
   width: 100%; /* 전체 너비 사용 */
 }
 
 .stock-info {
-  flex: 1; /* 첫 번째 항목을 좌측 끝으로 배치 */
-  text-align: left; /* 왼쪽 정렬 */
+  flex: 1;
+  text-align: left; /* 좌측 정렬 */
+}
+
+.stock-name {
+  font-weight: bold;
 }
 
 .price-change-container {
-  flex: 1; /* 두 번째 항목을 중앙에 배치 */
-  text-align: center; /* 중앙 정렬 */
+  flex: 1;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.stock-price {
+  color: #333;
 }
 
 .stock-change {
-  /* 기본 색상 설정 */
-  color: black; /* 기본 색상 */
+  color: black; /* 기본값 */
 }
 
 .stock-change.up {
-  color: red; /* 양수일 때 빨간색 */
+  color: red; /* 상승 */
 }
 
 .stock-change.down {
-  color: blue; /* 음수일 때 파란색 */
+  color: blue; /* 하락 */
 }
 
 .stock-change-rate {
-  flex: 1; /* 세 번째 항목을 우측 끝으로 배치 */
-  text-align: right; /* 오른쪽 정렬 */
-  /* 기본 색상 설정 */
-  color: black; /* 기본 색상 */
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: gray;
+  color: white;
 }
 
 .stock-change-rate.up {
-  color: red; /* 양수일 때 빨간색 */
+  background-color: red;
 }
 
 .stock-change-rate.down {
-  color: blue; /* 음수일 때 파란색 */
+  background-color: blue;
+}
+
+.short-code {
+  color: #888;
+  font-size: 14px;
+  margin-left: auto;
+}
+
+.recommend-stock {
+  display: flex;
+}
+
+.ai-stock {
+  font-size: 16px;
+  margin-left: auto;
+  padding-top: 10px;
+}
+
+.next-button {
+  margin-left: 10px;
+  padding-bottom: 5px;
 }
 </style>

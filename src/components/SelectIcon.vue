@@ -1,10 +1,10 @@
 <template>
   <div
-    :class="['icon-container', { selected: isSelected }]"
+    :class="['icon-container', { selected: selected }]"
     @click="toggleSelect"
   >
     <svg
-      v-if="isSelected"
+      v-if="selected"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width="24"
@@ -33,19 +33,29 @@
 </template>
 
 <script>
-export default {
+import { computed, defineComponent } from "vue";
+
+export default defineComponent({
   props: {
     isSelected: {
       type: Boolean,
       default: false,
     },
   },
-  methods: {
-    toggleSelect() {
-      this.$emit("update:isSelected", !this.isSelected);
-    },
+  emits: ["update:isSelected"],
+  setup(props, { emit }) {
+    const selected = computed(() => props.isSelected);
+
+    const toggleSelect = () => {
+      emit("update:isSelected", !props.isSelected);
+    };
+
+    return {
+      selected,
+      toggleSelect,
+    };
   },
-};
+});
 </script>
 
 <style scoped>
