@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { Line } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,

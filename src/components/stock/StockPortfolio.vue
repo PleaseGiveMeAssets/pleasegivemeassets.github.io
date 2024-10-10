@@ -1,6 +1,5 @@
 <template>
   <div v-if="data" :key="forceRerender" class="card-ui">
-    <p class="title">내 포트폴리오</p>
     <div class="portfolio">
       <table>
         <tr>

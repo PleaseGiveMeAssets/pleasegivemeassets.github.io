@@ -13,6 +13,7 @@ import StockPortfolioPage from "@/pages/StockPortfolio.vue";
 import StockSearchPage from "@/pages/StockSearch.vue";
 import MyStockListViewPage from "@/pages/MyStockListViewPage.vue";
 import AccountManagement from "@/pages/AccountManagement.vue";
+import StockPortfolioDetailPage from "@/pages/StockPortfolioDetailPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import RecommendStockPage from "@/pages/RecommendStockPage.vue";
 
@@ -23,6 +24,11 @@ const router = createRouter({
     {
       path: "/stock/:stockId",
       component: StockPage,
+      props: true,
+    },
+    {
+      path: "/stock/:stockId/portfolio",
+      component: StockPortfolioDetailPage,
       props: true,
     },
     { path: "/survey", component: SurveyPage }, // Survey 경로 추가

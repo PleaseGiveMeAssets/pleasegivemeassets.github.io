@@ -1,9 +1,7 @@
 <template>
   <div class="card-ui">
-    <header class="header">
       <h1>PGMA(로고)</h1>
       <p class="report-time">다음 리포트까지 23시간 남았어요!</p>
-    </header>
 
     <section class="summary">
       <h2>일일 동향 요약</h2>
@@ -57,13 +55,6 @@ h2 {
 
 .summary {
   margin-top: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
 }
 
 .report-time {
