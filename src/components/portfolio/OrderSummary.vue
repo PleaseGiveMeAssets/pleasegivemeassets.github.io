@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data" :key="forceRerender" class="card-ui">
+  <div v-if="data" class="card-ui">
     <div class="title">보유 정보</div>
     <div class="orderInfo">
       <table>
