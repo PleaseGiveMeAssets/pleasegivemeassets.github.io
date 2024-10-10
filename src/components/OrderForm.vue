@@ -17,38 +17,40 @@
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="data" class="orderForm">
         <table>
-          <tr>
-            <td>
-              <div class="stockName">
-                {{ data.stockName }}
-              </div>
-              <div class="shortCode">
-                {{ data.shortCode }}
-              </div>
-            </td>
+          <tbody>
+            <tr>
+              <td>
+                <div class="stockName">
+                  {{ data.stockName }}
+                </div>
+                <div class="shortCode">
+                  {{ data.shortCode }}
+                </div>
+              </td>
 
-            <td>
-              <input
-                v-model="formData.quantity"
-                class="quantityInput"
-                inputmode="numeric"
-                type="number"
-              />
-              주
-            </td>
-          </tr>
-          <tr>
-            <td>평단가</td>
-            <td>
-              <input
-                v-model="formData.price"
-                class="priceInput"
-                inputmode="numeric"
-                type="number"
-              />
-              원
-            </td>
-          </tr>
+              <td>
+                <input
+                  v-model="formData.quantity"
+                  class="quantityInput"
+                  inputmode="numeric"
+                  type="number"
+                />
+                주
+              </td>
+            </tr>
+            <tr>
+              <td>평단가</td>
+              <td>
+                <input
+                  v-model="formData.price"
+                  class="priceInput"
+                  inputmode="numeric"
+                  type="number"
+                />
+                원
+              </td>
+            </tr>
+          </tbody>
         </table>
         <div class="dateTimePicker">
           <input v-model="formData.date" type="date" class="dateInput" />
@@ -74,7 +76,7 @@
 <script setup>
 import { reactive, ref, computed } from "vue";
 import stockPortfolioService from "@/services/stockPortfolioService";
-// import SaveFormIcon from "@/assets/icons/portfolio-form-save-icon.svg";
+import SaveFormIcon from "@/assets/icons/portfolio-form-save-icon.svg";
 const props = defineProps({
   data: {
     type: Object,
