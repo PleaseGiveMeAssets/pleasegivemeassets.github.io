@@ -86,49 +86,63 @@ const clearSearch = () => {
 
 <style scoped>
 .stock-search-container {
+  position: relative;
   padding-top: 48px;
+  padding-left: 0;
   border-left: 0;
+  width: 380px; /* 전체 너비 사용 */
+  margin: 0 auto; /* 가운데 정렬 */
 }
 
 .search-bar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 검색어와 버튼 사이 여유 공간 확보 */
   align-items: center;
   margin-bottom: 0;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 약간의 그림자 추가 */
+  padding: 0px; /* 내부 패딩 */
 }
 
 input[type="text"] {
-  width: 85%;
+  width: 80%; /* 입력 필드의 너비 */
   padding: 8px;
   border: none;
   font-size: 16px;
   background: none;
+  outline: none; /* 포커스 시 테두리 제거 */
 }
 
 button {
-  width: 12%;
-  background-color: #f5f5f5;
+  width: 15%;
+  background-color: transparent; /* 버튼 배경 투명 */
   border: none;
-  padding: 8px;
-  font-size: 10px;
-  border-radius: 5px;
+  font-size: 14px;
+  color: #007bff; /* 파란색 텍스트 */
+  cursor: pointer;
+  outline: none;
 }
 
 .stock-list {
   list-style-type: none;
   padding: 0;
   margin-top: 10px;
+  width: 100%;
 }
 
 .my-stock-title {
+  width: 100%;
+  height: 30px;
   font-size: 14px;
   font-weight: bold;
   margin-bottom: 8px;
   margin-top: 0;
+  padding: 0;
   color: #555;
-  background-color: #9f9f9f;
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .stock-item {
@@ -137,19 +151,20 @@ button {
   align-items: center;
   border-bottom: 1px solid #e0e0e0;
   padding: 15px 0;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .stock-name {
   font-weight: bold;
   color: #333;
+  font-size: 16px;
 }
 
 .stock-eng {
   display: block;
   font-size: 14px;
   color: #888;
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .stock-info {
@@ -158,12 +173,12 @@ button {
 
 .stock-info p {
   margin: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #999;
 }
 
 .stock-info p:first-child {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   color: #000;
 }

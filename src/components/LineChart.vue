@@ -1,10 +1,11 @@
 <template>
-  <div>
-    <line-chart :chart-data="chartData" :options="chartOptions" />
+  <div class="chart-wrapper">
+    <canvas ref="lineChart"></canvas>
   </div>
 </template>
 
 <script setup>
+import { ref, watch, onMounted } from "vue";
 import {
   Chart as ChartJS,
   Title,
@@ -14,9 +15,10 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
+  LineController,
 } from "chart.js";
 
-// Register chart.js components
+// ChartJS 등록
 ChartJS.register(
   Title,
   Tooltip,
@@ -25,9 +27,9 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
+  LineController,
 );
 
-// Props to accept chart data
 const props = defineProps({
   chartData: {
     type: Object,
@@ -35,33 +37,58 @@ const props = defineProps({
   },
 });
 
-// Define chart options
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: "수익률 (%)",
+// 차트 ref
+const lineChart = ref(null);
+
+// 차트 초기화 함수
+const initializeChart = () => {
+  const ctx = lineChart.value.getContext("2d");
+
+  new ChartJS(ctx, {
+    type: "line",
+    data: props.chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: "수익률 (%)",
+          },
+        },
+        x: {
+          title: {
+            display: true,
+          },
+        },
       },
     },
-    x: {
-      title: {
-        display: true,
-        text: "날짜",
-      },
-    },
-  },
+  });
 };
+
+// 컴포넌트 마운트 후 차트 생성
+onMounted(() => {
+  initializeChart();
+});
+
+// chartData가 변경될 때마다 차트를 업데이트
+watch(
+  () => props.chartData,
+  () => {
+    if (lineChart.value) {
+      initializeChart();
+    }
+  },
+);
 </script>
 
 <style scoped>
-/* 꺾은선 그래프 스타일을 필요에 맞게 추가 가능 */
 .chart-wrapper {
   position: relative;
-  width: 100%;
-  height: 400px; /* 원하는 높이로 조정 가능 */
+  width: 300px;
+  height: 200px;
+  padding-bottom: 20px;
 }
 </style>
