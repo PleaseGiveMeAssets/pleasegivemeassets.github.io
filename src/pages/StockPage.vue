@@ -1,7 +1,9 @@
 <template>
   <div class="stock">
     <StockChart :data="stockPriceData" />
-    <MyPortfolio :data="portfolioData" />
+    <router-link :to="`/stock/${stockId}/portfolio`" class="noUnderline">
+      <MyPortfolio :data="portfolioData" />
+    </router-link>
     <StockIndex :data="indexData" />
     <NewsList :data="newsData" />
   </div>
@@ -27,14 +29,12 @@ const props = defineProps({
 // store 가져오기
 const headerStore = useHeaderStore();
 
-// 타이틀 변경 함수
+// 헤더 변경 함수
 const fetchShortCode = (stockId) => {
-  console.log(stockId);
-  headerStore.setShortCode(stockId);
+  headerStore.setStockSubtitle(stockId);
 };
 const fetchStockName = (stockName) => {
-  console.log(stockName);
-  headerStore.setStockName(stockName);
+  headerStore.setStockTitle(stockName);
 };
 const portfolioData = ref({});
 const indexData = ref({});
@@ -67,6 +67,10 @@ onMounted(async () => {
 .stock {
   padding-top: 48px;
   padding-bottom: 48px;
+}
+.noUnderline {
+  text-decoration: none;
+  color: black;
 }
 .card-ui {
   background-color: var(--main-card-color);
