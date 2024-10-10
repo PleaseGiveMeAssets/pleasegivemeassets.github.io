@@ -2,12 +2,18 @@
   <div class="recommendations-page">
     <!-- 월, 일 선택 박스 -->
     <div class="unit-selector">
-      <label>
-        <input v-model="selectedUnit" type="radio" value="day" /> 일
-      </label>
-      <label>
-        <input v-model="selectedUnit" type="radio" value="month" /> 월
-      </label>
+      <div
+        :class="selectedUnit === 'day' ? 'selected-unit' : 'unit'"
+        @click="selectedUnit = 'day'"
+      >
+        일
+      </div>
+      <div
+        :class="selectedUnit === 'month' ? 'selected-unit' : 'unit'"
+        @click="selectedUnit = 'month'"
+      >
+        월
+      </div>
     </div>
 
     <!-- 날짜 선택 부분 -->
@@ -34,32 +40,35 @@
           :key="rsIndex"
           class="stock-item"
         >
-          <h2>{{ rs.day }}일</h2>
-          <div class="stock-info">
-            <div class="stock-name">{{ stock.stockName }}</div>
-            <div class="short-code">{{ stock.shortCode }}</div>
-          </div>
-          <div class="stock-price-info">
-            <div class="stock-price">{{ rs.price }}원</div>
+          <div class="stock-day">{{ rs.day }}일</div>
+          <!-- 날짜 부분 -->
+          <div class="stock-details">
+            <div class="stock-info">
+              <div class="stock-name">{{ stock.stockName }}</div>
+              <div class="short-code">{{ stock.shortCode }}</div>
+            </div>
+            <div class="stock-price-info">
+              <div class="stock-price">{{ rs.price }}원</div>
+              <div
+                :class="
+                  rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
+                "
+              >
+                {{ rs.changeAmount > 0 ? "▲" : "▼"
+                }}{{ Math.abs(rs.changeAmount) }}원
+              </div>
+            </div>
             <div
               :class="
-                rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
+                rs.changeAmountRate > 0
+                  ? 'stock-change-rate up'
+                  : rs.changeAmountRate < 0
+                    ? 'stock-change-rate down'
+                    : 'stock-change-rate'
               "
             >
-              {{ rs.changeAmount > 0 ? "▲" : "▼"
-              }}{{ Math.abs(rs.changeAmount) }}원
+              {{ rs.changeAmountRate }}%
             </div>
-          </div>
-          <div
-            :class="
-              rs.changeAmountRate > 0
-                ? 'stock-change-rate up'
-                : rs.changeAmountRate < 0
-                  ? 'stock-change-rate down'
-                  : 'stock-change-rate'
-            "
-          >
-            {{ rs.changeAmountRate }}%
           </div>
         </div>
       </div>
@@ -112,13 +121,32 @@ onMounted(() => createRecommendStock(currentDate.value));
 
 .unit-selector {
   display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
+  justify-content: space-between; /* 좌우 끝에 배치 */
+  align-items: center;
+  width: 100%; /* 전체 화면을 차지하게 설정 */
+  padding: 0 20px; /* 좌우 여백 추가 */
+  margin-bottom: 20px;
 }
 
-.unit-selector label {
-  margin: 0 10px;
-  font-size: 16px;
+.unit,
+.selected-unit {
+  font-size: 18px;
+  padding: 10px 0; /* 상하 여백만 추가 */
+  width: 50%; /* 좌우 버튼이 동일한 넓이를 차지하게 설정 */
+  text-align: center; /* 가운데 정렬 */
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.selected-unit {
+  color: black;
+  font-weight: bold;
+  border-bottom: 2px solid #6e2ff4; /* 선택된 항목 강조 */
+}
+
+.unit {
+  color: gray;
 }
 
 .date-picker {
@@ -134,23 +162,38 @@ onMounted(() => createRecommendStock(currentDate.value));
 
 .stock-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column; /* 날짜는 위에, 나머지는 아래로 정렬 */
   margin-bottom: 10px;
 }
 
-.stock-info {
+.stock-day {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding-top: 20px;
+  margin-bottom: 5px;
+}
+
+.stock-details {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between; /* 나머지 정보는 수평으로 정렬 */
+  width: 100%;
+}
+
+.stock-info {
+  flex: 1;
+  text-align: left;
 }
 
 .stock-price-info {
-  display: flex;
-  align-items: center;
+  flex: 1;
+  text-align: right;
+  margin-right: 20px;
 }
 
 .stock-price {
+  color: #333;
   font-weight: bold;
-  margin-right: 10px;
 }
 
 .up {
@@ -163,7 +206,7 @@ onMounted(() => createRecommendStock(currentDate.value));
 
 .stock-change-rate {
   font-weight: bold;
-  padding: 5px 10px;
+  padding: 10px;
   border-radius: 8px;
   background-color: gray;
   color: white;
@@ -175,5 +218,15 @@ onMounted(() => createRecommendStock(currentDate.value));
 
 .stock-change-rate.down {
   background-color: blue;
+}
+
+.short-code {
+  color: #888;
+  font-size: 14px;
+  margin-left: auto;
+}
+
+.stock-name {
+  font-weight: bold;
 }
 </style>
