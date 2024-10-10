@@ -96,6 +96,7 @@ const orderFormData = computed(() => {
 const orderHistoryData = computed(() => {
   return stockPortfolioData.value.orders || [];
 });
+
 const isStockButtonVisible = computed(() => headerStore.isStockButtonVisible);
 
 const fetchStockPortfolioData = async () => {
@@ -131,12 +132,14 @@ onMounted(async () => {
 
 .stock-order-button-container {
   position: fixed;
-  bottom: 100px;
+  bottom: 38px;
   left: 0;
   width: 100%;
+  height: 120px;
   display: flex;
+  background-color: #ffffff;
   justify-content: space-around;
-  padding: 12px;
+  padding: 30px 0px 0px 20px;
 }
 
 .sell-button {

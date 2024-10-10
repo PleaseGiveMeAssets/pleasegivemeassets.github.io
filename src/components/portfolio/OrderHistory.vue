@@ -1,5 +1,5 @@
 <template>
-  <div class="card-ui">
+  <div class="card-ui portfolio">
     <p class="title">매수 내역</p>
     <table>
       <tbody>
@@ -18,11 +18,11 @@
             <td>
               <span
                 :class="{
-                  sellText: order.type === 'B',
-                  buyText: order.type !== 'B',
+                  sellText: order.orderType === 'B',
+                  buyText: order.orderType !== 'B',
                 }"
               >
-                {{ order.type === "B" ? "매도" : "매수" }}
+                {{ order.orderType == "B" ? "매도" : "매수" }}
                 {{ order.quantity }}주
               </span>
             </td>
@@ -53,27 +53,20 @@ const props = defineProps({
 
 const formatDate = (timestamp) => {
   const date = new Date(timestamp);
-  const month = date.getMonth() + 1; // getMonth()는 0부터 시작하므로 +1
-  const day = date.getDate(); // 날짜 추출
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
   return `${month}.${day}`;
 };
 const isSameAsPrevious = (index) => {
-  if (index === 0) return false; // 첫 번째 항목은 비교할 이전 항목이 없으므로 항상 표시
+  if (index === 0) return false;
   const previousOrder = Object.values(props.data)[index - 1];
   const currentOrder = Object.values(props.data)[index];
   return (
     formatDate(previousOrder.orderedAt) === formatDate(currentOrder.orderedAt)
   );
 };
-const totalPrice = computed(() => {
-  if (!props.data || !props.data.price || !props.data.quantity) {
-    return 0; // 기본값
-  }
-  return props.data.price * props.data.quantity;
-});
-
 onMounted(() => {
-  console.log("test" + JSON.stringify(props.data));
+  console.log(props.data);
 });
 </script>
 
@@ -91,10 +84,10 @@ table {
 }
 .portfolio {
   padding-right: 24px;
+  margin-bottom: 200px;
 }
 th,
 td {
-  /* border: 1px solid #ddd; */
   line-height: 1.6;
 }
 .totalPrice {
@@ -109,19 +102,24 @@ td:nth-child(1) {
 }
 td:nth-child(2) {
   width: 170px;
-
+  white-space: nowrap; /* 줄 바꿈 방지 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* ...으로 표시 */
   text-align: right;
   padding-right: 70px;
 }
 td:nth-child(3) {
   width: 200px;
-
+  white-space: nowrap; /* 줄 바꿈 방지 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* ...으로 표시 */
   text-align: right;
 }
 .sellText {
   color: var(--bear-color);
 }
 .orderItem {
+  font-size: 14px;
   margin-bottom: 6px;
 }
 .buyText {

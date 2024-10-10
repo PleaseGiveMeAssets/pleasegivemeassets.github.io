@@ -76,7 +76,7 @@
 <script setup>
 import { reactive, ref, computed } from "vue";
 import stockPortfolioService from "@/services/stockPortfolioService";
-import SaveFormIcon from "@/assets/icons/portfolio-form-save-icon.svg";
+// import SaveFormIcon from "@/assets/icons/portfolio-form-save-icon.svg";
 const props = defineProps({
   data: {
     type: Object,
@@ -179,7 +179,6 @@ const submitOrderForm = async () => {
     // 성공적으로 서버에 데이터 전송 후 처리
     console.log("서버 응답:", response);
 
-    alert("포트폴리오에 저장되었습니다!");
     triggerUpdateData();
     emitUpdate();
   } catch (error) {
