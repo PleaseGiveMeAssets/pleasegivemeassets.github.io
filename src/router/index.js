@@ -1,5 +1,6 @@
 import StockPage from "@/pages/StockPage.vue";
 import SurveyPage from "@/pages/SurveyPage.vue";
+import SurveyResultPage from "@/pages/SurveyResultPage.vue";
 import MyprofilePage from "@/pages/MyprofilePage.vue";
 import InterestPage from "@/pages/InterestPage.vue";
 import NotificationsPage from "@/pages/NotificationsPage.vue";
@@ -11,7 +12,9 @@ import HomePage from "@/pages/HomePage.vue";
 import StockPortfolioPage from "@/pages/StockPortfolio.vue";
 import StockSearchPage from "@/pages/StockSearch.vue";
 import MyStockListViewPage from "@/pages/MyStockListViewPage.vue";
+import AccountManagement from "@/pages/AccountManagement.vue";
 import { createRouter, createWebHistory } from "vue-router";
+import RecommendStockPage from "@/pages/RecommendStockPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,6 +26,7 @@ const router = createRouter({
       props: true,
     },
     { path: "/survey", component: SurveyPage }, // Survey 경로 추가
+    { path: "/survey-result", component: SurveyResultPage }, // SurveyResult 경로추가
     {
       path: "/myProfile", // MyProfile 경로 추가
       component: MyprofilePage,
@@ -38,6 +42,8 @@ const router = createRouter({
     { path: "/portfolio", component: StockPortfolioPage },
     { path: "/stocksearch", component: StockSearchPage },
     { path: "/myStocklist", component: MyStockListViewPage },
+    { path: "/account-management", component: AccountManagement },
+    { path: "/recommendstock", component: RecommendStockPage },
   ],
 });
 export default router;

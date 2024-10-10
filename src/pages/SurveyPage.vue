@@ -76,7 +76,7 @@ import { fetchQuestion, submitAnswer } from "../services/surveyService";
 const question = ref(null);
 const questionId = ref(1);
 const maxQuestions = 7;
-const selectedOption = ref(null);
+const selectedOption = ref(null); // 선택된 옵션 상태 초기화
 
 // 진행률 계산
 const progressPercentage = computed(() => {
@@ -87,6 +87,7 @@ const progressPercentage = computed(() => {
 const loadQuestion = async () => {
   try {
     question.value = await fetchQuestion(questionId.value);
+    selectedOption.value = null; // 질문이 로드될 때마다 선택 옵션 초기화
   } catch (error) {
     console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
   }

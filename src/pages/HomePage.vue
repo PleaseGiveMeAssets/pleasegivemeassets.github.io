@@ -1,21 +1,22 @@
 <template>
   <div class="home">
-    <HomeDailyTrendPage />
+    <HomeDailyTrend />
 
-    <HomePortfolioPage />
+    <HomePortfolio />
 
-    <HomeRecommendStockPage />
+    <HomeRecommendStock />
   </div>
 </template>
 
 <script setup>
-import HomeDailyTrendPage from "./HomeDailyTrendPage.vue";
-import HomePortfolioPage from "./HomePortfolioPage.vue";
-import HomeRecommendStockPage from "./HomeRecommendStockPage.vue";
+import HomeDailyTrend from "../components/home/HomeDailyTrend.vue";
+import HomePortfolio from "../components/home/HomePortfolio.vue";
+import HomeRecommendStock from "../components/home/HomeRecommendStock.vue";
 </script>
 
 <style scoped>
 .home {
-  padding: 20px;
+  padding-top: 100px;
+  padding-bottom: 100px;
 }
 </style>
