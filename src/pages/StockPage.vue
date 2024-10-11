@@ -69,7 +69,7 @@ onMounted(async () => {
 
 <style scoped>
 .stock {
-  padding-top: 48px;
+  padding-top: 54px;
   padding-bottom: 48px;
 }
 .noUnderline {
@@ -78,9 +78,11 @@ onMounted(async () => {
 }
 .card-ui {
   background-color: var(--main-card-color);
-  border: 1px solid #e0e0e0;
-  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  gap: 10px;
+  width: 340px;
+  transition: transform 0.2s;
+  margin-bottom: 20px;
 }
 </style>

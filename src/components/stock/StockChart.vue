@@ -69,12 +69,24 @@ const chartOptions = ref({
     enabled: false,
   },
   xAxis: {
+    type: "category",
     labels: {
       enabled: false,
     },
+    ordinal: false, // 빈 날짜(주말 등)를 제거하여 일정 간격 유지
     lineWidth: 0,
     tickLength: 0,
     gridLineWidth: 0,
+    tickPositioner: function () {
+      const positions = this.series[0].xData.filter((timestamp) => {
+        const date = new Date(timestamp);
+        const day = date.getDay();
+        const hours = date.getHours();
+        // 주말(토요일, 일요일) 및 장 마감 시간(예: 16시 이후)을 제외하고 표시
+        return day !== 0 && day !== 6 && hours >= 9 && hours < 16;
+      });
+      return positions;
+    },
   },
   yAxis: {
     labels: {
@@ -89,6 +101,7 @@ const chartOptions = ref({
   plotOptions: {
     series: {
       animation: false,
+      pointPlacement: "off",
     },
   },
   series: [

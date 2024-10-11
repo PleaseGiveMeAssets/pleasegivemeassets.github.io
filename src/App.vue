@@ -1,28 +1,34 @@
 <template>
   <div class="container">
-    <HeaderNavigator />
-    <div class="content">
+    <HeaderNavigator v-if="!$route.meta.hideNavbar" />
+    <div :class="{ content: !$route.meta.hideNavbar }">
       <router-view />
     </div>
-    <BottomNavigator class="bottom-nav-bar" />
+    <BottomNavigator v-if="!$route.meta.hideNavbar" class="bottom-nav-bar" />
   </div>
 </template>
 
 <script setup>
+import { useRoute } from "vue-router";
 import HeaderNavigator from "./components/HeaderNavigator.vue";
 import BottomNavigator from "./components/BottomNavigator.vue";
+
+const route = useRoute();
 </script>
 
 <style scoped>
 .content {
-  padding: 48 12 0 12;
+  padding: 48px 16px 0px 16px;
 }
+
 .container {
   font-family: "Pretendard-Medium";
+  padding: 0px;
 }
 
 .bottom-nav-bar {
   position: fixed;
+  padding: 10px;
   margin: 0 auto;
   bottom: 0;
   left: 0;

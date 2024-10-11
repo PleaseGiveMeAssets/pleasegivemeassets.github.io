@@ -1,4 +1,21 @@
 <template>
+  <!-- 저장된 세부 카테고리 목록 -->
+  <div class="saved-category">
+    <p>관심 키워드</p>
+    <div
+      v-for="(savedSubcategory, index) in savedSubCategories"
+      :key="index"
+      class="saved-category-item"
+    >
+      <span>{{ savedSubcategory.subCategoryName }}</span>
+      <button
+        class="delete-button"
+        @click="deleteSubcategory(savedSubcategory.subCategoryId)"
+      >
+        x
+      </button>
+    </div>
+  </div>
   <div
     class="category-container"
     :class="{ active: showCategories && !selectedCategory }"
@@ -39,6 +56,10 @@
         <span class="subcategory-name">{{ subcategory.name }}</span>
         <SelectIcon
           :is-selected="selectedSubcategory.includes(subcategory.id)"
+          class="icon"
+          :class="{
+            'selected-icon': selectedSubcategory.includes(subcategory.id),
+          }"
         />
       </div>
     </div>
@@ -50,6 +71,8 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
+const userId = "testUser1";
+
 import accomodationIcon from "@/assets/interest-icons/accomodation-icon.svg";
 import energyIcon from "@/assets/interest-icons/energy-icon.svg";
 import entertainmentIcon from "@/assets/interest-icons/entertainment-icon.svg";
@@ -77,6 +100,8 @@ const mainCategories = ref([]);
 const subCategories = ref([]);
 const showCategories = ref(false);
 const selectedCategory = ref(null);
+const selectedSubcategory = ref([]); // 선택 상태를 저장하는 배열
+const savedSubCategories = ref([]); // 저장된 세부 카테고리 목록
 
 const toggleCategories = () => {
   if (selectedCategory.value) {
@@ -122,25 +147,94 @@ const loadSubCategories = async (mainCategoryId) => {
       id: subCategory.subCategoryId,
       name: subCategory.subCategoryName,
     }));
+
+    // 저장된 세부 카테고리 상태를 유지하기 위해 selectedSubcategory 업데이트
+    selectedSubcategory.value = savedSubCategories.value.map(
+      (saved) => saved.subCategoryId,
+    );
   } catch (error) {
     console.error("세부 카테고리를 불러오는 중 오류 발생:", error);
   }
 };
 
-const selectedSubcategory = ref([]); // 선택 상태를 저장하는 배열
-
-const toggleSubcategorySelect = (subcategoryId) => {
+const toggleSubcategorySelect = async (subcategoryId) => {
   if (selectedSubcategory.value.includes(subcategoryId)) {
+    // 선택된 상태에서 다시 클릭하면 삭제
+    await deleteSubcategory(subcategoryId);
     selectedSubcategory.value = selectedSubcategory.value.filter(
       (id) => id !== subcategoryId,
     );
-  } else {
+    savedSubCategories.value = savedSubCategories.value.filter(
+      (saved) => saved.subCategoryId !== subcategoryId,
+    );
+  } else if (
+    !savedSubCategories.value.some(
+      (saved) => saved.subCategoryId === subcategoryId,
+    )
+  ) {
+    // 중복이 아닐 경우에만 저장
     selectedSubcategory.value.push(subcategoryId);
+    await saveSubcategory(subcategoryId); // 백엔드 저장 요청
+
+    // 바로 저장된 목록에 추가
+    const newSubcategory = subCategories.value.find(
+      (sub) => sub.id === subcategoryId,
+    );
+    if (newSubcategory) {
+      savedSubCategories.value.push({
+        subCategoryId: subcategoryId,
+        subCategoryName: newSubcategory.name,
+      });
+    }
+  }
+};
+
+// 선택된 세부 카테고리 저장하기
+const saveSubcategory = async (subcategoryId) => {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/category/interest/${userId}/${subcategoryId}`,
+    );
+    console.log("세부 카테고리가 저장되었습니다:", subcategoryId);
+  } catch (error) {
+    console.error("세부 카테고리 저장 실패:", error);
+  }
+};
+
+// 저장된 세부 카테고리 불러오기
+const loadSavedSubcategories = async () => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/category/interest/${userId}`,
+    );
+    savedSubCategories.value = response.data;
+    console.log(savedSubCategories.value);
+  } catch (error) {
+    console.error("저장된 세부 카테고리 불러오기 실패:", error);
+  }
+};
+
+// 세부 카테고리 삭제하기
+const deleteSubcategory = async (subCategoryId) => {
+  try {
+    const response = await axios.delete(
+      `${API_BASE_URL}/category/${userId}/${subCategoryId}`,
+    );
+    if (response.data === "삭제 성공") {
+      savedSubCategories.value = savedSubCategories.value.filter(
+        (subcategory) => subcategory.subCategoryId !== subCategoryId,
+      );
+    } else {
+      console.error("삭제 실패:", response.data);
+    }
+  } catch (error) {
+    console.error("세부 카테고리 삭제 실패:", error);
   }
 };
 
 onMounted(() => {
   loadMainCategories();
+  loadSavedSubcategories();
 });
 </script>
 
@@ -262,6 +356,30 @@ onMounted(() => {
   color: #333;
 }
 .selected-border {
-  border-color: var(--primary-color);
+  border-color: #9e85f6;
+}
+.saved-category {
+  margin-left: 15px;
+  padding-top: 70px;
+}
+
+.saved-category-item {
+  font-size: 12px;
+  padding: 5px 10px;
+  background-color: #ffffff;
+  border: 2px solid #9e85f6;
+  border-radius: 50px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+.delete-button {
+  background: none;
+  border: none;
+  color: var(--back-button);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  padding-left: 5px;
 }
 </style>

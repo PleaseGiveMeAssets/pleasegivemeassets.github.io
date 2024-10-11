@@ -10,7 +10,7 @@
         <span>자동 로그인 사용</span>
         <ToggleSwitch />
       </div>
-      <div class="item">
+      <div class="item" @click="showLogoutModal = true">
         <span>로그아웃</span>
       </div>
     </div>
@@ -42,17 +42,73 @@
         <span>></span>
       </div>
     </div>
+
+    <LogoutModal
+      v-if="showLogoutModal"
+      @close="showLogoutModal = false"
+      @logout="logout"
+    />
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 import ToggleSwitch from "@/components/ToggleSwitch.vue";
+import LogoutModal from "@/components/LogoutModal.vue";
 
-export default {
-  name: "SettingsPage",
-  components: {
-    ToggleSwitch,
-  },
+const router = useRouter();
+const showLogoutModal = ref(false);
+
+const logout = async () => {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      throw new Error("Access Token이 존재하지 않습니다.");
+    }
+
+    // 서버로 로그아웃 요청 보내기 (Access Token을 Authorization 헤더에 포함)
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/auth/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      },
+    );
+
+    if (response.status === 200) {
+      localStorage.removeItem("accessToken");
+      document.cookie =
+        "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      showLogoutModal.value = false;
+
+      const kakaoLogoutUrl = response.data.kakaoLogoutUrl;
+
+      if (kakaoLogoutUrl) {
+        // 카카오 로그아웃 URL이 있을 경우
+        const redirectUrl = encodeURIComponent(
+          `${window.location.origin}/auth/logout/kakao`,
+        );
+        const finalKakaoLogoutUrl = `${kakaoLogoutUrl}&state=${redirectUrl}`;
+
+        // 카카오 로그아웃 페이지로 이동
+        window.location.href = finalKakaoLogoutUrl;
+      } else {
+        // 일반 로그아웃 후 /main으로 리다이렉트
+        router.push("/main");
+      }
+    }
+  } catch (error) {
+    console.error("로그아웃 실패: ", error);
+    if (error.response) {
+      console.error("서버 응답: ", error.response.data);
+    }
+    alert("로그아웃 처리 중 오류 발생");
+  }
 };
 </script>
 
