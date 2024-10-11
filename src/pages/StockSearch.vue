@@ -15,7 +15,12 @@
 
     <!-- 주식 목록 -->
     <ul v-if="stocks.length > 0" class="stock-list">
-      <li v-for="(stock, index) in stocks" :key="index" class="stock-item">
+      <li
+        v-for="(stock, index) in stocks"
+        :key="index"
+        class="stock-item"
+        @click="selectData(stock)"
+      >
         <div class="stock-name">
           {{ stock.stockName }}
           <span class="stock-eng">{{ stock.engName }}</span>
@@ -26,7 +31,13 @@
         </div>
       </li>
     </ul>
-
+    <OrderForm
+      v-if="isFormVisible"
+      :data="orderFormData"
+      class="modal-overlay"
+      @update="isCloseClicked"
+      @update-data="updateData"
+    />
     <!-- 검색 결과가 없을 때 메시지 표시 -->
     <div v-if="!stocks.length && searchTerm.length > 0">
       <p>해당 종목이 없습니다.</p>
@@ -35,13 +46,34 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import axios from "axios";
 import _ from "lodash";
+import OrderForm from "@/components/OrderForm.vue";
 
 const searchTerm = ref("");
 const stocks = ref([]);
 const isComposing = ref(false);
+const isFormVisible = ref(false);
+const orderFormData = ref({});
+const selectData = (stock) => {
+  orderFormData.value.orderType = "buy";
+  orderFormData.value.stockName = stock.stockName;
+  orderFormData.value.stockId = stock.stockId;
+  orderFormData.value.price = 0;
+  orderFormData.value.quantity = 0;
+  showForm("buy");
+};
+const isCloseClicked = () => {
+  isFormVisible.value = false;
+};
+
+const showForm = (type) => {
+  formType.value = type;
+  isFormVisible.value = true;
+};
+
+const formType = ref(""); // buy(매수)인지 sell(매도)인지 알려주세요
 
 // 디바운스를 이용한 검색
 const debouncedFetchStockList = _.debounce(fetchStockList, 300);
@@ -181,5 +213,17 @@ button {
   font-size: 14px;
   font-weight: bold;
   color: #000;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100; /* 화면 위에 오도록 z-index 설정 */
 }
 </style>
