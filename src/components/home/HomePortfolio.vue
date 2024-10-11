@@ -71,6 +71,7 @@ h2 {
 
 .next-button {
   margin-left: auto;
+  padding-right: 5px;
   padding-top: 50px;
 }
 </style>
