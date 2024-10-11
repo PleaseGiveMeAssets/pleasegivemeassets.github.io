@@ -119,7 +119,7 @@ onMounted(() => createRecommendStock(currentDate.value));
 
 <style scoped>
 .recommendations-page {
-  padding-top: 100px;
+  padding-top: 20px;
   font-family: Arial, sans-serif;
 }
 
@@ -158,6 +158,7 @@ onMounted(() => createRecommendStock(currentDate.value));
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  padding-bottom: 30px;
 }
 
 .stock-group {
@@ -167,15 +168,15 @@ onMounted(() => createRecommendStock(currentDate.value));
 .stock-item {
   display: flex;
   flex-direction: column; /* 날짜는 위에, 나머지는 아래로 정렬 */
-  margin-bottom: 10px;
+  padding-bottom: 30px;
 }
 
 .stock-day {
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  padding-top: 20px;
   margin-bottom: 5px;
+  padding-bottom: 10px;
 }
 
 .stock-details {
@@ -209,11 +210,14 @@ onMounted(() => createRecommendStock(currentDate.value));
 }
 
 .stock-change-rate {
+  flex: none;
+  text-align: right; /* 우측 정렬 */
   font-weight: bold;
-  padding: 10px;
+  padding: 10px 10px; /* 상하 여백을 줄임 */
   border-radius: 8px;
   background-color: gray;
   color: white;
+  min-width: 70px; /* 최소 너비를 설정 (필요에 따라 조정) */
 }
 
 .stock-change-rate.up {
