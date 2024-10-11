@@ -20,16 +20,27 @@
             class="stock-price-info"
           >
             <div class="stock-info">
-              <div class="stock-name">{{ stock.stockName }}</div>
-              <div class="short-code">{{ stock.shortCode }}</div>
+              <div class="stock-name">{{ recommendStock.stockName }}</div>
+              <div class="short-code">{{ recommendStock.shortCode }}</div>
             </div>
             <div class="price-change-container">
               <div class="stock-price">{{ recommendStock.price }}원</div>
               <div
                 class="stock-change"
-                :class="recommendStock.changeAmount > 0 ? 'up' : 'down'"
+                :class="
+                  recommendStock.changeAmount > 0
+                    ? 'up'
+                    : recommendStock.changeAmount < 0
+                      ? 'down'
+                      : ''
+                "
               >
-                {{ recommendStock.changeAmount > 0 ? "▲" : "▼"
+                {{
+                  recommendStock.changeAmount > 0
+                    ? "▲"
+                    : recommendStock.changeAmount < 0
+                      ? "▼"
+                      : ""
                 }}{{ Math.abs(recommendStock.changeAmount) }}원
               </div>
             </div>
@@ -100,15 +111,14 @@ h2 {
 }
 
 .stock-item {
-  display: flex;
-  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .stock-price-info {
   display: flex;
-  justify-content: space-between; /* 좌, 중, 우 배치 */
-  align-items: center; /* 수직 중앙 정렬 */
   width: 100%; /* 전체 너비 사용 */
+  justify-content: space-between;
+  align-items: center;
 }
 
 .stock-info {
@@ -122,8 +132,8 @@ h2 {
 
 .price-change-container {
   flex: 1;
-  text-align: right;
-  margin-right: 20px;
+  text-align: right; /* 가운데 정렬 */
+  padding-right: 20px;
 }
 
 .stock-price {
@@ -143,8 +153,11 @@ h2 {
 }
 
 .stock-change-rate {
+  flex: none;
+  width: 20%;
+  text-align: right; /* 우측 정렬 */
   font-weight: bold;
-  padding: 5px 10px;
+  padding: 3px 8px;
   border-radius: 8px;
   background-color: gray;
   color: white;
@@ -161,7 +174,6 @@ h2 {
 .short-code {
   color: #888;
   font-size: 14px;
-  margin-left: auto;
 }
 
 .recommend-stock {
