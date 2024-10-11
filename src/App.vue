@@ -1,16 +1,17 @@
 <template>
   <div class="container">
-    <HeaderNavigator />
-    <div class="content">
-      <router-view />
-    </div>
-    <BottomNavigator class="bottom-nav-bar" />
+    <HeaderNavigator v-if="!$route.meta.hideNavbar" />
+    <router-view :class="{ content: !$route.meta.hideNavbar }" />
+    <BottomNavigator v-if="!$route.meta.hideNavbar" class="bottom-nav-bar" />
   </div>
 </template>
 
 <script setup>
+import { useRoute } from "vue-router";
 import HeaderNavigator from "./components/HeaderNavigator.vue";
 import BottomNavigator from "./components/BottomNavigator.vue";
+
+const route = useRoute();
 </script>
 
 <style scoped>
