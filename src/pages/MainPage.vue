@@ -13,7 +13,7 @@
       :class="{ fadeIn: showButton }"
       @click="goToLogin"
     >
-      로그인
+      시작하기
     </button>
   </div>
 </template>

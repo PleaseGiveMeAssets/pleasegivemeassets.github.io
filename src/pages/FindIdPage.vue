@@ -1,72 +1,105 @@
 <template>
-  <div class="find-id-container">
-    <!-- 1. 이름 입력창 + 휴대폰번호 입력창 + 인증번호 입력창 -->
-    <div class="input-section">
-      <!-- 이름 입력창 div -->
-      <div class="input-group">
-        <input
-          id="name"
-          v-model="name"
-          type="text"
-          placeholder="이름을 입력해주세요."
-        />
+  <div class="find-id-page">
+    <div class="find-id-container">
+      <div class="content-wrapper">
+        <div class="input-section">
+          <!-- 이름 입력창 div -->
+          <div class="input-group">
+            <input id="name" v-model="name" type="text" placeholder="이름" />
+          </div>
+
+          <!-- 휴대폰번호 입력창 div -->
+          <div class="input-group phone-input-group">
+            <input
+              id="phone"
+              v-model="phone"
+              type="text"
+              placeholder="휴대폰 번호 '-' 제외하고 입력"
+              @input="formatPhoneNumber"
+            />
+            <div class="auth-button-wrapper">
+              <button
+                class="phone-auth-btn"
+                :disabled="!isPhoneValid || isCountingDown || isVerified"
+                @click="sendVerificationCode"
+              >
+                인증 번호
+              </button>
+            </div>
+          </div>
+
+          <!-- 인증번호 전송 메시지 placeholder -->
+          <div class="verification-message-placeholder">
+            <div v-if="showVerificationMessage" class="verification-message">
+              {{ verificationMessage }}
+            </div>
+          </div>
+
+          <!-- 인증번호 입력창 div + 카운트다운 타이머 + 확인 버튼 -->
+          <div class="input-group phone-input-group">
+            <input
+              id="verificationCode"
+              v-model="verificationCode"
+              type="text"
+              placeholder="인증번호"
+            />
+            <div class="confirm-button-timer-wrapper">
+              <span
+                v-if="isCountingDown && !isVerified"
+                class="countdown-timer"
+                >{{ formattedTime }}</span
+              >
+              <button
+                class="phone-auth-btn"
+                :disabled="!isVerificationCodeValid || isVerified"
+                @click="verifyCode"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+
+          <!-- 인증번호 확인 메시지 placeholder -->
+          <div class="verification-result-message-placeholder">
+            <div
+              v-if="showVerificationResultMessage"
+              :class="verificationResultMessageClass"
+            >
+              {{ verificationResultMessage }}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- 휴대폰번호 입력창 div -->
-      <div class="input-group phone-input-group">
-        <input
-          id="phone"
-          v-model="phone"
-          type="text"
-          placeholder="휴대폰 번호 '-' 제외하고 입력"
-        />
-        <button
-          class="phone-auth-btn"
-          :disabled="isPhoneEmpty"
-          @click="sendVerificationCode"
-        >
-          인증
-        </button>
+      <div class="footer-section">
+        <!-- 다음 버튼 영역 -->
+        <div class="next-button-section">
+          <button
+            class="next-btn"
+            :class="{ 'next-btn-active': !isFormInvalid }"
+            :disabled="isFormInvalid"
+            @click="submitFindId"
+          >
+            다음
+          </button>
+        </div>
+
+        <!-- 비밀번호 찾기 링크 -->
+        <div class="find-password-link">
+          <span class="forgot-password">비밀번호를 잊으셨나요?</span>
+          <span class="find-password" @click="goToFindPassword"
+            >비밀번호 찾기</span
+          >
+        </div>
       </div>
 
-      <!-- 인증번호 입력창 div -->
-      <div class="input-group">
-        <input
-          id="verificationCode"
-          v-model="verificationCode"
-          type="text"
-          placeholder="인증번호를 입력해주세요."
-        />
-      </div>
-    </div>
-
-    <!-- 2. 다음 버튼 영역 -->
-    <div class="next-button-section">
-      <!-- 다음 버튼 div -->
-      <div>
-        <button
-          class="next-btn"
-          :disabled="isFormInvalid"
-          @click="submitFindId"
-        >
-          다음
-        </button>
-      </div>
-    </div>
-
-    <!-- 3. 비밀번호를 잊으셨나요? + 비밀번호 찾기 -->
-    <div class="password-recovery-section">
-      <!-- 비밀번호를 잊으셨나요? div -->
-      <div class="password-recovery-text">
-        <span>비밀번호를 잊으셨나요?</span>
-      </div>
-
-      <!-- 비밀번호 찾기 div -->
-      <div class="find-password-section">
-        <span class="find-password-link" @click="goToFindPassword"
-          >비밀번호 찾기</span
-        >
-      </div>
+      <!-- 네비게이션 바 -->
+      <nav class="navigation-bar">
+        <a href="#" class="nav-item">홈</a>
+        <a href="#" class="nav-item">리포트</a>
+        <a href="#" class="nav-item">포트폴리오</a>
+        <a href="#" class="nav-item">MY</a>
+      </nav>
     </div>
   </div>
 </template>
@@ -78,22 +111,83 @@ import { useRouter } from "vue-router";
 const name = ref("");
 const phone = ref("");
 const verificationCode = ref("");
+const isCountingDown = ref(false);
+const remainingTime = ref(180); // 3분(180초) 카운트다운
+let timerInterval = null;
+
+const showVerificationMessage = ref(false);
+const verificationMessage = ref("");
+
+const showVerificationResultMessage = ref(false);
+const verificationResultMessage = ref("");
+const isVerificationSuccess = ref(false);
+const isVerified = ref(false);
 
 const router = useRouter();
 
-const isPhoneEmpty = computed(() => phone.value === "");
+const isPhoneValid = computed(() => phone.value.length === 11);
+const isVerificationCodeValid = computed(
+  () => verificationCode.value.length > 0,
+);
 const isFormInvalid = computed(
-  () =>
-    name.value === "" || phone.value === "" || verificationCode.value === "",
+  () => name.value === "" || phone.value === "" || !isVerified.value,
 );
 
+const verificationResultMessageClass = computed(() => ({
+  "verification-result-message": true,
+  "verification-success": isVerificationSuccess.value,
+  "verification-error": !isVerificationSuccess.value,
+}));
+
+const formatPhoneNumber = () => {
+  phone.value = phone.value.replace(/\D/g, "").slice(0, 11);
+};
+
 const sendVerificationCode = () => {
-  // 여기에 인증번호 전송 로직을 추가하세요.
-  alert("인증번호가 전송되었습니다.");
+  verificationMessage.value = "인증번호가 전송되었습니다.";
+  showVerificationMessage.value = true;
+  startCountdown();
+};
+
+const startCountdown = () => {
+  isCountingDown.value = true;
+  remainingTime.value = 180;
+
+  timerInterval = setInterval(() => {
+    if (remainingTime.value > 0) {
+      remainingTime.value--;
+    } else {
+      stopCountdown();
+    }
+  }, 1000);
+};
+
+const stopCountdown = () => {
+  clearInterval(timerInterval);
+  isCountingDown.value = false;
+  remainingTime.value = 0;
+};
+
+const formattedTime = computed(() => {
+  const minutes = Math.floor(remainingTime.value / 60);
+  const seconds = remainingTime.value % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+});
+
+const verifyCode = () => {
+  if (verificationCode.value === "1234") {
+    verificationResultMessage.value = "인증번호가 확인되었습니다.";
+    isVerificationSuccess.value = true;
+    isVerified.value = true;
+    stopCountdown();
+  } else {
+    verificationResultMessage.value = "인증번호가 일치하지 않습니다.";
+    isVerificationSuccess.value = false;
+  }
+  showVerificationResultMessage.value = true;
 };
 
 const submitFindId = () => {
-  // 여기에 아이디 찾기 로직을 추가하세요.
   console.log(
     "아이디 찾기 요청:",
     name.value,
@@ -108,21 +202,42 @@ const goToFindPassword = () => {
 </script>
 
 <style scoped>
+.find-id-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .find-id-container {
   width: 100%;
   max-width: 390px;
-  min-height: 100vh;
-  padding: 80px 24px 24px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   box-sizing: border-box;
   margin: 0 auto;
+  padding: 20px 24px 80px;
+}
+
+.content-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-section {
   width: 100%;
-  margin-bottom: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-section {
+  margin-top: auto;
+  padding-bottom: 390px;
 }
 
 .input-group {
@@ -134,15 +249,19 @@ const goToFindPassword = () => {
 .input-group > input {
   width: 100%;
   padding: 12px;
-  font-size: 15px; /* 입력된 텍스트의 크기를 15px로 설정 */
+  font-size: 15px;
   border: 1px solid var(--input-gray);
-  border-radius: 6px;
+  border-radius: 6px !important;
 }
 
-/* placeholder 색상과 기존 크기 유지 */
 .input-group > input::placeholder {
-  font-size: 13px; /* 기존 크기로 유지 */
+  font-size: 15px;
   color: var(--input-gray);
+}
+
+.input-group > input:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .phone-input-group {
@@ -152,14 +271,20 @@ const goToFindPassword = () => {
 
 .phone-input-group input {
   flex-grow: 1;
-  padding-right: 80px; /* 인증 버튼을 위한 여유 공간 */
+  padding-right: 180px;
 }
 
-.phone-auth-btn {
+.auth-button-wrapper,
+.confirm-button-timer-wrapper {
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.phone-auth-btn {
   padding: 6px 12px;
   background-color: var(--before-auth);
   color: var(--before-auth-text);
@@ -170,6 +295,24 @@ const goToFindPassword = () => {
   font-size: 15px;
 }
 
+.phone-auth-btn:disabled {
+  background-color: #d3d3d3;
+  color: #999999;
+  cursor: not-allowed;
+}
+
+.phone-auth-btn:not(:disabled) {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.countdown-timer {
+  margin-right: 8px;
+  font-size: 15px;
+  color: #ff4d4f;
+  white-space: nowrap;
+}
+
 .next-button-section {
   width: 100%;
   margin-bottom: 16px;
@@ -177,32 +320,102 @@ const goToFindPassword = () => {
 
 .next-btn {
   width: 100%;
-  height: 42px;
-  background-color: #dcd9f7;
+  height: 60px;
+  background-color: #e8e8fc;
   color: #7c77a3;
-  font-size: 16px;
+  font-size: 20px;
+  font-weight: bold;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   text-align: center;
-  line-height: 42px;
+  line-height: 60px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.next-btn-active {
+  background-color: var(--primary-color);
+  color: #ffffff;
 }
 
 .next-btn:disabled {
-  background-color: #f0f0f0;
+  background-color: var(--inactive-button);
+  color: var(--inactive-button-text);
+  cursor: not-allowed;
 }
 
-.password-recovery-section {
-  margin-top: 24px;
+.find-password-link {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #8e8e8e;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+  width: 100%;
 }
 
-.password-recovery-text {
-  margin-bottom: 8px;
+.forgot-password {
+  flex-shrink: 0;
 }
 
-.find-password-section {
-  color: #7c77a3;
+.find-password {
+  text-decoration: underline;
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+.verification-message-placeholder {
+  min-height: 20px;
+}
+
+.verification-result-message-placeholder {
+  min-height: 20px;
+}
+
+.verification-message {
+  color: var(--sub-text-gray);
+  font-size: 13px;
+  margin-top: -15px;
+  margin-bottom: 15px;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.verification-result-message {
+  font-size: 13px;
+  margin-top: -15px;
+  margin-bottom: 15px;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.verification-success {
+  color: var(--primary-color);
+}
+
+.verification-error {
+  color: #ff4d4f;
+}
+
+.navigation-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
 }
 </style>

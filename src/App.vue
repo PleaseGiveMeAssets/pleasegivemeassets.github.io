@@ -22,6 +22,7 @@ const route = useRoute();
 }
 
 .container {
+  padding: 0px;
   font-family: "Pretendard-Medium";
   padding: 0px;
 }
