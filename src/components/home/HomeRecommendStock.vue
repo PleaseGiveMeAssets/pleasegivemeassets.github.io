@@ -119,6 +119,7 @@ h2 {
   width: 100%; /* 전체 너비 사용 */
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 20px;
 }
 
 .stock-info {
@@ -188,6 +189,7 @@ h2 {
 
 .next-button {
   margin-left: 10px;
+  padding-right: 5px;
   padding-bottom: 5px;
 }
 </style>
