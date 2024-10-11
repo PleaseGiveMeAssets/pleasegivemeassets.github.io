@@ -42,13 +42,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHeaderStore } from "@/stores/headerStore";
 
 const router = useRouter();
 const route = useRoute();
-const isHomePage = ref(route.name === "home");
+const isHomePage = ref(false);
 
 const headerStore = useHeaderStore();
 
@@ -79,6 +79,10 @@ const handleDeleteAll = () => {
 };
 
 const goBack = () => router.back();
+
+watchEffect(() => {
+  isHomePage.value = route.name === "home";
+});
 </script>
 
 <style scoped>

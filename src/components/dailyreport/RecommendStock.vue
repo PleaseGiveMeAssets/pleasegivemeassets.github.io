@@ -1,16 +1,18 @@
 <template>
-  <section class="recommended-stocks">
-    <h2>PGMA(로고)</h2>
-    <div v-for="(stock, sIndex) in dailyRecommendStock" :key="sIndex">
-      <h3>{{ stock.stockName }}</h3>
-      <p
-        v-for="(recommendStock, rsIndex) in stock.dailyRecommendStockDTOList"
-        :key="rsIndex"
-      >
-        {{ recommendStock.content }}
-      </p>
-    </div>
-  </section>
+  <div class="card-ui">
+    <section>
+      <img class="logo" src="@/assets/icons/report-logo.svg" />
+      <div v-for="(stock, sIndex) in dailyRecommendStock" :key="sIndex">
+        <div
+          v-for="(recommendStock, rsIndex) in stock.dailyRecommendStockDTOList"
+          :key="rsIndex"
+        >
+          <h3>{{ recommendStock.stockName }}</h3>
+          <p>{{ recommendStock.content }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -41,7 +43,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.recommended-stocks {
+.card-ui {
+  background-color: var(--main-card-color);
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 60px;
+}
+
+.logo {
   margin-bottom: 20px;
+  height: 50px;
+  width: 50px;
 }
 </style>
