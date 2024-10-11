@@ -239,10 +239,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.saved-category {
-  padding-top: 70px;
-  margin-left: 10px;
-}
 .category-container {
   position: absolute;
   width: 390px;
@@ -360,11 +356,11 @@ onMounted(() => {
   color: #333;
 }
 .selected-border {
-  border-color: #9e85f6; /* 보라색 */
+  border-color: #9e85f6;
 }
 .saved-category {
-  margin-top: 20px;
-  padding-top: 60px;
+  margin-left: 15px;
+  padding-top: 70px;
 }
 
 .saved-category-item {
