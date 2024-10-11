@@ -69,7 +69,7 @@ import { onMounted, reactive } from "vue";
 // 추천 종목 데이터를 불러오기 위한 기본 URL 설정
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
 
 // 추천 종목 API 호출 함수
 const createRecommendStock = async () => {

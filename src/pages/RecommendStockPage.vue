@@ -86,7 +86,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 // 기본 URL과 종목 추천 데이터 설정
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const recommendStock = reactive([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
 const lastDisplayedDay = ref(0);
 
 // 날짜 정보와 선택 단위

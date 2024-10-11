@@ -21,7 +21,7 @@ import axios from "axios";
 const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
 const portfolio = reactive([]);
 const stockData = ref([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
 
 // 포트폴리오 데이터 로드 및 차트 초기화
 const createPortfolio = async () => {

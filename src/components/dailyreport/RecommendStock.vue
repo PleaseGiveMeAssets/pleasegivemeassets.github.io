@@ -19,7 +19,7 @@ import axios from "axios";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
 
 const createRecommendStock = async () => {
   try {
