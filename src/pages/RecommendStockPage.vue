@@ -35,17 +35,20 @@
         :key="sIndex"
         class="stock-group"
       >
+        <!-- 선택된 단위가 'month'일 때만 날짜 표시 -->
+        <div v-if="selectedUnit === 'month'" class="stock-day">
+          {{ stock.day }}일
+        </div>
         <div
           v-for="(rs, rsIndex) in stock.dailyRecommendStockDTOList"
           :key="rsIndex"
           class="stock-item"
         >
-          <div class="stock-day">{{ rs.day }}일</div>
           <!-- 날짜 부분 -->
           <div class="stock-details">
             <div class="stock-info">
-              <div class="stock-name">{{ stock.stockName }}</div>
-              <div class="short-code">{{ stock.shortCode }}</div>
+              <div class="stock-name">{{ rs.stockName }}</div>
+              <div class="short-code">{{ rs.shortCode }}</div>
             </div>
             <div class="stock-price-info">
               <div class="stock-price">{{ rs.price }}원</div>
@@ -54,7 +57,7 @@
                   rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
                 "
               >
-                {{ rs.changeAmount > 0 ? "▲" : "▼"
+                {{ rs.changeAmount > 0 ? "▲" : rs.changeAmount < 0 ? "▼" : ""
                 }}{{ Math.abs(rs.changeAmount) }}원
               </div>
             </div>
@@ -84,6 +87,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const recommendStock = reactive([]);
 const token = localStorage.getItem("token");
+const lastDisplayedDay = ref(0);
 
 // 날짜 정보와 선택 단위
 const currentDate = ref(new Date().toISOString().slice(0, 10)); // 기본 현재 날짜
