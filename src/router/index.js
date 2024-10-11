@@ -24,7 +24,7 @@ import RecommendStockPage from "@/pages/RecommendStockPage.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: HomePage },
+    { path: "/", name: "home", component: HomePage },
     {
       path: "/stock/:stockId",
       component: StockPage,

@@ -22,6 +22,11 @@
     >
       <img src="@/assets/icons/edit-form-icon.svg" />
     </button>
+    <img
+      v-if="isHomePage"
+      class="notification-icon"
+      src="@/assets/icons/notification-icon.svg"
+    />
   </header>
   <div v-if="isModalVisible" class="modal-overlay" @click="toggleModal">
     <div class="modal-content" @click.stop>
@@ -43,6 +48,7 @@ import { useHeaderStore } from "@/stores/headerStore";
 
 const router = useRouter();
 const route = useRoute();
+const isHomePage = ref(route.name === "home");
 
 const headerStore = useHeaderStore();
 
@@ -196,5 +202,9 @@ p {
 .modal-content button:nth-child(3) {
   background-color: var(--warning-color);
   color: #ffffff;
+}
+.notification-icon {
+  position: absolute;
+  left: 89%;
 }
 </style>
