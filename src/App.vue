@@ -28,6 +28,7 @@ const route = useRoute();
 
 .bottom-nav-bar {
   position: fixed;
+  padding: 10px;
   margin: 0 auto;
   bottom: 0;
   left: 0;
