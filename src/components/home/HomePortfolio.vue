@@ -48,6 +48,11 @@ const createPortfolio = async () => {
     }));
   } catch (err) {
     console.error("createPortfolio error:", err.message);
+
+    if (err.response && err.response.status === 500) {
+      localStorage.removeItem("accessToken");
+      router.push("/login");
+    }
   }
 };
 
