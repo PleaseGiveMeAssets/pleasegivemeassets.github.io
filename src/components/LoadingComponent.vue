@@ -1,8 +1,12 @@
 <template>
   <div class="loading-overlay">
-    <div class="loading-spinner">
-      <!-- 로딩 스피너 또는 로딩 메시지 -->
-      Loading...
+    <div class="loading-containerList">
+      <!-- 로딩 중일 때 보여줄 내용 (로딩 스피너나 메시지) -->
+      <img
+        src="/public/images/spinNuguri.png"
+        alt="loading"
+        class="loading-image"
+      />
     </div>
   </div>
 </template>
@@ -18,11 +22,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
-.loading-spinner {
-  font-size: 24px;
-  color: white;
+.loading-image {
+  padding-top: 200px;
+  width: 200px; /* 원하는 크기로 설정 */
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

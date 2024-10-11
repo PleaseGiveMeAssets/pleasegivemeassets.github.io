@@ -54,7 +54,7 @@ onMounted(createPortfolio);
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
-  padding-top: 60px;
+  padding-top: 20px;
 }
 
 .card-ui {
@@ -71,6 +71,7 @@ h2 {
 
 .next-button {
   margin-left: auto;
-  padding-top: 50px;
+  padding-right: 5px;
+  padding-top: 10px;
 }
 </style>

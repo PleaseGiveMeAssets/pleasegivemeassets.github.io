@@ -35,17 +35,20 @@
         :key="sIndex"
         class="stock-group"
       >
+        <!-- 선택된 단위가 'month'일 때만 날짜 표시 -->
+        <div v-if="selectedUnit === 'month'" class="stock-day">
+          {{ stock.day }}일
+        </div>
         <div
           v-for="(rs, rsIndex) in stock.dailyRecommendStockDTOList"
           :key="rsIndex"
           class="stock-item"
         >
-          <div class="stock-day">{{ rs.day }}일</div>
           <!-- 날짜 부분 -->
           <div class="stock-details">
             <div class="stock-info">
-              <div class="stock-name">{{ stock.stockName }}</div>
-              <div class="short-code">{{ stock.shortCode }}</div>
+              <div class="stock-name">{{ rs.stockName }}</div>
+              <div class="short-code">{{ rs.shortCode }}</div>
             </div>
             <div class="stock-price-info">
               <div class="stock-price">{{ rs.price }}원</div>
@@ -54,7 +57,7 @@
                   rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
                 "
               >
-                {{ rs.changeAmount > 0 ? "▲" : "▼"
+                {{ rs.changeAmount > 0 ? "▲" : rs.changeAmount < 0 ? "▼" : ""
                 }}{{ Math.abs(rs.changeAmount) }}원
               </div>
             </div>
@@ -84,6 +87,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const recommendStock = reactive([]);
 const token = localStorage.getItem("token");
+const lastDisplayedDay = ref(0);
 
 // 날짜 정보와 선택 단위
 const currentDate = ref(new Date().toISOString().slice(0, 10)); // 기본 현재 날짜
@@ -115,7 +119,7 @@ onMounted(() => createRecommendStock(currentDate.value));
 
 <style scoped>
 .recommendations-page {
-  padding-top: 100px;
+  padding-top: 20px;
   font-family: Arial, sans-serif;
 }
 
@@ -154,6 +158,7 @@ onMounted(() => createRecommendStock(currentDate.value));
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  padding-bottom: 30px;
 }
 
 .stock-group {
@@ -163,15 +168,15 @@ onMounted(() => createRecommendStock(currentDate.value));
 .stock-item {
   display: flex;
   flex-direction: column; /* 날짜는 위에, 나머지는 아래로 정렬 */
-  margin-bottom: 10px;
+  padding-bottom: 30px;
 }
 
 .stock-day {
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  padding-top: 20px;
   margin-bottom: 5px;
+  padding-bottom: 10px;
 }
 
 .stock-details {
@@ -205,11 +210,14 @@ onMounted(() => createRecommendStock(currentDate.value));
 }
 
 .stock-change-rate {
+  flex: none;
+  text-align: right; /* 우측 정렬 */
   font-weight: bold;
-  padding: 10px;
+  padding: 10px 10px; /* 상하 여백을 줄임 */
   border-radius: 8px;
   background-color: gray;
   color: white;
+  min-width: 70px; /* 최소 너비를 설정 (필요에 따라 조정) */
 }
 
 .stock-change-rate.up {

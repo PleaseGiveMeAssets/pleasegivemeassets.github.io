@@ -14,13 +14,17 @@ import StockSearchPage from "@/pages/StockSearch.vue";
 import MyStockListViewPage from "@/pages/MyStockListViewPage.vue";
 import AccountManagement from "@/pages/AccountManagement.vue";
 import StockPortfolioDetailPage from "@/pages/StockPortfolioDetailPage.vue";
+import LoginPage from "@/pages/LoginPage.vue";
+import FindIdPage from "@/pages/FindIdPage.vue";
+import AuthLoginHanddler from "@/components/AuthLoginHandler.vue";
+import MainPage from "@/pages/MainPage.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import RecommendStockPage from "@/pages/RecommendStockPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: HomePage },
+    { path: "/", name: "home", component: HomePage },
     {
       path: "/stock/:stockId",
       component: StockPage,
@@ -50,6 +54,44 @@ const router = createRouter({
     { path: "/myStocklist", component: MyStockListViewPage },
     { path: "/account-management", component: AccountManagement },
     { path: "/recommendstock", component: RecommendStockPage },
+    {
+      path: "/login",
+      component: LoginPage,
+      meta: { requiresAuth: false },
+      beforeEnter: (to, from, next) => {
+        if (isLoggedIn()) {
+          next({ path: "/" });
+        } else {
+          next();
+        }
+      },
+    },
+    { path: "/find-id", component: FindIdPage },
+    { path: "/auth/login/:service", component: AuthLoginHanddler },
+    { path: "/main", component: MainPage, meta: { hideNavbar: true } },
+    {
+      path: "/auth/logout/kakao",
+      component: {
+        mounted() {
+          this.$router.push("/main");
+        },
+      },
+    },
   ],
 });
+
+// 로그인 상태 확인
+function isLoggedIn() {
+  return !!localStorage.getItem("accessToken");
+}
+
+// 전역 네비게이션 가드
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isLoggedIn()) {
+    next({ name: "Login" });
+  } else {
+    next();
+  }
+});
+
 export default router;
