@@ -133,7 +133,7 @@ const goToFindPassword = () => {
   width: 100%;
   max-width: 390px;
   min-height: 100vh;
-  padding: 80px 24px 24px;
+  padding: 20px 24px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;

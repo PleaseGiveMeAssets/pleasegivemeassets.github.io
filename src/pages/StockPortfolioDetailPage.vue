@@ -88,8 +88,9 @@ const orderFormData = computed(() => {
     orderType: formType.value,
     stockName: stockPortfolioData.value.name,
     shortCode: props.stockId,
-    price: stockPortfolioData.value.totalPrice,
+    price: stockPortfolioData.value.avgPrice,
     quantity: stockPortfolioData.value.totalQuantity,
+    recentPrice: stockPortfolioData.value.recentPrice,
   };
 });
 
@@ -119,14 +120,18 @@ onMounted(async () => {
 <style scoped>
 .container {
   font-family: "Pretendard-Bold";
-  padding-top: 48px;
+  padding: 10px 0px 140px 0px;
 }
 
 .card-ui {
   background-color: var(--main-card-color);
-  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  gap: 10px;
+  transition: transform 0.2s;
+  margin-bottom: 20px;
+  padding: 10px;
+  font-family: "Pretendard-Bold";
 }
 
 .stock-order-button-container {
@@ -138,7 +143,7 @@ onMounted(async () => {
   display: flex;
   background-color: #ffffff;
   justify-content: space-around;
-  padding: 30px 0px 0px 20px;
+  padding: 30px 0px 0px;
 }
 
 .sell-button {

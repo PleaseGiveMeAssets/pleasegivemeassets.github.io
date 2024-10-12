@@ -1,46 +1,49 @@
 <template>
-  <section class="pgma-logo">
-    <h2>PGMA(로고)</h2>
-    <img
-      src="https://via.placeholder.com/300x100?text=표지+그림+들어갈+곳+위딩+:+일일+종목+동향"
-      alt="표지 그림"
-    />
-  </section>
+  <div class="card-ui">
+    <section>
+      <img class="logo" src="@/assets/icons/report-logo.svg" />
+      <img class="cover" src="@/assets/icons/report-cover.svg" />
+    </section>
+  </div>
 
-  <section class="latest-trend">
-    <h2>PGMA(로고)</h2>
-    <h3>{{ trend.recentTrendTitle }}</h3>
-    <p>
-      {{ trend.recentTrendContent }}
-    </p>
-  </section>
+  <div class="card-ui">
+    <section>
+      <img class="logo" src="@/assets/icons/report-logo.svg" />
+      <h3>{{ trend.recentTrendTitle }}</h3>
+      <p>
+        {{ trend.recentTrendContent }}
+      </p>
+    </section>
 
-  <section class="stock-trend">
-    <h3>{{ trend.stockTrendTitle }}</h3>
-    <p>
-      {{ trend.stockTrendContent }}
-    </p>
-  </section>
+    <section>
+      <h3>{{ trend.stockTrendTitle }}</h3>
+      <p>
+        {{ trend.stockTrendContent }}
+      </p>
+    </section>
+  </div>
 
-  <section class="market-index">
-    <h2>PGMA(로고)</h2>
-    <div class="index-cards">
-      <div class="index-card">
-        <h4>코스닥</h4>
-        <p class="price">{{ trend.kosdaqPrice }}</p>
-        <p class="change" :class="trend.kosdaqProfitRate < 0 ? 'down' : 'up'">
-          {{ trend.kosdaqProfitRate }}%
-        </p>
+  <div class="card-ui">
+    <section>
+      <img class="logo" src="@/assets/icons/report-logo.svg" />
+      <div class="index-cards">
+        <div class="index-card">
+          <h4>코스닥</h4>
+          <p class="price">{{ trend.kosdaqPrice }}</p>
+          <p class="change" :class="trend.kosdaqProfitRate < 0 ? 'down' : 'up'">
+            {{ trend.kosdaqProfitRate }}%
+          </p>
+        </div>
+        <div class="index-card">
+          <h4>코스피</h4>
+          <p class="price">{{ trend.kospiPrice }}</p>
+          <p class="change" :class="trend.kospiProfitRate < 0 ? 'down' : 'up'">
+            {{ trend.kospiProfitRate }}%
+          </p>
+        </div>
       </div>
-      <div class="index-card">
-        <h4>코스피</h4>
-        <p class="price">{{ trend.kospiPrice }}</p>
-        <p class="change" :class="trend.kospiProfitRate < 0 ? 'down' : 'up'">
-          {{ trend.kospiProfitRate }}%
-        </p>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -49,7 +52,7 @@ import axios from "axios";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const trend = reactive([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
 
 const createTrend = async () => {
   try {
@@ -71,13 +74,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.latest-trend,
-.stock-trend {
-  margin-bottom: 20px;
-}
-
-.market-index {
-  margin-bottom: 20px;
+.card-ui {
+  background-color: var(--main-card-color);
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
 }
 
 .index-cards {
@@ -105,8 +108,17 @@ onMounted(() => {
   color: red;
 }
 
-.pgma-logo img {
-  margin: 20px 0;
-  width: 100%;
+.logo {
+  height: 50px;
+  width: 50px;
+  margin-bottom: 20px;
+}
+
+.cover {
+  height: 60px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+  margin-top: 10px;
 }
 </style>

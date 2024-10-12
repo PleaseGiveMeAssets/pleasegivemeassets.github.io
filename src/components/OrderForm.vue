@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="modal-content" @click="closeTextModal">
-      <button class="close-button" @click="emitUpdate">닫기</button>
+      <button class="close-button" @click="emitUpdate">
+        <img src="@/assets/icons/close-form-icon.svg" />
+      </button>
       <div>
         {{
           data.orderType === "sell"
@@ -12,7 +14,7 @@
         }}
       </div>
       <button class="submit-button" type="submit" @click="submitOrderForm">
-        <SaveFormIcon />
+        <img src="@/assets/icons/portfolio-form-save-icon.svg" />
       </button>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="data" class="orderForm">
@@ -228,8 +230,7 @@ td:nth-child(2) {
   top: 10px;
   left: 10px;
   padding: 10px;
-  background-color: red;
-  color: white;
+  background-color: white;
   border: none;
   cursor: pointer;
 }
@@ -246,8 +247,7 @@ td:nth-child(2) {
   top: 10px;
   right: 10px;
   padding: 10px;
-  background-color: green;
-  color: white;
+  background-color: white;
   border: none;
   cursor: pointer;
 }

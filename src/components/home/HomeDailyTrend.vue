@@ -20,7 +20,7 @@ import { onMounted, reactive } from "vue";
 // 기본 URL과 동향 요약 데이터 설정
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const dailyTrendSummarized = reactive({});
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
 
 // 동향 요약 데이터 불러오기
 const createDailyTrend = async () => {

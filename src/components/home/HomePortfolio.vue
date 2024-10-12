@@ -1,7 +1,11 @@
 <template>
   <div class="portfolio">
     <h2>포트폴리오</h2>
-    <img class="next-button" src="@/assets/icons/nextButton-icon.svg" />
+    <img
+      class="next-button"
+      src="@/assets/icons/nextButton-icon.svg"
+      @click="movePortfolio"
+    />
   </div>
   <div class="card-ui">
     <section>
@@ -16,12 +20,18 @@
 import { ref, reactive, onMounted, nextTick } from "vue";
 import DonutChart from "@/components/DoughnutChart.vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 // API URL 및 상태 관리
 const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
 const portfolio = reactive([]);
 const stockData = ref([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
+const router = useRouter();
+
+const movePortfolio = () => {
+  router.push("/portfolio");
+};
 
 // 포트폴리오 데이터 로드 및 차트 초기화
 const createPortfolio = async () => {
@@ -38,6 +48,11 @@ const createPortfolio = async () => {
     }));
   } catch (err) {
     console.error("createPortfolio error:", err.message);
+
+    if (err.response && err.response.status === 500) {
+      localStorage.removeItem("accessToken");
+      router.push("/login");
+    }
   }
 };
 
@@ -54,7 +69,7 @@ onMounted(createPortfolio);
 h2 {
   font-size: 18px;
   margin-bottom: 10px;
-  padding-top: 60px;
+  padding-top: 20px;
 }
 
 .card-ui {
@@ -71,6 +86,7 @@ h2 {
 
 .next-button {
   margin-left: auto;
-  padding-top: 50px;
+  padding-right: 5px;
+  padding-top: 10px;
 }
 </style>

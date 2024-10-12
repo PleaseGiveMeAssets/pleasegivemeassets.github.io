@@ -2,16 +2,16 @@
   <div class="recommend-stock">
     <h2>일일추천종목</h2>
     <p class="ai-stock">AI 추천 종목 현황</p>
-    <img class="next-button" src="@/assets/icons/nextButton-icon.svg" />
+    <img
+      class="next-button"
+      src="@/assets/icons/nextButton-icon.svg"
+      @click="moveRecommendStock"
+    />
   </div>
   <div class="card-ui">
     <section>
       <div class="home-recommend-stock">
-        <div
-          v-for="(stock, sIndex) in dailyRecommendStock"
-          :key="sIndex"
-          class="stock-item"
-        >
+        <div v-for="(stock, sIndex) in dailyRecommendStock" :key="sIndex">
           <div
             v-for="(
               recommendStock, rsIndex
@@ -65,11 +65,17 @@
 <script setup>
 import axios from "axios";
 import { onMounted, reactive } from "vue";
+import { useRouter } from "vue-router";
 
 // 추천 종목 데이터를 불러오기 위한 기본 URL 설정
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("accessToken");
+const router = useRouter();
+
+const moveRecommendStock = () => {
+  router.push("/recommendstock");
+};
 
 // 추천 종목 API 호출 함수
 const createRecommendStock = async () => {
@@ -97,6 +103,7 @@ onMounted(createRecommendStock);
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 80px;
 }
 
 h2 {
@@ -110,15 +117,12 @@ h2 {
   flex-direction: column;
 }
 
-.stock-item {
-  margin-bottom: 10px;
-}
-
 .stock-price-info {
   display: flex;
   width: 100%; /* 전체 너비 사용 */
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 20px;
 }
 
 .stock-info {
@@ -188,6 +192,7 @@ h2 {
 
 .next-button {
   margin-left: 10px;
+  padding-right: 5px;
   padding-bottom: 5px;
 }
 </style>

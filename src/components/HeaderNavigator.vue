@@ -22,6 +22,11 @@
     >
       <img src="@/assets/icons/edit-form-icon.svg" />
     </button>
+    <img
+      v-if="isHomePage"
+      class="notification-icon"
+      src="@/assets/icons/notification-icon.svg"
+    />
   </header>
   <div v-if="isModalVisible" class="modal-overlay" @click="toggleModal">
     <div class="modal-content" @click.stop>
@@ -37,12 +42,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHeaderStore } from "@/stores/headerStore";
 
 const router = useRouter();
 const route = useRoute();
+const isHomePage = ref(false);
 
 const headerStore = useHeaderStore();
 
@@ -73,6 +79,10 @@ const handleDeleteAll = () => {
 };
 
 const goBack = () => router.back();
+
+watchEffect(() => {
+  isHomePage.value = route.name === "home";
+});
 </script>
 
 <style scoped>
@@ -196,5 +206,9 @@ p {
 .modal-content button:nth-child(3) {
   background-color: var(--warning-color);
   color: #ffffff;
+}
+.notification-icon {
+  position: absolute;
+  left: 89%;
 }
 </style>

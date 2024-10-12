@@ -22,7 +22,7 @@ import myIcon from "@/assets/icons/my-icon.svg";
 
 const menuItems = reactive([
   { name: "홈", path: "/", icon: homeIcon },
-  { name: "리포트", path: "/report", icon: reportIcon },
+  { name: "리포트", path: "/dailyreport", icon: reportIcon },
   { name: "포트폴리오", path: "/portfolio", icon: portfolioIcon },
   { name: "MY", path: "/myProfile", icon: myIcon },
 ]);
