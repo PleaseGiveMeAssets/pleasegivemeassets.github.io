@@ -44,7 +44,7 @@ const createPortfolio = async () => {
 
     stockData.value = portfolio.map((stock) => ({
       name: stock.stockName,
-      value: stock.totalQuantity * stock.totalPrice,
+      value: stock.totalPrice,
     }));
   } catch (err) {
     console.error("createPortfolio error:", err.message);
