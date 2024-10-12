@@ -183,7 +183,7 @@ onMounted(() => {
 <style scoped>
 .scrap-page {
   padding: 14px;
-  padding-top: 80px;
+  padding-top: 20px;
 }
 
 .tabs {
