@@ -1,28 +1,26 @@
-
-import StockPage from "@/pages/StockPage.vue";
-import SurveyPage from "@/pages/SurveyPage.vue";
+import StockPage from '@/pages/StockPage.vue';
+import SurveyPage from '@/pages/SurveyPage.vue';
 import SurveyLoadingPage from '@/pages/SurveyLoadingPage.vue';
-import SurveyResultPage from "@/pages/SurveyResultPage.vue";
-import MyprofilePage from "@/pages/MyProfilePage.vue";
-import InterestPage from "@/pages/InterestPage.vue";
-import NotificationsPage from "@/pages/NotificationsPage.vue";
-import ProfileEditPage from "@/pages/ProfileEditPage.vue";
-import SavedPage from "@/pages/SavedPage.vue";
-import SettingsPage from "@/pages/SettingsPage.vue";
-import DailyReportPage from "@/pages/DailyReportPage.vue";
-import HomePage from "@/pages/HomePage.vue";
-import StockPortfolioPage from "@/pages/StockPortfolio.vue";
-import StockSearchPage from "@/pages/StockSearch.vue";
-import MyStockListViewPage from "@/pages/MyStockListViewPage.vue";
-import AccountManagement from "@/pages/AccountManagement.vue";
-import StockPortfolioDetailPage from "@/pages/StockPortfolioDetailPage.vue";
-import LoginPage from "@/pages/LoginPage.vue";
-import FindIdPage from "@/pages/FindIdPage.vue";
-import AuthLoginHanddler from "@/components/AuthLoginHandler.vue";
-import MainPage from "@/pages/MainPage.vue";
-import { createRouter, createWebHistory } from "vue-router";
-import RecommendStockPage from "@/pages/RecommendStockPage.vue";
-
+import SurveyResultPage from '@/pages/SurveyResultPage.vue';
+import MyprofilePage from '@/pages/MyprofilePage.vue';
+import InterestPage from '@/pages/InterestPage.vue';
+import NotificationsPage from '@/pages/NotificationsPage.vue';
+import ProfileEditPage from '@/pages/ProfileEditPage.vue';
+import SavedPage from '@/pages/SavedPage.vue';
+import SettingsPage from '@/pages/SettingsPage.vue';
+import DailyReportPage from '@/pages/DailyReportPage.vue';
+import HomePage from '@/pages/HomePage.vue';
+import StockPortfolioPage from '@/pages/StockPortfolio.vue';
+import StockSearchPage from '@/pages/StockSearch.vue';
+import MyStockListViewPage from '@/pages/MyStockListViewPage.vue';
+import AccountManagement from '@/pages/AccountManagement.vue';
+import StockPortfolioDetailPage from '@/pages/StockPortfolioDetailPage.vue';
+import LoginPage from '@/pages/LoginPage.vue';
+import FindIdPage from '@/pages/FindIdPage.vue';
+import AuthLoginHanddler from '@/components/AuthLoginHandler.vue';
+import MainPage from '@/pages/MainPage.vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import RecommendStockPage from '@/pages/RecommendStockPage.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,9 +36,13 @@ const router = createRouter({
       component: StockPortfolioDetailPage,
       props: true,
     },
-    { path: '/survey', component: SurveyPage }, // Survey 경로 추가
+    { path: '/survey', name: 'survey', component: SurveyPage }, // Survey 경로 추가
     { path: '/survey-loading', component: SurveyLoadingPage }, // SurveyLoading 경로추가
-    { path: '/survey-result', component: SurveyResultPage }, // SurveyResult 경로추가
+    {
+      path: '/survey-result',
+      name: 'survey-result',
+      component: SurveyResultPage,
+    }, // SurveyResult 경로추가
     {
       path: '/myProfile', // MyProfile 경로 추가
       component: MyprofilePage,
