@@ -60,7 +60,21 @@ const initializeChart = () => {
         },
         x: {
           title: {
-            display: true,
+            display: false,
+            text: "날짜",
+          },
+          ticks: {
+            callback: function (value, index, values) {
+              const label = this.getLabelForValue(value);
+              // 날짜 형식 변환: 20240930 -> 24.09.30
+              return (
+                label.slice(2, 4) +
+                "." +
+                label.slice(4, 6) +
+                "." +
+                label.slice(6, 8)
+              );
+            },
           },
         },
       },
@@ -88,7 +102,8 @@ watch(
 .chart-wrapper {
   position: relative;
   width: 300px;
-  height: 200px;
+  height: 300px;
   padding-bottom: 20px;
+  background-color: #6e2ff4;
 }
 </style>

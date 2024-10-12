@@ -10,8 +10,11 @@
     </div>
 
     <div v-else>
-      <!-- 우측 상단 편집 버튼 -->
-      <div v-if="hasAssetData">
+      <!-- 차트 로딩 애니메이션 적용 -->
+      <div
+        v-if="hasAssetData"
+        :class="['chart-wrapper', { 'chart-visible': chartVisible }]"
+      >
         <button class="edit-button" @click="goToEditPage">편집</button>
         <!-- 도넛 차트 -->
         <div class="chart-content" @click="goToStockSearchList">
@@ -56,13 +59,15 @@
               :key="index"
               class="stock-item"
             >
-              <div class="stock-info">
-                <p class="stock-name">{{ stock.name }}</p>
-                <p class="stock-shortcode">{{ stock.shortCode }}</p>
-              </div>
-              <div class="stock-market">
-                {{ formatCurrency(stock.value) }}원
-              </div>
+              <router-link :to="`/stock/${stockId}`" class="noUnderline">
+                <div class="stock-info">
+                  <p class="stock-name">{{ stock.name }}</p>
+                  <p class="stock-shortcode">{{ stock.shortCode }}</p>
+                </div>
+                <div class="stock-market">
+                  {{ formatCurrency(stock.value) }}원
+                </div>
+              </router-link>
             </li>
           </ul>
         </div>
@@ -94,6 +99,16 @@ import LineChart from "../components/LineChart.vue";
 import EmptyAssetBox from "../components/EmptyAssetBox.vue";
 import SellBuyButton from "../components/SellBuyButton.vue";
 
+const BASE = `${import.meta.env.VITE_API_URL}`;
+// JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
+const getToken = () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    router.push({ path: "/login" }); // 로그인 페이지로 이동
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
+  }
+  return token;
+};
 // 라우터 객체 가져오기
 const router = useRouter();
 
@@ -132,22 +147,32 @@ const loading = ref(true); // 데이터를 불러오는 중인지 여부를 추�
 // 차트 데이터를 저장하는 ref
 const stockData = ref([]);
 const topStocks = ref([]);
-// API로부터 데이터를 가져오는 함수
+
+// 도넛 데이터를 가져오는 함수
 const fetchPortfolioData = async () => {
+  const token = getToken(); // 토큰 가져오기
+
   try {
-    const response = await axios.get("/api/portfolio");
+    const response = await axios.get(`${BASE}/portfolio`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
+      },
+    });
     const portfolioData = response.data;
 
     // 가져온 데이터를 원하는 형식으로 변환
     stockData.value = portfolioData.map((item) => ({
       name: item.stockName,
+      stockId: item.stockId,
       shortCode: item.shortCode,
       value: item.totalPrice,
     }));
+
     // 상위 5개 종목 추출
     topStocks.value = stockData.value
       .sort((a, b) => b.value - a.value)
       .slice(0, 3); // 상위 5개 종목만 추출
+
     hasAssetData.value = stockData.value.length > 0;
   } catch (error) {
     console.error("Error fetching portfolio data:", error);
@@ -156,9 +181,17 @@ const fetchPortfolioData = async () => {
   }
 };
 
+// 수익률 데이터를 가져오는 함수
 const fetchProfitData = async () => {
+  const token = getToken(); // 토큰 가져오기
+
   try {
-    const response = await axios.get("/api/stock/total");
+    const response = await axios.get(`${BASE}/stock/total`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
+      },
+    });
+
     const assetDataResponse = response.data;
     if (assetDataResponse) {
       assetData.value.purchaseAmount = assetDataResponse.totalInvestedAmount;
@@ -178,9 +211,17 @@ const fetchProfitData = async () => {
 
 const formatCurrency = (value) => Math.round(value).toLocaleString();
 
-onMounted(async () => {
+// 그래프 데이터 API 호출 함수
+const fetchWeeklyGraphData = async () => {
+  const token = getToken(); // 토큰 가져오기
+
   try {
-    const response = await axios.get("/api/weekly-graph");
+    const response = await axios.get(`${BASE}/weekly-graph`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
+      },
+    });
+
     const stockData = response.data;
 
     // 차트의 라벨로 사용할 날짜 배열
@@ -201,8 +242,19 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching stock portfolio info:", error);
   }
-  fetchPortfolioData();
-  fetchProfitData();
+};
+const chartVisible = ref(false); // 차트가 로딩 후 나타나는 애니메이션 상태
+// 컴포넌트 마운트 시 호출
+onMounted(async () => {
+  await fetchWeeklyGraphData(); // 데이터를 fetch하는 함수 호출
+  await fetchPortfolioData(); // 추가 데이터 가져오기
+  await fetchProfitData(); // 추가 데이터 가져오기
+
+  // 로딩이 완료된 후 너구리 애니메이션을 멈추고 차트를 보여줍니다.
+  loading.value = false;
+  setTimeout(() => {
+    chartVisible.value = true; // 차트가 서서히 나타나도록 상태 변경
+  }, 100); // 짧은 지연 후 차트 애니메이션 시작
 });
 </script>
 
@@ -212,18 +264,44 @@ onMounted(async () => {
   width: 100%;
   margin: 0 auto;
   text-align: center;
-  padding-top: 10px;
-  padding-left: 8px;
+  padding-left: 0;
+}
+.chart-wrapper {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 1s ease-in-out,
+    transform 0.5s ease-in-out;
+}
+.chart-wrapper.chart-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.edit-button {
+  position: absolute;
+  top: 10px; /* 상단에서의 위치 조정 */
+  right: 10px; /* 우측에서의 위치 조정 */
+  z-index: 10; /* 차트보다 앞에 오도록 z-index를 높게 설정 */
+  background-color: #ccc;
+  color: black;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  background-color: #bbb;
 }
 .edit-button {
   position: absolute;
-  top: 60px;
+  top: 20px;
   right: 15px;
   font-size: 12px;
   padding: 4px 8px;
   background-color: #ccc;
   color: black;
-  border: none;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -254,7 +332,7 @@ onMounted(async () => {
 
 .info-box {
   padding: 10px;
-  background-color: #000;
+  background-color: black;
   color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -317,6 +395,8 @@ h6 {
   padding-top: 200px;
   width: 200px; /* 원하는 크기로 설정 */
   animation: spin 0.5s linear infinite;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
 }
 
 @keyframes spin {

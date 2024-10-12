@@ -13,7 +13,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const goToAssetInput = () => {
-  router.push({ path: "/asset-input" }); // 자산 입력 페이지로 이동
+  router.push({ path: "/stocksearch" }); // 자산 입력 페이지로 이동
 };
 </script>
 

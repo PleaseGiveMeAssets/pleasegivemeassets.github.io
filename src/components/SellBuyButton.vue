@@ -38,10 +38,10 @@ const goToBuyPage = () => {
 }
 
 .sell-button {
-  background-color: blue;
+  background-color: var(--bear-color);
 }
 
 .buy-button {
-  background-color: red;
+  background-color: var(--bull-color);
 }
 </style>

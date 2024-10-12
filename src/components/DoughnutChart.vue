@@ -46,7 +46,7 @@
         font-size="14"
         font-weight="bold"
       >
-        총액
+        평가 총액
       </text>
       <text
         :x="centerX"
