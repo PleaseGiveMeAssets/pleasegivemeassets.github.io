@@ -7,29 +7,34 @@
     <div class="notification-list">
       <div
         v-for="notification in notifications"
-        :key="notification.id"
+        :key="notification.notificationId"
         class="swipeable"
         @touchstart="handleTouchStart($event, $event.currentTarget)"
         @touchmove="handleTouchMove($event, $event.currentTarget)"
         @touchend="handleTouchEnd"
       >
-        <div class="notification-item">
+        <div class="notification-item" @click="test">
           <div class="icon-and-type">
             <div class="icon">
-              <img :src="getIcon(notification.type)" alt="icon" />
+              <img :src="getIcon(notification.messageType)" alt="icon" />
             </div>
             <div class="content">
-              <p class="type">{{ getNotificationType(notification.type) }}</p>
+              <p class="type">
+                {{ getNotificationType(notification.messageType) }}
+              </p>
               <p class="time">{{ timeAgo(notification.createdAt) }}</p>
             </div>
           </div>
+          <!-- DB에서 가져온 메시지 표시 -->
           <p class="message">{{ notification.message }}</p>
           <p class="sub-message">자세히 보기</p>
         </div>
         <div class="delete-button-container">
           <button
             class="delete-button"
-            @click="deleteNotification(notification.id)"
+            @click.stop="
+              deleteNotification(userId, notification.notificationId)
+            "
           >
             삭제
           </button>
@@ -42,26 +47,38 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ToggleSwitch from "@/components/ToggleSwitch.vue";
-import { getNotifications } from "@/services/notificationService";
-
+import axios from "axios";
 import priceIcon from "@/assets/notification-icons/price-change.svg";
 import recommendationIcon from "@/assets/notification-icons/recommendation.svg";
 import reportIcon from "@/assets/notification-icons/report.svg";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const userId = "testUser1"; // 특정 사용자 ID (예: testUser1)
+
 const notificationEnabled = ref(true);
 const notifications = ref([]);
-
-onMounted(() => {
-  notifications.value = getNotifications();
+onMounted(async () => {
+  notifications.value = await fetchNotifications(userId);
 });
+
+const fetchNotifications = async (userId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/notifications/${userId}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch notifications:", error);
+    return [];
+  }
+};
 
 const getIcon = (type) => {
   switch (type) {
-    case "price":
+    case "P":
       return priceIcon;
-    case "recommendation":
+    case "S":
       return recommendationIcon;
-    case "report":
+    case "R":
       return reportIcon;
     default:
       return "";
@@ -70,11 +87,11 @@ const getIcon = (type) => {
 
 const getNotificationType = (type) => {
   switch (type) {
-    case "price":
+    case "P":
       return "가격변동 알림";
-    case "recommendation":
+    case "S":
       return "추천종목 알림";
-    case "report":
+    case "R":
       return "리포트 알림";
     default:
       return "";
@@ -88,8 +105,17 @@ const timeAgo = (date) => {
   return days > 0 ? `${days}일 전` : hours > 0 ? `${hours}시간 전` : "방금 전";
 };
 
-const deleteNotification = (id) => {
-  notifications.value = notifications.value.filter((n) => n.id !== id);
+const deleteNotification = async (userId, id) => {
+  try {
+    console.log(`Deleting notification with ID: ${id}`);
+    await axios.delete(`${API_BASE_URL}/notifications/${userId}/${id}`);
+    notifications.value = notifications.value.filter(
+      (n) => n.notificationId !== id,
+    );
+    console.log("Updated notifications:", notifications.value);
+  } catch (error) {
+    console.error("Failed to delete notification:", error);
+  }
 };
 
 const startX = ref(0);
@@ -126,7 +152,7 @@ p {
 }
 .notification-page {
   position: relative;
-  padding-top: 70px;
+  padding-top: 20px;
   width: 100%;
 }
 
@@ -144,7 +170,7 @@ p {
 .notification-list {
   display: flex;
   flex-direction: column;
-  margin-left: -12px;
+  margin-left: -16px;
   width: 100vw;
 }
 

@@ -3,7 +3,7 @@
     <h1 class="text-center">투자유형 분석</h1>
 
     <div v-if="investmentType" class="result-container">
-      <h2>{{ userName }}님의 투자 유형 분석을 완료하였습니다.</h2>
+      <h2>{{ userNickname }}님의 투자 유형 분석을 완료하였습니다.</h2>
 
       <div class="investment-type-result mt-4">
         <h3>투자 유형 분석 결과</h3>
@@ -37,22 +37,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { fetchSurveyResult } from "../services/surveyService";
+import { ref, onMounted } from 'vue';
+import {
+  fetchSurveyResult,
+  fetchUserNickname,
+} from '../services/surveyService';
 
 // 상태 변수 선언
 const investmentType = ref(null);
-const userName = ref("홍길동"); // 실제 사용자 이름을 사용할 수 있도록 수정
+const userNickname = ref(''); // 사용자 이름 초기값을 빈 문자열로 설정
 
-// 설문 결과 불러오기 함수
+// 설문 결과 및 사용자 닉네임 불러오기 함수
 const loadSurveyResult = async () => {
   try {
+    // 설문 결과 불러오기
     const result = await fetchSurveyResult();
     investmentType.value = result;
+
+    // 사용자 닉네임 불러오기
+    const nickname = await fetchUserNickname();
+    userNickname.value = nickname;
   } catch (error) {
     console.error(
-      "설문 결과를 불러오는 중 오류가 발생했습니다.",
-      error.response?.data || error.message,
+      '설문 결과를 불러오는 중 오류가 발생했습니다.',
+      error.response?.data || error.message
     );
   }
 };
