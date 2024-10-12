@@ -41,10 +41,13 @@ const headerStore = useHeaderStore();
 const isLoading = ref(true);
 const isFormVisible = ref(false);
 const formType = ref("");
-
 const isCloseClicked = () => {
   isFormVisible.value = false;
 };
+async function updateData() {
+  Object.assign(stockPortfolioData.value, await fetchStockPortfolioData());
+}
+
 const fetchStockName = (stockName) => {
   headerStore.setStockTitle(stockName);
 };
@@ -103,10 +106,6 @@ const isStockButtonVisible = computed(() => headerStore.isStockButtonVisible);
 const fetchStockPortfolioData = async () => {
   return await stockPortfolioService.fetchStockOrder(props.stockId);
 };
-
-async function updateData() {
-  Object.assign(stockPortfolioData.value, await fetchStockPortfolioData());
-}
 
 onMounted(async () => {
   await updateData();
