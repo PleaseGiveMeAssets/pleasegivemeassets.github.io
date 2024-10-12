@@ -61,11 +61,11 @@
       <!-- 항목 영역 -->
       <g
         :transform="`translate(${width * 0.6}, ${
-          height / 2 - (chartData.length * 25) / 2 - 10
+          height / 2 - (topChartData.length * 25) / 2 - 10
         })`"
       >
         <g
-          v-for="(item, index) in chartData"
+          v-for="(item, index) in topChartData"
           :key="index"
           :transform="`translate(0, ${index * 30})`"
         >
@@ -126,7 +126,10 @@ const chartData = computed(() => {
 });
 
 const hasData = computed(() => chartData.value.length > 0);
-
+// 상위 7개 항목만 가져오기
+const topChartData = computed(() => {
+  return chartData.value.slice(0, 7); // 상위 7개 항목만 가져옴
+});
 const total = computed(() =>
   chartData.value.reduce((sum, item) => sum + item.value, 0),
 );
@@ -199,7 +202,7 @@ watchEffect(() => {
 });
 
 function startAnimation() {
-  const animationDuration = 1000; // 1초
+  const animationDuration = 300; // 1초
   const startTime = Date.now();
 
   const animate = () => {

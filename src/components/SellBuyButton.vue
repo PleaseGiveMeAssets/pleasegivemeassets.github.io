@@ -12,7 +12,7 @@ const router = useRouter();
 
 // Define the methods
 const goToSellPage = () => {
-  router.push({ path: "/sell" });
+  router.push({ path: "/myStocklist" });
 };
 
 const goToBuyPage = () => {

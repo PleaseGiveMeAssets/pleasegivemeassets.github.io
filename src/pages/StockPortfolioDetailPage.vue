@@ -2,7 +2,6 @@
   <Loading v-if="isLoading" />
   <div v-if="!isLoading" class="container">
     <OrderSummary :data="orderSummaryData" />
-
     <OrderHistory :data="orderHistoryData" />
     <div
       v-if="isStockButtonVisible == true"
@@ -41,10 +40,13 @@ const headerStore = useHeaderStore();
 const isLoading = ref(true);
 const isFormVisible = ref(false);
 const formType = ref("");
-
 const isCloseClicked = () => {
   isFormVisible.value = false;
 };
+async function updateData() {
+  Object.assign(stockPortfolioData.value, await fetchStockPortfolioData());
+}
+
 const fetchStockName = (stockName) => {
   headerStore.setStockTitle(stockName);
 };
@@ -72,7 +74,7 @@ const orderSummaryData = computed(() => {
   return {
     stockName: stockPortfolioData.value.name,
     avgPrice: stockPortfolioData.value.totalPrice,
-    quantity: stockPortfolioData.value.totalQuantity,
+    totalQuantity: stockPortfolioData.value.totalQuantity,
   };
 });
 const orderFormData = computed(() => {
@@ -103,10 +105,6 @@ const isStockButtonVisible = computed(() => headerStore.isStockButtonVisible);
 const fetchStockPortfolioData = async () => {
   return await stockPortfolioService.fetchStockOrder(props.stockId);
 };
-
-async function updateData() {
-  Object.assign(stockPortfolioData.value, await fetchStockPortfolioData());
-}
 
 onMounted(async () => {
   await updateData();
