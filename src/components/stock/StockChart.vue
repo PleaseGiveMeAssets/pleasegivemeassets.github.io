@@ -16,6 +16,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+let lastLabel = null;
 
 const props = defineProps({
   data: {
@@ -71,22 +72,35 @@ const chartOptions = ref({
   xAxis: {
     type: "category",
     labels: {
-      enabled: false,
+      enabled: true,
+      rotation: -10, // 라벨을 수평으로 설정
+      style: {
+        fontSize: "10px", // 라벨의 글꼴 크기를 줄임
+      },
+      formatter: function () {
+        const parts = this.value.split(" ");
+        let formattedDate = parts[0]; // 'MM월 dd일' 부분
+        let time = parts[1]; // '시:분' 부분
+
+        // 'MM월 dd일'에서 '월'과 '일'을 제거하고, 월과 일을 조합
+        const month = formattedDate.slice(0, -1); // 'MM' (월 제거)
+        const day = time.slice(0, -1); // 'dd' (일 제거)
+
+        // 원하는 형식으로 월과 일 조합
+        const label = `${month}월 ${day}일`;
+        if (label === lastLabel) {
+          // 현재 라벨이 이전 라벨과 중복되면 빈 값을 반환
+          return "";
+        } else {
+          lastLabel = label; // 중복되지 않으면 라벨을 저장하고 반환
+          return label;
+        }
+      },
     },
-    ordinal: false, // 빈 날짜(주말 등)를 제거하여 일정 간격 유지
+
     lineWidth: 0,
     tickLength: 0,
     gridLineWidth: 0,
-    tickPositioner: function () {
-      const positions = this.series[0].xData.filter((timestamp) => {
-        const date = new Date(timestamp);
-        const day = date.getDay();
-        const hours = date.getHours();
-        // 주말(토요일, 일요일) 및 장 마감 시간(예: 16시 이후)을 제외하고 표시
-        return day !== 0 && day !== 6 && hours >= 9 && hours < 16;
-      });
-      return positions;
-    },
   },
   yAxis: {
     labels: {
@@ -101,14 +115,19 @@ const chartOptions = ref({
   plotOptions: {
     series: {
       animation: false,
-      pointPlacement: "off",
     },
+  },
+  rangeSelector: {
+    selected: 1,
   },
   series: [
     {
-      name: "price",
+      name: "가격",
       data: [],
       color: primaryColor,
+      tooltip: {
+        valueDecimals: 2,
+      },
     },
   ],
   legend: {
@@ -130,9 +149,16 @@ chartOptions.value.series[0].data = computed(() => {
         item.stockHistoryId.slice(6, 8),
         item.stockHistoryId.slice(8, 10),
         item.stockHistoryId.slice(10, 12),
-      ).getTime();
+      );
 
-      return [date, parseFloat(item.closedPrice)]; // [시간, 종가]
+      const formattedDate = date.toLocaleDateString("ko-KR", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      return [formattedDate, parseFloat(item.closedPrice)]; // [시간, 종가]
     });
 
   return parsedData;

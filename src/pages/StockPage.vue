@@ -2,7 +2,10 @@
   <Loading v-if="isLoading" />
   <div v-if="!isLoading" class="stock">
     <StockChart :data="stockPriceData" />
-    <router-link :to="`/stock/${stockId}/portfolio`" class="noUnderline">
+    <router-link
+      :to="`/stock/${stockId}/portfolio`"
+      class="my-portfolio-container"
+    >
       <MyPortfolio :data="portfolioData" />
     </router-link>
     <StockIndex :data="indexData" />
@@ -69,10 +72,10 @@ onMounted(async () => {
 
 <style scoped>
 .stock {
-  padding-top: 54px;
-  padding-bottom: 48px;
+  padding: 14px 0px 48px 0px;
 }
-.noUnderline {
+
+.my-portfolio-container {
   text-decoration: none;
   color: black;
 }
@@ -81,8 +84,9 @@ onMounted(async () => {
   border-radius: 12px;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
   gap: 10px;
-  width: 340px;
   transition: transform 0.2s;
   margin-bottom: 20px;
+  padding: 10px;
+  font-family: "Pretendard-Bold";
 }
 </style>

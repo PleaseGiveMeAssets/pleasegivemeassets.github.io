@@ -1,6 +1,5 @@
 <template>
   <div class="card-ui">
-    <!-- v-for로 데이터를 반복 렌더링 -->
     <div
       v-for="news in Object.values(data)"
       :key="news.newsId"
@@ -24,31 +23,27 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.news-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.news-item {
-  display: flex;
-  align-items: center;
-}
-
 .news-link {
   display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.news-image {
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
+  justify-content: space-between; /* 텍스트와 이미지를 양쪽으로 정렬 */
+  align-items: center; /* 텍스트와 이미지를 수직으로 가운데 정렬 */
+  text-decoration: none; /* 링크 밑줄 제거 */
 }
 
 .news-title {
-  font-size: 16px;
+  flex-grow: 1; /* 제목이 가능한 넓게 차지하도록 설정 */
+  font-size: 14px;
   color: #000;
+  white-space: nowrap; /* 한 줄로 표시 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis;
+}
+
+.news-image {
+  max-width: 100px; /* 이미지의 최대 너비 설정 */
+  height: auto; /* 비율 유지하며 이미지 크기 조정 */
+}
+.card-ui {
+  padding-bottom: 10px;
 }
 </style>

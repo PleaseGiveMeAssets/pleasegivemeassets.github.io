@@ -1,46 +1,31 @@
 <template>
-  <div :key="forceRerender" class="card-ui">
-    <p class="title">투자지표</p>
-    <div class="indexContainer">
-      <div class="indexContainerRow">
-        <div class="box">
-          <div class="boxIndex">
-            <p class="text-63">시가총액</p>
-            <p class="text-64">{{ capitalization }}</p>
-          </div>
-        </div>
-        <div class="box">
-          <div class="boxIndex">
-            <p class="text-67">PER</p>
-            <p class="text-68">{{ data.per }}배</p>
-          </div>
-        </div>
-        <div class="box">
-          <div class="boxIndex">
-            <p class="text-71">PBR</p>
-            <p class="text-72">{{ data.pbr }}배</p>
-          </div>
-        </div>
+  <div class="card-ui">
+    <p class="title">투자 지표</p>
+
+    <div class="asset-info">
+      <div class="info-box">
+        <p>시가총액</p>
+        <p>{{ (capitalization || 0).toLocaleString() }}</p>
       </div>
-      <div class="indexContainerRow">
-        <div class="box">
-          <div class="boxIndex">
-            <p class="text-76">ROE</p>
-            <p class="text-77">{{ data.roe }}배</p>
-          </div>
-        </div>
-        <div class="box">
-          <div class="boxIndex">
-            <p class="text-80">PSR</p>
-            <p class="text-81">{{ data.psr }}배</p>
-          </div>
-        </div>
-        <div class="box">
-          <div class="boxIndex">
-            <p class="text-84">BPS</p>
-            <p class="text-85">{{ data.bps }}배</p>
-          </div>
-        </div>
+      <!-- <div class="info-box">
+        <p>PER</p>
+        <p>{{ data.per }}배</p>
+      </div> -->
+      <div class="info-box">
+        <p>PBR</p>
+        <p>{{ data.pbr }}배</p>
+      </div>
+      <!-- <div class="info-box">
+        <p>현재 수익률</p>
+        <p>{{ data.roe }}배</p>
+      </div> -->
+      <!-- <div class="info-box">
+        <p>평가손익 금액</p>
+        <p>{{ data.psr }}</p>
+      </div> -->
+      <div class="info-box">
+        <p>BPS</p>
+        <p>{{ data.bps }}원</p>
       </div>
     </div>
   </div>
@@ -115,7 +100,19 @@ function formatLargeNumber(num) {
   padding: 0; /* padding도 필요하면 제거 */
   line-height: 1.4; /* 줄 간격을 설정 (기본 값은 보통 1.5) */
 }
-.card-ui {
-  font-family: "Pretendard-Bold";
+
+.asset-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.info-box {
+  padding: 10px;
+  background-color: #000;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
 }
 </style>
