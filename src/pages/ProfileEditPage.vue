@@ -93,7 +93,7 @@ body {
 }
 .profile-edit {
   text-align: center;
-  padding-top: 100px;
+  padding-top: 20px;
 }
 
 h1 {

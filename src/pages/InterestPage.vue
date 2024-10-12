@@ -360,7 +360,7 @@ onMounted(() => {
 }
 .saved-category {
   margin-left: 15px;
-  padding-top: 70px;
+  padding-top: 20px;
 }
 
 .saved-category-item {

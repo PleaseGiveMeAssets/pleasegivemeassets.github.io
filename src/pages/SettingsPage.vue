@@ -115,7 +115,7 @@ const logout = async () => {
 <style scoped>
 .settings-page {
   padding: 16px;
-  padding-top: 80px;
+  padding-top: 20px;
   background-color: #fff;
 }
 

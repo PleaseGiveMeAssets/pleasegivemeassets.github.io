@@ -115,7 +115,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80px;
   position: relative;
 }
 
@@ -124,7 +123,6 @@ body {
   border-radius: 16px;
   width: 340px;
   height: 100px;
-  margin-top: 80px;
   position: absolute;
   top: 0;
   z-index: 1;
@@ -180,11 +178,10 @@ body {
 
 .nickname {
   font-size: 30px;
-  color: #49454f;
   margin: 0;
 }
 .investment-type {
-  font-size: 11px;
+  font-size: 12px;
   color: #757575;
 }
 
@@ -192,7 +189,6 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 16px;
-  color: #49454f;
   font-weight: bold;
   margin-top: 10px;
 }
