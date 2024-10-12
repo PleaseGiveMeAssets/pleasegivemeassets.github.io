@@ -2,7 +2,6 @@
   <Loading v-if="isLoading" />
   <div v-if="!isLoading" class="container">
     <OrderSummary :data="orderSummaryData" />
-
     <OrderHistory :data="orderHistoryData" />
     <div
       v-if="isStockButtonVisible == true"
@@ -75,7 +74,7 @@ const orderSummaryData = computed(() => {
   return {
     stockName: stockPortfolioData.value.name,
     avgPrice: stockPortfolioData.value.totalPrice,
-    quantity: stockPortfolioData.value.totalQuantity,
+    totalQuantity: stockPortfolioData.value.totalQuantity,
   };
 });
 const orderFormData = computed(() => {

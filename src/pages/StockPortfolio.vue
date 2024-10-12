@@ -64,7 +64,7 @@
               :key="index"
               class="stock-item"
             >
-              <router-link :to="`/stock/${stockId}`" class="noUnderline">
+              <router-link :to="`/stock/${stock.stockId}`" class="noUnderline">
                 <div class="stock-info">
                   <p class="stock-name">{{ stock.name }}</p>
                   <p class="stock-shortcode">{{ stock.shortCode }}</p>

@@ -18,11 +18,11 @@
             <td>
               <span
                 :class="{
-                  sellText: order.orderType === 'B',
-                  buyText: order.orderType !== 'B',
+                  sellText: order.orderType !== 'B',
+                  buyText: order.orderType === 'B',
                 }"
               >
-                {{ order.orderType == "B" ? "매도" : "매수" }}
+                {{ order.orderType == "B" ? "매수" : "매도" }}
                 {{ order.quantity }}주
               </span>
             </td>
@@ -102,17 +102,17 @@ td:nth-child(1) {
 }
 td:nth-child(2) {
   width: 170px;
-  white-space: nowrap; /* 줄 바꿈 방지 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* ...으로 표시 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-align: right;
   padding-right: 70px;
 }
 td:nth-child(3) {
   width: 200px;
-  white-space: nowrap; /* 줄 바꿈 방지 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* ...으로 표시 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-align: right;
 }
 .sellText {

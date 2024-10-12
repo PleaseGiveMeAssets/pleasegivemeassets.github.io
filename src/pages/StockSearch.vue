@@ -15,7 +15,12 @@
 
     <!-- 주식 목록 -->
     <ul v-if="stocks.length > 0" class="stock-list">
-      <li v-for="(stock, index) in stocks" :key="index" class="stock-item">
+      <li
+        v-for="(stock, index) in stocks"
+        :key="index"
+        class="stock-item"
+        @click="showForm('buy', stock.stockId)"
+      >
         <div class="stock-name">
           {{ stock.stockName }}
           <span class="stock-eng">{{ stock.engName }}</span>
@@ -31,18 +36,59 @@
     <div v-if="!stocks.length && searchTerm.length > 0">
       <p>해당 종목이 없습니다.</p>
     </div>
+    <OrderForm
+      v-if="isFormVisible"
+      :data="orderFormData"
+      class="modal-overlay"
+      @update="isCloseClicked"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import axios from "axios";
+import OrderForm from "@/components/OrderForm.vue";
 import _ from "lodash";
 
 const searchTerm = ref("");
 const stocks = ref([]);
 const isComposing = ref(false);
 
+const stockPortfolioData = ref({});
+const isLoading = ref(true);
+const isFormVisible = ref(false);
+const formType = ref("");
+const selectStockId = ref("");
+
+const isCloseClicked = () => {
+  isFormVisible.value = false;
+};
+
+const orderFormData = computed(() => {
+  if (formType.value == "sell" || formType.value == "buy")
+    return {
+      orderType: formType.value,
+      stockName: stockPortfolioData.value.name,
+      stockId: selectStockId.value,
+      price: 0,
+      quantity: 0,
+    };
+  return {
+    orderType: formType.value,
+    stockName: stockPortfolioData.value.name,
+    shortCode: props.stockId,
+    price: stockPortfolioData.value.avgPrice,
+    quantity: stockPortfolioData.value.totalQuantity,
+    recentPrice: stockPortfolioData.value.recentPrice,
+  };
+});
+
+const showForm = (type, stockId) => {
+  selectStockId.value = stockId;
+  formType.value = type;
+  isFormVisible.value = true;
+};
 // 디바운스를 이용한 검색
 const debouncedFetchStockList = _.debounce(fetchStockList, 300);
 
@@ -182,5 +228,18 @@ button {
   font-size: 14px;
   font-weight: bold;
   color: #000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100; /* 화면 위에 오도록 z-index 설정 */
 }
 </style>
