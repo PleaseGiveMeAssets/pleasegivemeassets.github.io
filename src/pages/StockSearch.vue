@@ -1,388 +1,186 @@
 <template>
-  <div class="chart-container">
-    <div v-if="loading" class="loading-container">
-      <!-- 로딩 중일 때 보여줄 내용 (로딩 스피너나 메시지) -->
-      <img
-        src="/public/images/spinNuguri.png"
-        alt="loading"
-        class="loading-image"
+  <div class="stock-search-container">
+    <!-- 검색 바 -->
+    <div class="search-bar">
+      <input
+        v-model="searchTerm"
+        type="text"
+        placeholder="🔍 검색"
+        @input="onInputChange"
+        @compositionend="onCompositionEnd"
       />
+      <button @click="clearSearch">취소</button>
     </div>
+    <p class="my-stock-title">종목</p>
 
-    <div v-else>
-      <!-- 우측 상단 편집 버튼 -->
-      <div v-if="hasAssetData" class="chart-wrapper">
-        <button class="edit-button" @click="goToEditPage">편집</button>
-        <!-- 도넛 차트 -->
-        <div class="chart-content" @click="goToStockSearchList">
-          <DoughnutChart
-            v-if="stockData.length > 0"
-            :data="stockData"
-            :width="390"
-            :height="350"
-          />
+    <!-- 주식 목록 -->
+    <ul v-if="stocks.length > 0" class="stock-list">
+      <li v-for="(stock, index) in stocks" :key="index" class="stock-item">
+        <div class="stock-name">
+          {{ stock.stockName }}
+          <span class="stock-eng">{{ stock.engName }}</span>
         </div>
-        <!-- 매도 / 매수 buttons -->
-        <SellBuyButton />
-        <br />
+        <div class="stock-info">
+          <p v-if="stock.shortCode">{{ stock.shortCode }}</p>
+          <p>{{ stock.market }}</p>
+        </div>
+      </li>
+    </ul>
 
-        <!-- 자산 정보 -->
-        <h6>나의 자산</h6>
-        <div class="asset-info">
-          <div class="info-box">
-            <p>매수총액</p>
-            <p>{{ formatCurrency(assetData.purchaseAmount) }}원</p>
-          </div>
-          <div class="info-box">
-            <p>총 수익</p>
-            <p>{{ formatCurrency(assetData.totalProfit) }}원</p>
-          </div>
-          <div class="info-box">
-            <p>평가손익 금액</p>
-            <p>{{ formatCurrency(assetData.evaluationAmount) }}원</p>
-          </div>
-          <div class="info-box">
-            <p>현재 수익률</p>
-            <p>{{ Math.round(assetData.currentYield) }}%</p>
-          </div>
-        </div>
-        <br />
-        <!-- 상위 5개 종목 표시 -->
-        <h6>주요 투자 종목</h6>
-        <div v-if="topStocks && topStocks.length > 0" class="top-stocks">
-          <ul class="stock-list">
-            <li
-              v-for="(stock, index) in topStocks"
-              :key="index"
-              class="stock-item"
-            >
-              <div class="stock-info">
-                <p class="stock-name">{{ stock.name }}</p>
-                <p class="stock-shortcode">{{ stock.shortCode }}</p>
-              </div>
-              <div class="stock-market">
-                {{ formatCurrency(stock.value) }}원
-              </div>
-            </li>
-          </ul>
-        </div>
-        <br />
-
-        <!-- 라인 차트 -->
-        <h6>주간 투자 수익률</h6>
-        <div class="chart-wra">
-          <LineChart
-            v-if="lineChartData.labels.length > 0"
-            :chart-data="lineChartData"
-          />
-          <p v-else>수익률 데이터가 없습니다.</p>
-        </div>
-      </div>
-
-      <!-- 자산 데이터가 없을 경우 EmptyAssetBox 컴포넌트 사용 -->
-      <EmptyAssetBox v-else />
+    <!-- 검색 결과가 없을 때 메시지 표시 -->
+    <div v-if="!stocks.length && searchTerm.length > 0">
+      <p>해당 종목이 없습니다.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
-import DoughnutChart from "../components/DoughnutChart.vue";
-import LineChart from "../components/LineChart.vue";
-import EmptyAssetBox from "../components/EmptyAssetBox.vue";
-import SellBuyButton from "../components/SellBuyButton.vue";
+import _ from "lodash";
 
-const BASE = `${import.meta.env.VITE_API_URL}`;
-// JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    router.push({ path: "/login" }); // 로그인 페이지로 이동
-    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
-  }
-  return token;
-};
-// 라우터 객체 가져오기
-const router = useRouter();
+const searchTerm = ref("");
+const stocks = ref([]);
+const isComposing = ref(false);
 
-// 클릭 시 페이지 이동 함수
-const goToStockSearchList = () => {
-  router.push({ path: "/myStocklist" });
-};
-// 클릭 시 편집 페이지로 이동 함수
-const goToEditPage = () => {
-  router.push({ path: "/edit" });
-};
+// 디바운스를 이용한 검색
+const debouncedFetchStockList = _.debounce(fetchStockList, 300);
 
-const assetData = ref({
-  purchaseAmount: 0,
-  totalProfit: 0,
-  evaluationAmount: 0,
-  currentYield: 0,
-});
-
-const lineChartData = ref({
-  labels: [],
-  datasets: [
-    {
-      label: "수익률",
-      data: [],
-      borderColor: "#42A5F5",
-      fill: false,
-      tension: 1,
-    },
-  ],
-});
-
-const hasAssetData = ref(false);
-const loading = ref(true); // 데이터를 불러오는 중인지 여부를 추적하는 변수
-
-// 차트 데이터를 저장하는 ref
-const stockData = ref([]);
-const topStocks = ref([]);
-
-// 도넛 데이터를 가져오는 함수
-const fetchPortfolioData = async () => {
-  const token = getToken(); // 토큰 가져오기
-
-  try {
-    const response = await axios.get(`${BASE}/portfolio`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-      },
-    });
-    const portfolioData = response.data;
-
-    // 가져온 데이터를 원하는 형식으로 변환
-    stockData.value = portfolioData.map((item) => ({
-      name: item.stockName,
-      shortCode: item.shortCode,
-      value: item.totalPrice,
-    }));
-
-    // 상위 5개 종목 추출
-    topStocks.value = stockData.value
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3); // 상위 5개 종목만 추출
-
-    hasAssetData.value = stockData.value.length > 0;
-  } catch (error) {
-    console.error("Error fetching portfolio data:", error);
-  } finally {
-    loading.value = false; // 로딩이 완료되었을 때 로딩 상태를 false로 변경
+// 검색어 변경 시 호출되는 함수
+const onInputChange = (event) => {
+  searchTerm.value = event.target.value;
+  if (!isComposing.value) {
+    debouncedFetchStockList();
   }
 };
 
-// 수익률 데이터를 가져오는 함수
-const fetchProfitData = async () => {
-  const token = getToken(); // 토큰 가져오기
+// 한글 입력이 끝난 후 호출되는 함수
+const onCompositionEnd = () => {
+  isComposing.value = false;
+  debouncedFetchStockList(); // 한글 입력이 끝난 후 검색 실행
+};
 
-  try {
-    const response = await axios.get(`${BASE}/stock/total`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-      },
-    });
-
-    const assetDataResponse = response.data;
-    if (assetDataResponse) {
-      assetData.value.purchaseAmount = assetDataResponse.totalInvestedAmount;
-      assetData.value.totalProfit = assetDataResponse.totalProfitLossAmount;
-      assetData.value.evaluationAmount =
-        assetDataResponse.totalProfitLossAmount;
-      assetData.value.currentYield =
-        assetDataResponse.totalProfitLossPercentage;
-
-      hasAssetData.value = true;
+// 검색 결과 가져오는 함수
+async function fetchStockList() {
+  if (searchTerm.value.trim().length > 0) {
+    try {
+      const response = await axios.get("/api/stock/search", {
+        params: { searchStock: searchTerm.value },
+      });
+      stocks.value = response.data;
+    } catch (error) {
+      console.error("Stock search error:", error);
+      stocks.value = []; // 오류 발생 시 목록 초기화
     }
-  } catch (error) {
-    console.error("Error fetching profit data:", error);
-    hasAssetData.value = false;
+  } else {
+    stocks.value = []; // 검색어가 없을 경우 목록 초기화
   }
+}
+
+// 검색어 초기화 함수
+const clearSearch = () => {
+  searchTerm.value = "";
+  stocks.value = [];
 };
-
-const formatCurrency = (value) => Math.round(value).toLocaleString();
-
-// 그래프 데이터 API 호출 함수
-const fetchWeeklyGraphData = async () => {
-  const token = getToken(); // 토큰 가져오기
-
-  try {
-    const response = await axios.get(`${BASE}/weekly-graph`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-      },
-    });
-
-    const stockData = response.data;
-
-    // 차트의 라벨로 사용할 날짜 배열
-    const labels = stockData.map((item) => item.stockDate);
-
-    // 수익률 계산 (수익률 = (totalProfit / totalAmount) * 100)
-    const profitRates = stockData.map((item) => {
-      if (item.totalAmount !== 0) {
-        return ((item.totalProfit / item.totalAmount) * 100).toFixed(2);
-      } else {
-        return 0; // totalAmount가 0일 때 수익률은 0으로 처리
-      }
-    });
-
-    // 차트 데이터 설정
-    lineChartData.value.labels = labels;
-    lineChartData.value.datasets[0].data = profitRates;
-  } catch (error) {
-    console.error("Error fetching stock portfolio info:", error);
-  }
-};
-
-// 컴포넌트 마운트 시 호출
-onMounted(() => {
-  fetchWeeklyGraphData(); // 데이터를 fetch하는 함수 호출
-  fetchPortfolioData(); // 추가 데이터 가져오기
-  fetchProfitData(); // 추가 데이터 가져오기
-});
 </script>
 
 <style scoped>
-.chart-container {
-  position: relative; /* 편집 버튼을 절대 위치로 설정하기 위해 부모를 상대 위치로 */
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  padding-left: 0;
-}
-.chart-wrapper {
+.stock-search-container {
   position: relative;
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 8px;
+  border-left: 0;
+  width: 380px; /* 전체 너비 사용 */
+  margin: 0 auto; /* 가운데 정렬 */
 }
 
-.edit-button {
-  position: absolute;
-  top: 10px; /* 상단에서의 위치 조정 */
-  right: 10px; /* 우측에서의 위치 조정 */
-  z-index: 10; /* 차트보다 앞에 오도록 z-index를 높게 설정 */
-  background-color: #ccc;
-  color: black;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.edit-button:hover {
-  background-color: #bbb;
-}
-.edit-button {
-  position: absolute;
-  top: 20px;
-  right: 15px;
-  font-size: 12px;
-  padding: 4px 8px;
-  background-color: #ccc;
-  color: black;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.edit-button:hover {
-  background-color: #bbb;
-}
-.chart-content {
+.search-bar {
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* 검색어와 버튼 사이 여유 공간 확보 */
   align-items: center;
-  cursor: pointer; /* 클릭 가능한 마우스 포인터 추가 */
-}
-
-.color-box {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 10px;
-}
-
-.asset-info {
-  width: 350px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.info-box {
-  padding: 10px;
-  background-color: #6e2ff4;
-  color: #fff;
+  margin-bottom: 0;
+  background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: left;
-}
-.chart-wra {
-  width: 350px;
-  padding: 20px;
-}
-.top-stocks {
-  margin-top: 0;
-  padding: 0 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 약간의 그림자 추가 */
+  padding: 0px; /* 내부 패딩 */
 }
 
-h6 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: left;
+input[type="text"] {
+  width: 80%; /* 입력 필드의 너비 */
+  padding: 8px;
+  border: none;
+  font-size: 16px;
+  background: none;
+  outline: none; /* 포커스 시 테두리 제거 */
+}
+
+button {
+  width: 15%;
+  background-color: transparent; /* 버튼 배경 투명 */
+  border: none;
+  font-size: 14px;
+  color: #007bff; /* 파란색 텍스트 */
+  cursor: pointer;
+  outline: none;
 }
 
 .stock-list {
   list-style-type: none;
   padding: 0;
-  margin: 0;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.my-stock-title {
+  width: 100%;
+  height: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  margin-top: 0;
+  padding: 0;
+  color: #555;
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .stock-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
   border-bottom: 1px solid #e0e0e0;
-}
-
-.stock-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
+  padding: 15px 0;
+  font-size: 16px;
 }
 
 .stock-name {
-  font-size: 16px;
   font-weight: bold;
-  margin: 0;
+  color: #333;
+  font-size: 16px;
 }
 
-.stock-shortcode {
+.stock-eng {
+  display: block;
   font-size: 14px;
   color: #888;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
-.stock-market {
-  font-size: 16px;
-  color: #000;
+.stock-info {
+  text-align: right;
+}
+
+.stock-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.stock-info p:first-child {
+  font-size: 14px;
   font-weight: bold;
-}
-.loading-image {
-  padding-top: 200px;
-  width: 200px; /* 원하는 크기로 설정 */
-  animation: spin 0.5s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  color: #000;
 }
 </style>

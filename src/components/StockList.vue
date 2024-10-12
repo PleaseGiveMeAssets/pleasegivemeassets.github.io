@@ -21,7 +21,6 @@ import { ref, onMounted, computed } from "vue";
 import StockItem from "@/components/StockItem.vue";
 import OrderForm from "@/components/OrderForm.vue";
 import axios from "axios";
-import stockPortfolioService from "@/services/stockPortfolioService";
 
 const props = defineProps({
   stocks: {
