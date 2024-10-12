@@ -22,11 +22,29 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import StockList from "@/components/StockList.vue";
 
+// JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
+const getToken = () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    router.push({ path: "/login" }); // 로그인 페이지로 이동
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
+  }
+  return token;
+};
+
 const stocks = ref([]);
 const loading = ref(true); // 데이터를 불러오는 중인지 여부를 추적하는 변수
+const BASE = `${import.meta.env.VITE_API_URL}`; // API base URL 설정
+
 onMounted(() => {
+  const token = getToken(); // 토큰 가져오기
+
   axios
-    .get("/api/stock")
+    .get(`${BASE}/stock`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+      },
+    })
     .then((response) => {
       stocks.value = response.data;
     })
@@ -41,9 +59,8 @@ onMounted(() => {
 
 <style scoped>
 .stock-portfolio {
-  padding-top: 48px;
   padding-right: 8px;
-  padding-bottom: 60px;
+  padding-bottom: 70px;
 }
 
 h1 {
