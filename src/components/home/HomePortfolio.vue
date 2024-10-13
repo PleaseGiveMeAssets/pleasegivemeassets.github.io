@@ -19,8 +19,10 @@
 <script setup>
 import { ref, reactive, onMounted, nextTick } from "vue";
 import DonutChart from "@/components/DoughnutChart.vue";
+import RenewToken from "@/services/renewToken";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import MyCookie from "@/services/myCookie";
 
 // API URL 및 상태 관리
 const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
@@ -28,6 +30,9 @@ const portfolio = reactive([]);
 const stockData = ref([]);
 const token = localStorage.getItem("accessToken");
 const router = useRouter();
+const renewToken = new RenewToken("/auth/login/renew");
+const myCookie = new MyCookie();
+const refreshToken = myCookie.getCookie("refreshToken");
 
 const movePortfolio = () => {
   router.push("/portfolio");
@@ -50,8 +55,17 @@ const createPortfolio = async () => {
     console.error("createPortfolio error:", err.message);
 
     if (err.response && err.response.status === 500) {
-      localStorage.removeItem("accessToken");
-      router.push("/login");
+      renewToken
+        .renew(refreshToken)
+        .then((data) => {
+          // 토큰 갱신 성공
+          localStorage.setItem("accessToken", data.accessToken);
+          window.location.href = "/";
+        })
+        .catch((err) => {
+          // 오류 처리
+          console.error("renewToken err : ", err);
+        });
     }
   }
 };
