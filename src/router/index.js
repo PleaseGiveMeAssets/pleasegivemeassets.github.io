@@ -38,9 +38,13 @@ const router = createRouter({
       component: StockPortfolioDetailPage,
       props: true,
     },
-    { path: "/survey", component: SurveyPage }, // Survey 경로 추가
+    { path: "/survey", name: "survey", component: SurveyPage }, // Survey 경로 추가
     { path: "/survey-loading", component: SurveyLoadingPage }, // SurveyLoading 경로추가
-    { path: "/survey-result", component: SurveyResultPage }, // SurveyResult 경로추가
+    {
+      path: "/survey-result",
+      name: "survey-result",
+      component: SurveyResultPage,
+    }, // SurveyResult 경로추가
     {
       path: "/myProfile", // MyProfile 경로 추가
       component: MyprofilePage,

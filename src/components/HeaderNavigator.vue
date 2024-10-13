@@ -17,6 +17,11 @@
       </div>
     </div>
 
+    <!-- 기존의 template 안에 header-title 부분 추가 -->
+    <div class="header-title">
+      <h4>{{ pageTitle }}</h4>
+    </div>
+
     <div class="header-actions"></div>
     <button
       v-if="isStockPortfolioPage == true"
@@ -45,9 +50,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watchEffect } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useHeaderStore } from "@/stores/headerStore";
+import { ref, computed, watchEffect } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useHeaderStore } from '@/stores/headerStore';
 
 const router = useRouter();
 const route = useRoute();
@@ -58,7 +63,7 @@ const isStockPage = computed(() => {
 const headerStore = useHeaderStore();
 
 const showBackButton = computed(() => {
-  return router.currentRoute.value.name !== "home";
+  return router.currentRoute.value.name !== 'home';
 });
 
 const stockName = computed(() => headerStore.stockName);
@@ -66,27 +71,37 @@ const shortCode = computed(() => headerStore.shortCode);
 const isStockPortfolioPage = computed(() => headerStore.isStockPortfolioPage);
 const isModalVisible = ref(false);
 
+const pageTitle = computed(() => {
+  if (route.name === 'survey') {
+    return '설문조사';
+  }
+  if (route.name === 'survey-result') {
+    return '투자유형 분석';
+  }
+  return '';
+});
+
 const toggleModal = () => {
   isModalVisible.value = !isModalVisible.value;
   headerStore.setStockButtonVisible();
 };
 
 const handleEdit = () => {
-  console.log("수정하기 클릭됨");
+  console.log('수정하기 클릭됨');
 };
 
 const handleSelectDelete = () => {
-  console.log("선택 삭제하기 클릭됨");
+  console.log('선택 삭제하기 클릭됨');
 };
 
 const handleDeleteAll = () => {
-  console.log("모두 삭제하기 클릭됨");
+  console.log('모두 삭제하기 클릭됨');
 };
 
 const goBack = () => router.back();
 
 watchEffect(() => {
-  isHomePage.value = route.name === "home";
+  isHomePage.value = route.name === 'home';
 });
 </script>
 
@@ -117,16 +132,16 @@ p {
 }
 
 .header-title {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500; /* Pretendard medium */
-  font-size: 20px;
+  font-family: 'Pretendard-Bold', sans-serif;
+  margin-top: 10px;
   position: absolute;
+  font-size: 14px;
   left: 50%;
   transform: translateX(-50%); /* 가로 가운데 정렬 */
   padding-bottom: 0; /* 아래 패딩 제거 */
 }
 .header-stock-section {
-  font-family: "Pretendard-Bold", sans-serif;
+  font-family: 'Pretendard-Bold', sans-serif;
   position: absolute;
   left: 50%;
   transform: translateX(-50%); /* 가로 가운데 정렬 */
