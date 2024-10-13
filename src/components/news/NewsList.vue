@@ -1,5 +1,7 @@
 <template>
   <div class="card-ui">
+    <p class="title">관련 뉴스</p>
+
     <div
       v-for="news in Object.values(data)"
       :key="news.newsId"
@@ -23,6 +25,10 @@ const props = defineProps({
 </script>
 
 <style scoped>
+.title {
+  font-family: "Pretendard-Bold";
+  font-size: 18px;
+}
 .news-link {
   display: flex;
   justify-content: space-between; /* 텍스트와 이미지를 양쪽으로 정렬 */
@@ -41,7 +47,7 @@ const props = defineProps({
 
 .news-image {
   max-width: 100px; /* 이미지의 최대 너비 설정 */
-  height: auto; /* 비율 유지하며 이미지 크기 조정 */
+  margin: 10px;
 }
 .card-ui {
   padding-bottom: 10px;

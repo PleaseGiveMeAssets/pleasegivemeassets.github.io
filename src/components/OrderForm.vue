@@ -6,15 +6,15 @@
       </button>
       <div>
         {{
-          data.orderType === "sell"
+          data.orderType === "S"
             ? "매도"
-            : data.orderType === "buy"
+            : data.orderType === "B"
               ? "매수"
               : "수정"
         }}
       </div>
-      <button class="submit-button" type="submit" @click="submitOrderForm">
-        <img src="@/assets/icons/portfolio-form-save-icon.svg" />
+      <button class="submit-button" type="submit" @click="submitOrderForm()">
+        <img src="@/assets/icons/save-form-icon.svg" />
       </button>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="data" class="orderForm">
@@ -76,9 +76,8 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { onMounted, reactive, ref, computed } from "vue";
 import stockPortfolioService from "@/services/stockPortfolioService";
-// import SaveFormIcon from "@/assets/icons/portfolio-form-save-icon.svg";
 const props = defineProps({
   data: {
     type: Object,
@@ -93,7 +92,16 @@ const formData = reactive({
   memo: "",
 });
 
+const stockPortfolioData = ref({});
+
 const emit = defineEmits(["update", "update-data"]);
+
+async function fetchPortfolioData() {
+  Object.assign(
+    stockPortfolioData.value,
+    await stockPortfolioService.fetchStockOrder(props.data.stockId),
+  );
+}
 
 // update-data 이벤트를 부모에게 알리는 함수
 const triggerUpdateData = () => {
@@ -159,13 +167,56 @@ const convertToTimestamp = async () => {
   return timestamp;
 };
 
+function validateOrderQuantityAlwaysPositive() {
+  const allOrders = [...stockPortfolioData.value.orders, formData];
+  console.log(allOrders);
+  const sortedOrders = allOrders.sort((a, b) => {
+    if (a.orderedAt !== b.orderedAt) {
+      return a.orderedAt - b.orderedAt;
+    }
+
+    if (a.orderType === "B" && b.orderType === "S") {
+      return -1;
+    }
+    if (a.orderType === "S" && b.orderType === "B") {
+      return 1;
+    }
+
+    return 0;
+  });
+
+  let totalQuantity = 0;
+
+  for (const order of sortedOrders) {
+    if (order.orderType === "B") {
+      totalQuantity += order.quantity;
+    } else if (order.orderType === "S") {
+      totalQuantity -= order.quantity;
+    }
+
+    if (totalQuantity < 0) {
+      errorMessage.value = "유효하지 않은 주문: 수량이 음수가 됩니다.";
+      return false;
+    }
+  }
+  console.log(allOrders);
+  console.log(totalQuantity);
+  return true;
+}
+
 const submitOrderForm = async () => {
   if (!validateForm()) {
     showErrorForLimitedTime();
     return;
   }
+
+  if (!validateOrderQuantityAlwaysPositive()) {
+    showErrorForLimitedTime();
+    return;
+  }
+
   const orderedAt = await convertToTimestamp();
-  const orderType = props.data.orderType == "sell" ? "S" : "B";
+  const orderType = props.data.orderType;
   try {
     const response = await stockPortfolioService.postStockOrder(
       props.data.stockId,
@@ -188,13 +239,13 @@ const submitOrderForm = async () => {
     alert("제출 중 오류가 발생했습니다.");
   }
 };
+
+onMounted(async () => {
+  fetchPortfolioData();
+});
 </script>
 
 <style scoped>
-.title {
-  font-family: "Pretendard-Bold";
-  font-size: 18px;
-}
 .card-ui {
   font-family: "Pretendard-Bold";
 }

@@ -3,7 +3,10 @@
     <button v-if="showBackButton" class="back-button" @click="goBack">
       <img src="@/assets/icons/backButton-icon.svg" alt="Back" />
     </button>
-    <div v-if="stockName != '' || shortCode != ''" class="header-stock-section">
+    <div
+      v-if="isStockPage && stockName != '' && shortCode != ''"
+      class="header-stock-section"
+    >
       <div class="stockRow">
         <div class="stockName">
           {{ stockName }}
@@ -49,7 +52,9 @@ import { useHeaderStore } from "@/stores/headerStore";
 const router = useRouter();
 const route = useRoute();
 const isHomePage = ref(false);
-
+const isStockPage = computed(() => {
+  return route.name === "stockPage" || route.name === "stockPortfolioPage";
+});
 const headerStore = useHeaderStore();
 
 const showBackButton = computed(() => {

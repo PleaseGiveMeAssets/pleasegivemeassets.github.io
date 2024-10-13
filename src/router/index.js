@@ -28,11 +28,13 @@ const router = createRouter({
     { path: "/", name: "home", component: HomePage },
     {
       path: "/stock/:stockId",
+      name: "stockPage",
       component: StockPage,
       props: true,
     },
     {
       path: "/stock/:stockId/portfolio",
+      name: "stockPortfolioPage",
       component: StockPortfolioDetailPage,
       props: true,
     },

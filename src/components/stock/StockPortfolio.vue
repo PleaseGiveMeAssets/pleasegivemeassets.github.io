@@ -4,34 +4,47 @@
     <div class="portfolio">
       <div v-if="data.totalQuantity">
         <table>
-          <tr>
-            <td class="totalPrice">
-              {{ (totalPrice || 0).toLocaleString() }}원
-            </td>
-            <td>{{ data.totalQuantity }}주</td>
-          </tr>
-          <tr>
-            <td
-              class="delta"
-              :class="{
-                negative: delta < 0,
-                positive: delta > 0,
-                neutral: delta === 0,
-              }"
-            >
-              {{ (delta || 0).toLocaleString() }} ({{ deltaPercent }}%)
-            </td>
-            <td class="price">{{ (data.avgPrice || 0).toLocaleString() }}원</td>
-          </tr>
+          <tbody>
+            <tr>
+              <td class="totalPrice">
+                {{ (currentProfit || 0).toLocaleString() }}원
+              </td>
+              <td>{{ data.totalQuantity }}주</td>
+            </tr>
+            <tr>
+              <td
+                class="delta"
+                :class="{
+                  negative: delta < 0,
+                  positive: delta > 0,
+                  neutral: delta === 0,
+                }"
+              >
+                <img
+                  v-if="delta > 0"
+                  src="@/assets/icons/price-increase-icon.svg"
+                />
+
+                <img
+                  v-if="delta < 0"
+                  src="@/assets/icons/price-decrease-icon.svg"
+                />
+                {{ (delta || 0).toLocaleString() }} ({{ deltaPercent }}%)
+              </td>
+              <td class="price">
+                {{ (data.avgPrice || 0).toLocaleString() }}원
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
-      <div else class="portfolioSummarySkeleton">포트폴리오가 없습니다.</div>
+      <div v-else class="portfolioSummarySkeleton">포트폴리오가 없습니다.</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   data: {
@@ -39,10 +52,14 @@ const props = defineProps({
     required: true,
   },
 });
+
 const delta = computed(() => {
   return (
     (props.data.recentPrice - props.data.avgPrice) * props.data.totalQuantity
   );
+});
+const currentProfit = computed(() => {
+  return props.data.recentPrice * props.data.totalQuantity;
 });
 const deltaPercent = computed(() => {
   return (
@@ -59,10 +76,6 @@ const totalPrice = computed(() => {
 </script>
 
 <style scoped>
-.title {
-  font-family: "Pretendard-Bold";
-  font-size: 18px;
-}
 .card-ui {
   font-family: "Pretendard-Bold";
 }
@@ -85,7 +98,7 @@ td {
   color: #4f4f4f;
 }
 td:nth-child(1) {
-  text-align: center;
+  text-align: left;
   padding-right: 70px;
 }
 td:nth-child(2) {

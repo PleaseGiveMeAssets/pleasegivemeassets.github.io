@@ -4,7 +4,7 @@
       v-for="stock in stocks"
       :key="stock.stockId"
       :stock="stock"
-      @click="showForm('sell', stock.stockId)"
+      @click="showForm('S', stock.stockId)"
     />
   </div>
   <OrderForm
@@ -20,7 +20,6 @@
 import { ref, onMounted, computed } from "vue";
 import StockItem from "@/components/StockItem.vue";
 import OrderForm from "@/components/OrderForm.vue";
-import axios from "axios";
 
 const props = defineProps({
   stocks: {
@@ -31,7 +30,6 @@ const props = defineProps({
 
 async function updateData() {
   window.location.reload();
-  // Object.assign(props.stocks.value, await fetchPortfolioData());
 }
 
 const stockPortfolioData = ref({});
@@ -45,7 +43,7 @@ const isCloseClicked = () => {
 };
 
 const orderFormData = computed(() => {
-  if (formType.value == "sell" || formType.value == "buy")
+  if (formType.value == "S" || formType.value == "B")
     return {
       orderType: formType.value,
       stockName: stockPortfolioData.value.name,

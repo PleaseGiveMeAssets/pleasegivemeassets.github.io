@@ -64,7 +64,7 @@ onMounted(async () => {
   Object.assign(indexData.value, await fetchIndexData());
   Object.assign(stockPriceData.value, await fetchStockPriceData());
   Object.assign(newsData.value, await fetchNewsData());
-  fetchShortCode(props.stockId);
+  fetchShortCode(portfolioData.value.shortCode);
   fetchStockName(portfolioData.value.name);
   isLoading.value = false;
 });
@@ -88,5 +88,9 @@ onMounted(async () => {
   margin-bottom: 20px;
   padding: 10px;
   font-family: "Pretendard-Bold";
+}
+.title {
+  font-family: "Pretendard-Bold";
+  font-size: 18px;
 }
 </style>

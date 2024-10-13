@@ -7,8 +7,8 @@
       v-if="isStockButtonVisible == true"
       class="stock-order-button-container"
     >
-      <button class="sell-button" @click="showForm('sell')">매도</button>
-      <button class="buy-button" @click="showForm('buy')">매수</button>
+      <button class="sell-button" @click="showForm('S')">매도</button>
+      <button class="buy-button" @click="showForm('B')">매수</button>
     </div>
     <OrderForm
       v-if="isFormVisible"
@@ -36,6 +36,7 @@ const props = defineProps({
   },
 });
 const headerStore = useHeaderStore();
+const stockPortfolioData = ref({});
 
 const isLoading = ref(true);
 const isFormVisible = ref(false);
@@ -43,6 +44,7 @@ const formType = ref("");
 const isCloseClicked = () => {
   isFormVisible.value = false;
 };
+
 async function updateData() {
   Object.assign(stockPortfolioData.value, await fetchStockPortfolioData());
 }
@@ -56,12 +58,10 @@ const fetchShortCode = (stockId) => {
 const setHeaderButton = () => {
   headerStore.setStockPortfolioHeaderButton(true);
 };
-const stockPortfolioData = ref({});
 
 const showForm = (type) => {
   formType.value = type;
   isFormVisible.value = true;
-  console.log(isFormVisible.value);
 };
 
 const orderSummaryData = computed(() => {
@@ -73,12 +73,13 @@ const orderSummaryData = computed(() => {
 
   return {
     stockName: stockPortfolioData.value.name,
-    avgPrice: stockPortfolioData.value.totalPrice,
-    totalQuantity: stockPortfolioData.value.totalQuantity,
+    avgPrice: stockPortfolioData.value.avgPrice,
+    quantity: stockPortfolioData.value.totalQuantity,
+    recentPrice: stockPortfolioData.value.recentPrice,
   };
 });
 const orderFormData = computed(() => {
-  if (formType.value == "sell" || formType.value == "buy")
+  if (formType.value == "S" || formType.value == "B")
     return {
       orderType: formType.value,
       stockName: stockPortfolioData.value.name,
@@ -109,7 +110,7 @@ const fetchStockPortfolioData = async () => {
 onMounted(async () => {
   await updateData();
   fetchStockName(stockPortfolioData.value.name);
-  fetchShortCode(props.stockId);
+  fetchShortCode(stockPortfolioData.value.shortCode);
   setHeaderButton();
   isLoading.value = false;
 });
