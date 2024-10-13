@@ -63,18 +63,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // router import 추가
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router"; // router import 추가
 import {
   fetchSurveyResult,
   fetchUserNickname,
-} from '../services/surveyService';
+} from "../services/surveyService";
 
 const router = useRouter();
 
 // 상태 변수 선언
 const investmentType = ref(null);
-const userNickname = ref(''); // 사용자 이름 초기값을 빈 문자열로 설정
+const userNickname = ref(""); // 사용자 이름 초기값을 빈 문자열로 설정
 
 // 설문 결과 및 사용자 닉네임 불러오기 함수
 const loadSurveyResult = async () => {
@@ -88,8 +88,8 @@ const loadSurveyResult = async () => {
     userNickname.value = nickname;
   } catch (error) {
     console.error(
-      '설문 결과를 불러오는 중 오류가 발생했습니다.',
-      error.response?.data || error.message
+      "설문 결과를 불러오는 중 오류가 발생했습니다.",
+      error.response?.data || error.message,
     );
   }
 };
@@ -97,7 +97,7 @@ const loadSurveyResult = async () => {
 // 설문 재진행 버튼 클릭 시 호출되는 함수
 const restartSurvey = () => {
   // 설문 첫 번째 페이지로 이동
-  router.push('/survey');
+  router.push("/survey");
 };
 
 // 컴포넌트가 마운트될 때 설문 결과를 로드
