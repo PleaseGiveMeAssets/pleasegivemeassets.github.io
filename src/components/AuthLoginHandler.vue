@@ -14,16 +14,18 @@ const extractCode = (url) => {
   };
 };
 
+const BASE = import.meta.env.VITE_API_URL;
+
 const sendCodeToBackend = async (code, service, state = null) => {
   try {
     let endpoint;
     if (service === "kakao") {
-      endpoint = `http://localhost:8080/api/v1/auth/login/code/${service}?code=${code}`;
+      endpoint = `${BASE}/auth/login/code/${service}?code=${code}`;
     } else if (service == "naver") {
       if (!state) {
         throw new Error("requires a state parameter");
       }
-      endpoint = `http://localhost:8080/api/v1/auth/login/code/${service}?code=${code}&state=${state}`;
+      endpoint = `${BASE}/auth/login/code/${service}?code=${code}&state=${state}`;
     } else {
       throw new Error("Unsupported service");
     }

@@ -18,7 +18,7 @@ const route = useRoute();
 
 <style scoped>
 .content {
-  padding: 48px 16px 0px 16px;
+  padding: 48px 24px 0px 24px;
 }
 
 .container {
