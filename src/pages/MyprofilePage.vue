@@ -71,14 +71,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
 
-import heartIcon from '@/assets/icons/heartArrow-icon.svg';
-import investmentIcon from '@/assets/icons/investment-icon.svg';
-import savedIcon from '@/assets/icons/saved-icon.svg';
-import settingsIcon from '@/assets/icons/settings-icon.svg';
+import heartIcon from "@/assets/icons/heartArrow-icon.svg";
+import investmentIcon from "@/assets/icons/investment-icon.svg";
+import savedIcon from "@/assets/icons/saved-icon.svg";
+import settingsIcon from "@/assets/icons/settings-icon.svg";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const route = useRoute();
@@ -88,10 +88,10 @@ const isLoading = ref(true);
 
 // JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
 const getToken = () => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   if (!token) {
-    router.push({ path: '/login' }); // 로그인 페이지로 이동
-    throw new Error('토큰이 없습니다. 로그인 페이지로 이동합니다.');
+    router.push({ path: "/login" }); // 로그인 페이지로 이동
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
   }
   return token;
 };
@@ -108,7 +108,7 @@ const fetchUserData = async () => {
     });
     userData.value = response.data;
   } catch (error) {
-    console.error('Failed to fetch user profile:', error);
+    console.error("Failed to fetch user profile:", error);
   } finally {
     isLoading.value = false;
   }
@@ -119,14 +119,14 @@ const navigateTo = (path) => {
 };
 
 onMounted(() => {
-  console.log('Fetched userId from route params:', route.params.userId);
+  console.log("Fetched userId from route params:", route.params.userId);
   fetchUserData();
 });
 </script>
 
 <style scoped>
 body {
-  font-family: 'Pretendard Medium', sans-serif;
+  font-family: "Pretendard Medium", sans-serif;
 }
 
 .user-profile {

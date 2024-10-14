@@ -3,7 +3,7 @@ import StockPage from "@/pages/StockPage.vue";
 import SurveyPage from "@/pages/SurveyPage.vue";
 import SurveyLoadingPage from "@/pages/SurveyLoadingPage.vue";
 import SurveyResultPage from "@/pages/SurveyResultPage.vue";
-import MyProfilePage from "@/pages/MyProfilePage.vue";
+import MyProfilePage from "@/pages/MyprofilePage.vue";
 import InterestPage from "@/pages/InterestPage.vue";
 import NotificationsPage from "@/pages/NotificationsPage.vue";
 import ProfileEditPage from "@/pages/ProfileEditPage.vue";
