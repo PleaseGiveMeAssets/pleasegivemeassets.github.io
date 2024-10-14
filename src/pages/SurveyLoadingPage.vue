@@ -15,11 +15,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { fetchUserNickname } from '../services/surveyService';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { fetchUserNickname } from "../services/surveyService";
 
-const userNickname = ref('');
+const userNickname = ref("");
 const router = useRouter();
 
 onMounted(async () => {
@@ -27,13 +27,13 @@ onMounted(async () => {
     const nickname = await fetchUserNickname();
     userNickname.value = nickname;
   } catch (error) {
-    console.error('유저 닉네임을 불러오는 중 오류가 발생했습니다.', error);
-    userNickname.value = '사용자';
+    console.error("유저 닉네임을 불러오는 중 오류가 발생했습니다.", error);
+    userNickname.value = "사용자";
   }
 
   // 일정 시간 후 결과 페이지로 이동
   setTimeout(() => {
-    router.push('/survey-result'); // 결과 페이지로 이동
+    router.push("/survey-result"); // 결과 페이지로 이동
   }, 3000); // 3초 후 이동
 });
 </script>
@@ -47,7 +47,7 @@ onMounted(async () => {
   height: 100vh;
   background-color: var(--primary-color);
   color: var(--main-card-color);
-  font-family: 'Pretendard-Medium', sans-serif;
+  font-family: "Pretendard-Medium", sans-serif;
 }
 
 .raccoon-image {
@@ -64,7 +64,7 @@ onMounted(async () => {
   text-align: center;
   margin-top: 20px;
   color: var(--main-card-color);
-  font-family: 'Pretendard-Bold', sans-serif;
+  font-family: "Pretendard-Bold", sans-serif;
 }
 
 .loading-dots {

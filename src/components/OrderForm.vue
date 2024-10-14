@@ -77,7 +77,9 @@
 
 <script setup>
 import { onMounted, reactive, ref, computed } from "vue";
+import { useHeaderStore } from "@/stores/headerStore";
 import stockPortfolioService from "@/services/stockPortfolioService";
+
 const props = defineProps({
   data: {
     type: Object,
@@ -93,7 +95,6 @@ const formData = reactive({
 });
 
 const stockPortfolioData = ref({});
-
 const emit = defineEmits(["update", "update-data"]);
 
 async function fetchPortfolioData() {
@@ -103,12 +104,27 @@ async function fetchPortfolioData() {
   );
 }
 
-// update-data 이벤트를 부모에게 알리는 함수
-const triggerUpdateData = () => {
-  console.log("triggerUpdateData");
-  emit("update-data"); // 부모에게 update-data 이벤트 발생
+const toggleModal = () => {
+  isEditModalVisible.value = !isEditModalVisible.value;
 };
 
+const handleEdit = () => {
+  console.log("수정하기 클릭됨");
+};
+
+const handleSelectDelete = () => {
+  console.log("선택 삭제하기 클릭됨");
+};
+
+const handleDeleteAll = () => {
+  stockPortfolioService.deleteAllOrder();
+  console.log("모두 삭제하기 클릭됨");
+};
+
+const triggerUpdateData = () => {
+  console.log("triggerUpdateData");
+  emit("update-data");
+};
 const errorMessage = ref("");
 let errorTimeout = null;
 const emitUpdate = () => {
@@ -199,8 +215,6 @@ function validateOrderQuantityAlwaysPositive() {
       return false;
     }
   }
-  console.log(allOrders);
-  console.log(totalQuantity);
   return true;
 }
 
@@ -228,9 +242,6 @@ const submitOrderForm = async () => {
         memo: formData.memo,
       },
     );
-
-    // 성공적으로 서버에 데이터 전송 후 처리
-    console.log("서버 응답:", response);
 
     triggerUpdateData();
     emitUpdate();

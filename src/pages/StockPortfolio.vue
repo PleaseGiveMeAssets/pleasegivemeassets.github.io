@@ -83,7 +83,6 @@
         <div class="chart-wra">
           <LineChart
             v-if="lineChartData.labels.length > 0"
-            :key="forceRerender"
             :chart-data="lineChartData"
           />
           <p v-else>수익률 데이터가 없습니다.</p>
@@ -264,7 +263,7 @@ onMounted(async () => {
 });
 
 watch(lineChartData, () => {
-  // chartData.datasets[0].data = amountArr;
+  chartData.datasets[0].data = amountArr;
   forceRerender.value++;
 });
 </script>
@@ -278,11 +277,7 @@ watch(lineChartData, () => {
   padding-left: 0;
 }
 .chart-wrapper {
-  opacity: 0;
   transform: scale(0.95);
-  transition:
-    opacity 1s ease-in-out,
-    transform 0.5s ease-in-out;
 }
 .chart-wrapper.chart-visible {
   opacity: 1;
@@ -350,8 +345,6 @@ watch(lineChartData, () => {
   text-align: left;
 }
 .chart-wra {
-  width: 350px;
-  padding: 20px;
 }
 .top-stocks {
   margin-top: 0;

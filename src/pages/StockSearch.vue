@@ -66,7 +66,7 @@ const isCloseClicked = () => {
 };
 
 const orderFormData = computed(() => {
-  if (formType.value == "sell" || formType.value == "buy")
+  if (formType.value == "S" || formType.value == "B")
     return {
       orderType: formType.value,
       stockName: stockPortfolioData.value.name,

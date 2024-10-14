@@ -6,6 +6,7 @@ export const useHeaderStore = defineStore("headerStore", {
     shortCode: "",
     isStockPortfolioPage: false,
     isStockButtonVisible: true,
+    isEditModalVisible: false,
   }),
   actions: {
     setStockTitle(stockName) {
@@ -19,6 +20,9 @@ export const useHeaderStore = defineStore("headerStore", {
     },
     setStockButtonVisible() {
       this.isStockButtonVisible = !this.isStockButtonVisible;
+    },
+    triggerEditFunction() {
+      this.isEditModalVisible = !this.isEditModalVisible;
     },
   },
 });

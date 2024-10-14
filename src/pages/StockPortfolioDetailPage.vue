@@ -13,10 +13,25 @@
     <OrderForm
       v-if="isFormVisible"
       :data="orderFormData"
-      class="modal-overlay"
+      class="order-modal-overlay"
       @update="isCloseClicked"
       @update-data="updateData"
     />
+    <div
+      v-if="headerStore.isEditModalVisible"
+      class="edit-modal-overlay"
+      @click="toggleModal"
+    >
+      <div class="modal-content" @click.stop>
+        <button class="modal-button" @click="handleEdit">수정하기</button>
+        <button class="modal-button" @click="handleSelectDelete">
+          선택 삭제하기
+        </button>
+        <button class="modal-button" @click="handleDeleteAll">
+          모두 삭제하기
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -58,7 +73,9 @@ const fetchShortCode = (stockId) => {
 const setHeaderButton = () => {
   headerStore.setStockPortfolioHeaderButton(true);
 };
-
+const toggleModal = () => {
+  headerStore.triggerEditFunction();
+};
 const showForm = (type) => {
   formType.value = type;
   isFormVisible.value = true;
@@ -100,9 +117,11 @@ const orderFormData = computed(() => {
 const orderHistoryData = computed(() => {
   return stockPortfolioData.value.orders || [];
 });
-
 const isStockButtonVisible = computed(() => headerStore.isStockButtonVisible);
-
+const isEditModalVisible = computed(() => {
+  console.log("test" + headerStore.isEditModalVisible);
+  return headerStore.isEditModalVisible;
+});
 const fetchStockPortfolioData = async () => {
   return await stockPortfolioService.fetchStockOrder(props.stockId);
 };
@@ -165,7 +184,7 @@ onMounted(async () => {
   font-size: 16px;
   cursor: pointer;
 }
-.modal-overlay {
+.order-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -176,5 +195,54 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   z-index: 1100; /* 화면 위에 오도록 z-index 설정 */
+}
+
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: flex-end;
+}
+
+/* 슬라이드 효과가 있는 모달 창 */
+.modal-content {
+  justify-content: center;
+  background-color: white;
+  width: 100%;
+  max-width: 400px;
+  height: 450px;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(100%);
+  transition: transform 10s ease-in-out; /* 슬라이드 애니메이션을 더 길게 */
+}
+
+.modal-overlay .modal-content {
+  transform: translateY(0); /* 모달이 올라오는 애니메이션 */
+}
+.modal-button {
+  width: 100%;
+  padding: 14px;
+  font-size: 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #000000;
+
+  margin-bottom: 30px;
+}
+.modal-content button:nth-child(2) {
+  background-color: var(--warning-color);
+  color: #ffffff;
+}
+.modal-content button:nth-child(3) {
+  background-color: var(--warning-color);
+  color: #ffffff;
 }
 </style>
