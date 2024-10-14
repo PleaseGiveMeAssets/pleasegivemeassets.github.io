@@ -30,6 +30,7 @@ ChartJS.register(
   LineController,
 );
 
+// props로 차트 데이터를 받아옴
 const props = defineProps({
   chartData: {
     type: Object,
@@ -37,14 +38,24 @@ const props = defineProps({
   },
 });
 
-// 차트 ref
+// lineChart를 담을 ref 변수
 const lineChart = ref(null);
+
+// 차트 인스턴스를 저장할 변수
+let chartInstance = null;
 
 // 차트 초기화 함수
 const initializeChart = () => {
+  console.log("!!", props.chartData);
   const ctx = lineChart.value.getContext("2d");
 
-  new ChartJS(ctx, {
+  // 기존 차트가 있으면 파괴
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  // 새로운 차트 생성
+  chartInstance = new ChartJS(ctx, {
     type: "line",
     data: props.chartData,
     options: {
@@ -64,7 +75,7 @@ const initializeChart = () => {
             text: "날짜",
           },
           ticks: {
-            callback: function (value, index, values) {
+            callback: function (value) {
               const label = this.getLabelForValue(value);
               // 날짜 형식 변환: 20240930 -> 24.09.30
               return (
@@ -82,8 +93,9 @@ const initializeChart = () => {
   });
 };
 
-// 컴포넌트 마운트 후 차트 생성
+// 컴포넌트가 마운트된 후 차트를 초기화
 onMounted(() => {
+  console.log("Chart Data on Mount:", props.chartData);
   initializeChart();
 });
 
@@ -91,10 +103,13 @@ onMounted(() => {
 watch(
   () => props.chartData,
   () => {
+    console.log("@@@", lineChart.value);
+
     if (lineChart.value) {
       initializeChart();
     }
   },
+  { deep: true },
 );
 </script>
 
