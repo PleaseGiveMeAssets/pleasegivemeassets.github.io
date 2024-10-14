@@ -12,13 +12,17 @@
         <p class="nickname-and-type">{{ userNickname }}님의 투자 유형은</p>
 
         <div class="investment-type-header">
+          <!-- 투자 유형 ID에 따라 이미지를 동적으로 선택 -->
           <img
             class="type-image"
-            src="@/assets/images/raccoon_investmentType5.png"
-            alt="Aggressive Investor"
+            :src="getImageByType(investmentType.investmentTypeId)"
+            alt="Investment Type Image"
           />
           <div class="investment-type-content">
-            <h3>{{ investmentType.investmentTypeName }}</h3>
+            <!-- <h3>{{ investmentType.investmentTypeName }}</h3> -->
+            <h3 :class="getColorByType(investmentType.investmentTypeId)">
+              {{ investmentType.investmentTypeName }}
+            </h3>
             <p>{{ investmentType.content }}</p>
           </div>
         </div>
@@ -63,18 +67,71 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router"; // router import 추가
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // router import 추가
 import {
   fetchSurveyResult,
   fetchUserNickname,
-} from "../services/surveyService";
+} from '../services/surveyService';
 
 const router = useRouter();
 
 // 상태 변수 선언
 const investmentType = ref(null);
-const userNickname = ref(""); // 사용자 이름 초기값을 빈 문자열로 설정
+const userNickname = ref(''); // 사용자 이름 초기값을 빈 문자열로 설정
+
+// 투자 유형 ID에 따라 이미지를 동적으로 불러오는 함수
+const getImageByType = (investmentTypeId) => {
+  switch (investmentTypeId) {
+    case 1:
+      return new URL(
+        '@/assets/images/raccoon_investmentType1.png',
+        import.meta.url
+      ).href;
+    case 2:
+      return new URL(
+        '@/assets/images/raccoon_investmentType2.png',
+        import.meta.url
+      ).href;
+    case 3:
+      return new URL(
+        '@/assets/images/raccoon_investmentType3.png',
+        import.meta.url
+      ).href;
+    case 4:
+      return new URL(
+        '@/assets/images/raccoon_investmentType4.png',
+        import.meta.url
+      ).href;
+    case 5:
+      return new URL(
+        '@/assets/images/raccoon_investmentType5.png',
+        import.meta.url
+      ).href;
+    default:
+      return new URL(
+        '@/assets/images/raccoon_investmentType1.png',
+        import.meta.url
+      ).href;
+  }
+};
+
+const getColorByType = (investmentTypeId) => {
+  switch (investmentTypeId) {
+    case 1:
+      return 'type-color1';
+    case 2:
+      return 'type-color2';
+    case 3:
+      return 'type-color3';
+    case 4:
+      return 'type-color4';
+    case 5:
+      return 'type-color5';
+    default:
+      return '';
+  }
+};
 
 // 설문 결과 및 사용자 닉네임 불러오기 함수
 const loadSurveyResult = async () => {
@@ -88,8 +145,8 @@ const loadSurveyResult = async () => {
     userNickname.value = nickname;
   } catch (error) {
     console.error(
-      "설문 결과를 불러오는 중 오류가 발생했습니다.",
-      error.response?.data || error.message,
+      '설문 결과를 불러오는 중 오류가 발생했습니다.',
+      error.response?.data || error.message
     );
   }
 };
@@ -97,7 +154,7 @@ const loadSurveyResult = async () => {
 // 설문 재진행 버튼 클릭 시 호출되는 함수
 const restartSurvey = () => {
   // 설문 첫 번째 페이지로 이동
-  router.push("/survey");
+  router.push('/survey');
 };
 
 // 컴포넌트가 마운트될 때 설문 결과를 로드
@@ -146,7 +203,6 @@ onMounted(() => {
 .investment-type-content h3 {
   margin: 0;
   font-size: 18px;
-  color: #fe446f;
 }
 
 .investment-type-content p {
@@ -221,5 +277,26 @@ onMounted(() => {
 
 .btn-primary:hover {
   background-color: #5b23d1;
+}
+
+/* 유형에 따라 글색 다르게 하기 위함 */
+.type-color1 {
+  color: #f1f1e1; /* 예시 색상 */
+}
+
+.type-color2 {
+  color: #b4ecc5; /* 예시 색상 */
+}
+
+.type-color3 {
+  color: #b4c4ec; /* 예시 색상 */
+}
+
+.type-color4 {
+  color: #f6f676; /* 예시 색상 */
+}
+
+.type-color5 {
+  color: #f5a6a6; /* 예시 색상 */
 }
 </style>

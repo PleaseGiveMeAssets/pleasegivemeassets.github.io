@@ -44,7 +44,7 @@
       </div>
       <div class="circle-navigation">
         <div class="circle-item">
-          <div class="circle-box" @click="navigateTo('/investment')">
+          <div class="circle-box" @click="navigateTo('/survey-result')">
             <img :src="investmentIcon" alt="투자성향" class="circle-icon" />
           </div>
           <p class="circle-text">투자성향</p>
@@ -71,15 +71,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { getUserProfile } from "@/services/myProfileService";
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { getUserProfile } from '@/services/myProfileService';
 
-import heartIcon from "@/assets/icons/heartArrow-icon.svg";
-import investmentIcon from "@/assets/icons/investment-icon.svg";
-import profileEditIcon from "@/assets/icons/profile-edit-icon.svg";
-import savedIcon from "@/assets/icons/saved-icon.svg";
-import settingsIcon from "@/assets/icons/settings-icon.svg";
+import heartIcon from '@/assets/icons/heartArrow-icon.svg';
+import investmentIcon from '@/assets/icons/investment-icon.svg';
+import profileEditIcon from '@/assets/icons/profile-edit-icon.svg';
+import savedIcon from '@/assets/icons/saved-icon.svg';
+import settingsIcon from '@/assets/icons/settings-icon.svg';
 
 const route = useRoute();
 const router = useRouter();
@@ -93,7 +93,7 @@ const fetchUserData = async () => {
     const data = await getUserProfile(userId);
     userData.value = data;
   } catch (error) {
-    console.error("Failed to fetch user profile:", error);
+    console.error('Failed to fetch user profile:', error);
   } finally {
     isLoading.value = false;
   }
@@ -108,7 +108,7 @@ onMounted(fetchUserData);
 
 <style scoped>
 body {
-  font-family: "Pretendard Medium", sans-serif;
+  font-family: 'Pretendard Medium', sans-serif;
 }
 
 .user-profile {
