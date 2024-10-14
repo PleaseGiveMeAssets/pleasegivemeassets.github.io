@@ -30,6 +30,24 @@ class StockPortfolioService {
       return "";
     }
   }
+  async validateSellData(stockId, endDate) {
+    if (import.meta.env.VITE_API_URL != 0) {
+      try {
+        const response = await axiosInstance.get(`stock/validateselldata`, {
+          params: {
+            stockId: stockId,
+            endDate: endDate,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error("API validateSellData fetch error", error);
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
   getStockOrder() {
     return {
       name: "신라섬유",

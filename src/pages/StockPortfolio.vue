@@ -83,6 +83,7 @@
         <div class="chart-wra">
           <LineChart
             v-if="lineChartData.labels.length > 0"
+            :key="forceRerender"
             :chart-data="lineChartData"
           />
           <p v-else>수익률 데이터가 없습니다.</p>
@@ -96,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import DoughnutChart from "../components/DoughnutChart.vue";
@@ -116,7 +117,7 @@ const getToken = () => {
 };
 // 라우터 객체 가져오기
 const router = useRouter();
-
+const forceRerender = ref(0);
 // 클릭 시 편집 페이지로 이동 함수
 const goToEditPage = () => {
   router.push({ path: "/edit" });
@@ -231,16 +232,18 @@ const fetchWeeklyGraphData = async () => {
 
     // 수익률 계산 (수익률 = (totalProfit / totalAmount) * 100)
     const profitRates = stockData.map((item) => {
+      // totalAmount가 0이 아닌 경우에만 수익률 계산
       if (item.totalAmount !== 0) {
-        return ((item.totalProfit / item.totalAmount) * 100).toFixed(2);
+        return (item.totalProfit / item.totalAmount) * 100;
       } else {
-        return 0; // totalAmount가 0일 때 수익률은 0으로 처리
+        return 0; // totalAmount가 0이면 수익률 0
       }
     });
 
     // 차트 데이터 설정
     lineChartData.value.labels = labels;
     lineChartData.value.datasets[0].data = profitRates;
+    console.log(lineChartData.value);
   } catch (error) {
     console.error("Error fetching stock portfolio info:", error);
   }
@@ -252,11 +255,17 @@ onMounted(async () => {
   await fetchPortfolioData(); // 추가 데이터 가져오기
   await fetchProfitData(); // 추가 데이터 가져오기
 
+  forceRerender.value++;
   // 로딩이 완료된 후 너구리 애니메이션을 멈추고 차트를 보여줍니다.
   loading.value = false;
   setTimeout(() => {
     chartVisible.value = true; // 차트가 서서히 나타나도록 상태 변경
   }, 100); // 짧은 지연 후 차트 애니메이션 시작
+});
+
+watch(lineChartData, () => {
+  // chartData.datasets[0].data = amountArr;
+  forceRerender.value++;
 });
 </script>
 

@@ -15,7 +15,7 @@
           :style="{ backgroundImage: `url(${userData.profileImageUrl})` }"
         ></div>
         <div class="info">
-          <p class="nickname">{{ userData.nickname }} 님</p>
+          <p class="nickname">{{ userData.nickname || userData.name }} 님</p>
           <p class="investment-type">
             당신의 투자성향은 {{ userData.investmentTypeName }}입니다.
           </p>
@@ -35,7 +35,7 @@
         <p class="nav-title">관심 항목</p>
         <img :src="heartIcon" alt="관심 항목" class="nav-icon" />
         <p class="sub-text">
-          백정현님이 관심 있어 할만한<br />
+          {{ userData.name }}님이 관심 있어 할만한<br />
           주식을 찾아보세요
         </p>
         <button class="find-button" @click="navigateTo('/interest')">
@@ -44,7 +44,7 @@
       </div>
       <div class="circle-navigation">
         <div class="circle-item">
-          <div class="circle-box" @click="navigateTo('/investment')">
+          <div class="circle-box" @click="navigateTo('/survey-result')">
             <img :src="investmentIcon" alt="투자성향" class="circle-icon" />
           </div>
           <p class="circle-text">투자성향</p>
@@ -71,29 +71,44 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { getUserProfile } from "@/services/myProfileService";
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
 
-import heartIcon from "@/assets/icons/heartArrow-icon.svg";
-import investmentIcon from "@/assets/icons/investment-icon.svg";
-import profileEditIcon from "@/assets/icons/profile-edit-icon.svg";
-import savedIcon from "@/assets/icons/saved-icon.svg";
-import settingsIcon from "@/assets/icons/settings-icon.svg";
+import heartIcon from '@/assets/icons/heartArrow-icon.svg';
+import investmentIcon from '@/assets/icons/investment-icon.svg';
+import savedIcon from '@/assets/icons/saved-icon.svg';
+import settingsIcon from '@/assets/icons/settings-icon.svg';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 const route = useRoute();
 const router = useRouter();
-const userId = route.params.userId;
 const userData = ref(null);
 const isLoading = ref(true);
 
+// JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
+const getToken = () => {
+  const token = localStorage.getItem('accessToken');
+  if (!token) {
+    router.push({ path: '/login' }); // 로그인 페이지로 이동
+    throw new Error('토큰이 없습니다. 로그인 페이지로 이동합니다.');
+  }
+  return token;
+};
+
+// 사용자 데이터를 불러오는 함수
 const fetchUserData = async () => {
   isLoading.value = true;
   try {
-    const data = await getUserProfile(userId);
-    userData.value = data;
+    const token = getToken();
+    const response = await axios.get(`${API_BASE_URL}/user/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+      },
+    });
+    userData.value = response.data;
   } catch (error) {
-    console.error("Failed to fetch user profile:", error);
+    console.error('Failed to fetch user profile:', error);
   } finally {
     isLoading.value = false;
   }
@@ -103,12 +118,15 @@ const navigateTo = (path) => {
   router.push(path);
 };
 
-onMounted(fetchUserData);
+onMounted(() => {
+  console.log('Fetched userId from route params:', route.params.userId);
+  fetchUserData();
+});
 </script>
 
 <style scoped>
 body {
-  font-family: "Pretendard Medium", sans-serif;
+  font-family: 'Pretendard Medium', sans-serif;
 }
 
 .user-profile {
@@ -140,7 +158,6 @@ body {
   margin-top: 50px;
 }
 .highlight-text {
-  color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
   font-size: 12px;
   margin-top: 6px;
@@ -219,7 +236,7 @@ body {
   position: absolute;
   top: 12px;
   left: 18px;
-  font-size: 15px !important;
+  font-size: 15px;
   font-weight: bold;
   color: #49454f;
 }
@@ -236,11 +253,6 @@ body {
   margin: 10px 0;
 }
 
-.nav-item p {
-  font-size: 13px;
-  color: #333;
-  margin: 0;
-}
 .find-button {
   width: 100%;
   max-width: 309px;
