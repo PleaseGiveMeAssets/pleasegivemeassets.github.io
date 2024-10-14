@@ -92,14 +92,6 @@
           >
         </div>
       </div>
-
-      <!-- 네비게이션 바 -->
-      <nav class="navigation-bar">
-        <a href="#" class="nav-item">홈</a>
-        <a href="#" class="nav-item">리포트</a>
-        <a href="#" class="nav-item">포트폴리오</a>
-        <a href="#" class="nav-item">MY</a>
-      </nav>
     </div>
   </div>
 </template>
@@ -107,6 +99,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const name = ref("");
 const phone = ref("");
@@ -187,13 +180,48 @@ const verifyCode = () => {
   showVerificationResultMessage.value = true;
 };
 
-const submitFindId = () => {
-  console.log(
-    "아이디 찾기 요청:",
-    name.value,
-    phone.value,
-    verificationCode.value,
-  );
+const submitFindId = async () => {
+  if (isFormInvalid.value) {
+    return;
+  }
+
+  const [phoneFirst, phoneMiddle, phoneLast] = phone.value
+    .match(/(\d{3})(\d{4})(\d{4})/)
+    .slice(1);
+
+  const BASE = `${import.meta.env.VITE_API_URL}/auth/find-id`;
+
+  try {
+    const response = await axios.post(BASE, {
+      name: name.value,
+      phoneFirst,
+      phoneMiddle,
+      phoneLast,
+      phoneVerificationCode: verificationCode.value,
+    });
+
+    // 아이디 찾기 성공 시 결과 페이지로 이동
+    router.push({
+      name: "FindIdResult",
+      query: {
+        accounts: JSON.stringify(response.data),
+      },
+    });
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      // 회원을 찾지 못한 경우에도 결과 페이지로 이동
+      router.push({
+        name: "FindIdResult",
+        query: {
+          accounts: JSON.stringify([]),
+        },
+      });
+    } else {
+      // 기타 에러 처리
+      console.error("아이디 찾기 요청 중 오류 발생:", error);
+      // 필요에 따라 사용자에게 에러 메시지 표시
+    }
+  }
 };
 
 const goToFindPassword = () => {
@@ -213,12 +241,11 @@ const goToFindPassword = () => {
 .find-id-container {
   width: 100%;
   max-width: 390px;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   margin: 0 auto;
-  padding: 20px 24px 80px;
+  padding: 0px 0 60px 0;
 }
 
 .content-wrapper {
@@ -271,7 +298,7 @@ const goToFindPassword = () => {
 
 .phone-input-group input {
   flex-grow: 1;
-  padding-right: 180px;
+  padding-right: 110px;
 }
 
 .auth-button-wrapper,
@@ -322,7 +349,7 @@ const goToFindPassword = () => {
   width: 100%;
   height: 60px;
   background-color: #e8e8fc;
-  color: #7c77a3;
+  color: var(--inactive-button);
   font-size: 20px;
   font-weight: bold;
   border: none;
@@ -399,23 +426,5 @@ const goToFindPassword = () => {
 
 .verification-error {
   color: #ff4d4f;
-}
-
-.navigation-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #ffffff;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.nav-item {
-  text-decoration: none;
-  color: #333;
-  font-size: 14px;
 }
 </style>
