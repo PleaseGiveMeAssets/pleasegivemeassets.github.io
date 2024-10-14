@@ -56,9 +56,7 @@
     <!-- 4. 소셜 로그인 버튼 섹션 -->
     <div class="social-login-section">
       <div class="social-login naver">
-        <a
-          href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=IYVENBOBxesP1YgAYgbo&redirect_uri=http://localhost:5173/auth/login/naver&state=random_state_string"
-        >
+        <a :href="naverLoginUrl">
           <img
             src="@/assets/images/naver_login.png"
             class="naver-login-btn"
@@ -67,9 +65,7 @@
         </a>
       </div>
       <div class="social-login kakao">
-        <a
-          href="https://kauth.kakao.com/oauth/authorize?client_id=314541b0e482a6d2f2ff97d5c582ed3b&redirect_uri=http://localhost:5173/auth/login/kakao&response_type=code"
-        >
+        <a :href="kakaoLoginUrl">
           <img
             src="@/assets/images/kakao_login.png"
             class="kakao-login-btn"
@@ -81,7 +77,7 @@
 
     <!-- 5. 회원가입 버튼 섹션 -->
     <div class="signup-section">
-      <div class="signup">회원가입</div>
+      <div class="signup" @click="goToSignUp">회원가입</div>
     </div>
   </div>
 </template>
@@ -94,17 +90,24 @@ import { useRouter } from "vue-router";
 const userId = ref("");
 const password = ref("");
 const rememberMe = ref(false);
+const BASE = `${import.meta.env.VITE_API_URL}/auth/login`;
+const kakaoClientId = import.meta.env.VITE_KAKAO_REST_API_KEY;
+const naverClientId = import.meta.env.VITE_NAVER_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_REDIRECT_URI;
+
+const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${redirectUri}/kakao&response_type=code`;
+const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${naverClientId}&redirect_uri=${redirectUri}/naver&state=random_state`;
 
 const router = useRouter();
 
 const login = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/v1/auth/login",
+      BASE,
       {
         userId: userId.value,
         password: password.value,
-        rememberMe: rememberMe.value,
+        rememberMe: rememberMe.value ? "Y" : "N",
       },
       { withCredentials: true },
     );
@@ -126,6 +129,10 @@ const goToFindId = () => {
 const goToFindPassword = () => {
   router.push("/find-password");
 };
+
+const goToSignUp = () => {
+  router.push("/signup");
+};
 </script>
 
 <style scoped>
@@ -133,7 +140,7 @@ const goToFindPassword = () => {
   width: 100%;
   max-width: 390px;
   min-height: 100vh;
-  padding: 20px 24px 24px;
+  padding: 20px 0 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;

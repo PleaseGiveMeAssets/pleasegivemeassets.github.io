@@ -7,6 +7,11 @@
         alt="loading"
         class="loading-image"
       />
+      <img
+        src="/public/images/spinNuguri.png"
+        alt="loading"
+        class="loading-image"
+      />
     </div>
 
     <div v-else>
@@ -17,7 +22,7 @@
       >
         <button class="edit-button" @click="goToEditPage">편집</button>
         <!-- 도넛 차트 -->
-        <div class="chart-content" @click="goToStockSearchList">
+        <div class="chart-content">
           <DoughnutChart
             v-if="stockData.length > 0"
             :data="stockData"
@@ -59,7 +64,7 @@
               :key="index"
               class="stock-item"
             >
-              <router-link :to="`/stock/${stockId}`" class="noUnderline">
+              <router-link :to="`/stock/${stock.stockId}`" class="noUnderline">
                 <div class="stock-info">
                   <p class="stock-name">{{ stock.name }}</p>
                   <p class="stock-shortcode">{{ stock.shortCode }}</p>
@@ -112,10 +117,6 @@ const getToken = () => {
 // 라우터 객체 가져오기
 const router = useRouter();
 
-// 클릭 시 페이지 이동 함수
-const goToStockSearchList = () => {
-  router.push({ path: "/myStocklist" });
-};
 // 클릭 시 편집 페이지로 이동 함수
 const goToEditPage = () => {
   router.push({ path: "/edit" });
@@ -197,6 +198,7 @@ const fetchProfitData = async () => {
       assetData.value.purchaseAmount = assetDataResponse.totalInvestedAmount;
       assetData.value.totalProfit = assetDataResponse.totalProfitLossAmount;
       assetData.value.evaluationAmount =
+        assetDataResponse.totalInvestedAmount +
         assetDataResponse.totalProfitLossAmount;
       assetData.value.currentYield =
         assetDataResponse.totalProfitLossPercentage;

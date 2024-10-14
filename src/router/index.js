@@ -1,5 +1,7 @@
+import { createRouter, createWebHistory } from "vue-router";
 import StockPage from "@/pages/StockPage.vue";
 import SurveyPage from "@/pages/SurveyPage.vue";
+import SurveyLoadingPage from "@/pages/SurveyLoadingPage.vue";
 import SurveyResultPage from "@/pages/SurveyResultPage.vue";
 import MyProfilePage from "@/pages/MyProfilePage.vue";
 import InterestPage from "@/pages/InterestPage.vue";
@@ -16,10 +18,11 @@ import AccountManagement from "@/pages/AccountManagement.vue";
 import StockPortfolioDetailPage from "@/pages/StockPortfolioDetailPage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import FindIdPage from "@/pages/FindIdPage.vue";
-import AuthLoginHanddler from "@/components/AuthLoginHandler.vue";
+import FindIdResultPage from "@/pages/FindIdResultPage.vue";
+import AuthLoginHandler from "@/components/AuthLoginHandler.vue";
 import MainPage from "@/pages/MainPage.vue";
-import { createRouter, createWebHistory } from "vue-router";
 import RecommendStockPage from "@/pages/RecommendStockPage.vue";
+import SignUpPage from "@/pages/SignUpPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,28 +30,34 @@ const router = createRouter({
     { path: "/", name: "home", component: HomePage },
     {
       path: "/stock/:stockId",
+      name: "stockPage",
       component: StockPage,
       props: true,
     },
     {
       path: "/stock/:stockId/portfolio",
+      name: "stockPortfolioPage",
       component: StockPortfolioDetailPage,
       props: true,
     },
-    { path: "/survey", component: SurveyPage }, // Survey 경로 추가
-    { path: "/survey-result", component: SurveyResultPage }, // SurveyResult 경로추가
+    { path: "/survey", name: "survey", component: SurveyPage }, // Survey 경로 추가
+    { path: "/survey-loading", component: SurveyLoadingPage }, // SurveyLoading 경로추가
+    {
+      path: "/survey-result",
+      name: "survey-result",
+      component: SurveyResultPage,
+    }, // SurveyResult 경로추가
     {
       path: "/myProfile", // MyProfile 경로 추가
       component: MyProfilePage,
       props: true,
     },
-    { path: "/interest", component: InterestPage }, // Interest 경로 추가
-    { path: "/notifications", component: NotificationsPage }, // Notifications 경로 추가
-    { path: "/profile-edit", component: ProfileEditPage }, // ProfileEdit 경로 추가
-    { path: "/saved", component: SavedPage }, // Saved 경로 추가
-    { path: "/settings", component: SettingsPage }, // Settings 경로 추가
+    { path: "/interest", component: InterestPage },
+    { path: "/notifications", component: NotificationsPage },
+    { path: "/profile-edit", component: ProfileEditPage },
+    { path: "/saved", component: SavedPage },
+    { path: "/settings", component: SettingsPage },
     { path: "/dailyreport", component: DailyReportPage },
-
     { path: "/portfolio", component: StockPortfolioPage },
     { path: "/stocksearch", component: StockSearchPage },
     { path: "/myStocklist", component: MyStockListViewPage },
@@ -66,9 +75,28 @@ const router = createRouter({
         }
       },
     },
-    { path: "/find-id", component: FindIdPage },
-    { path: "/auth/login/:service", component: AuthLoginHanddler },
-    { path: "/main", component: MainPage, meta: { hideNavbar: true } },
+    {
+      path: "/find-id",
+      component: FindIdPage,
+    },
+    {
+      path: "/find-id",
+      name: "FindIdResult",
+      component: FindIdResultPage,
+      props: (route) => ({
+        userId: route.query.userId,
+        createdAt: route.query.createdAt,
+      }),
+    },
+    {
+      path: "/auth/login/:service",
+      component: AuthLoginHandler,
+    },
+    {
+      path: "/main",
+      component: MainPage,
+      meta: { hideNavbar: true },
+    },
     {
       path: "/auth/logout/kakao",
       component: {
@@ -77,6 +105,7 @@ const router = createRouter({
         },
       },
     },
+    { path: "/signup", component: SignUpPage },
   ],
 });
 

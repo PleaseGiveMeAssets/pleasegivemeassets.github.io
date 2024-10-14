@@ -11,14 +11,16 @@ export async function fetchQuestion(questionId) {
   return response.data;
 }
 
-// 설문 답변 제출 함수
-export async function submitAnswer(userId, questionId, optionId) {
+export async function submitAnswer(questionId, optionId) {
   const userAnswerDTO = {
-    userId: userId,
     questionId: questionId,
     optionId: optionId,
   };
-  await axios.post(`${BASE}/survey/answer/${questionId}`, userAnswerDTO);
+  await axios.post(`${BASE}/survey/answer/${questionId}`, userAnswerDTO, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Add JWT token here
+    },
+  });
 }
 
 export async function fetchSurveyResult() {
@@ -32,3 +34,17 @@ export async function fetchSurveyResult() {
   );
   return response.data; // 총 점수와 투자 유형 정보 반환
 }
+
+// 사용자 닉네임 불러오기 함수 (JWT 토큰 필요)
+export const fetchUserNickname = async () => {
+  try {
+    const response = await axios.get(`${BASE}/survey-result/user-nickname`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // JWT 토큰 추가
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

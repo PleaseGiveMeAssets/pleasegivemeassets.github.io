@@ -5,7 +5,6 @@
         ref="highchartsRef"
         class=""
         :options="chartOptions"
-        @render="onChartRender"
       ></highcharts>
     </div>
     <div v-else>
@@ -31,6 +30,12 @@ const close = 10940; // 종가
 const primaryColor = getComputedStyle(document.documentElement)
   .getPropertyValue("--primary-color")
   .trim();
+const bearColor = getComputedStyle(document.documentElement)
+  .getPropertyValue("--bear-color")
+  .trim();
+const bullColor = getComputedStyle(document.documentElement)
+  .getPropertyValue("--bull-color")
+  .trim();
 const chartOptions = ref({
   chart: {
     height: 300,
@@ -40,24 +45,6 @@ const chartOptions = ref({
     text: "",
   },
   subtitle: {
-    text: `
-    <span style="display: inline-block; margin-right: 15px;">
-      <span style="color:#666666">시</span> ${open.toLocaleString()}
-    </span>
-    <span style="display: inline-block; margin-right: 15px;">
-      <span style="color:#666666">종</span> ${close.toLocaleString()}
-    </span>
-    <span style="display: inline-block; margin-right: 15px;">
-      <span style="color:#666666">저</span> ${low.toLocaleString()}
-    </span>
-    <span style="display: inline-block;">
-      <span style="color:#666666">고</span> ${high.toLocaleString()}
-    </span>
-    <div style="transform: translateX(-10%); 
-      left: 42px; font-size:26px; margin-top:18px">
-      ${close.toLocaleString()}원
-    </div>
-    `,
     align: "center",
     style: {
       fontFamily: "Pretendard-Bold",
@@ -75,24 +62,21 @@ const chartOptions = ref({
       enabled: true,
       rotation: -10, // 라벨을 수평으로 설정
       style: {
-        fontSize: "10px", // 라벨의 글꼴 크기를 줄임
+        fontSize: "10px",
       },
       formatter: function () {
         const parts = this.value.split(" ");
-        let formattedDate = parts[0]; // 'MM월 dd일' 부분
-        let time = parts[1]; // '시:분' 부분
+        let formattedDate = parts[0];
+        let time = parts[1];
 
-        // 'MM월 dd일'에서 '월'과 '일'을 제거하고, 월과 일을 조합
-        const month = formattedDate.slice(0, -1); // 'MM' (월 제거)
-        const day = time.slice(0, -1); // 'dd' (일 제거)
+        const month = formattedDate.slice(0, -1);
+        const day = time.slice(0, -1);
 
-        // 원하는 형식으로 월과 일 조합
         const label = `${month}월 ${day}일`;
         if (label === lastLabel) {
-          // 현재 라벨이 이전 라벨과 중복되면 빈 값을 반환
           return "";
         } else {
-          lastLabel = label; // 중복되지 않으면 라벨을 저장하고 반환
+          lastLabel = label;
           return label;
         }
       },
@@ -125,9 +109,6 @@ const chartOptions = ref({
       name: "가격",
       data: [],
       color: primaryColor,
-      tooltip: {
-        valueDecimals: 2,
-      },
     },
   ],
   legend: {
@@ -135,12 +116,10 @@ const chartOptions = ref({
   },
 });
 
-chartOptions.value.series[0].data = computed(() => {
-  // 데이터가 비어있는 경우 null 반환
+const parsedData = computed(() => {
   if (Object.keys(props.data).length === 0) return null;
 
-  // props.data의 객체 값을 배열로 변환하여 처리
-  const parsedData = Object.values(props.data)
+  const dataArray = Object.values(props.data)
     .filter((item) => item.openPrice != 0)
     .map((item) => {
       const date = new Date(
@@ -158,11 +137,58 @@ chartOptions.value.series[0].data = computed(() => {
         minute: "2-digit",
       });
 
-      return [formattedDate, parseFloat(item.closedPrice)]; // [시간, 종가]
+      return {
+        date: formattedDate,
+        open: item.openPrice,
+        close: item.closedPrice,
+        high: item.highPrice,
+        low: item.lowPrice,
+      };
     });
 
-  return parsedData;
+  // 차트 데이터에 마지막 값을 기준으로 high, low, open, close 설정
+  if (dataArray.length > 0) {
+    const lastData = dataArray[dataArray.length - 1];
+    const delta = (
+      ((lastData.close - dataArray[0].close) / dataArray[0].close) *
+      100
+    ).toFixed(2);
+    const deltaColor = delta > 0 ? bullColor : bearColor;
+    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    chartOptions.value.subtitle.text = `
+    <div>
+      <div style="text-align: center;">
+        <span style="display: inline-block; margin-right: 10px;">
+          <span style="padding:2px; color:#666666">시</span> ${lastData.open.toLocaleString()}
+        </span>
+        <span style="display: inline-block; margin-right: 10px;">
+          <span style="padding:2px; color:#666666">종</span> ${lastData.close.toLocaleString()}
+        </span>
+        <span style="display: inline-block; margin-right: 10px;">
+          <span style="padding:2px; color:#666666">저</span> ${lastData.low.toLocaleString()}
+        </span>
+        <span style="display: inline-block;">
+          <span style="padding:2px; color:#666666">고</span> ${lastData.high.toLocaleString()}
+        </span>
+      </div>
+      <div style="transform: translateX(-5%); 
+        font-size:26px; margin-top:18px">
+        ${lastData.close.toLocaleString()}원
+      </div>
+      <div style="transform: translateX(-5%); font-size:14px; margin-top:10px">
+        <span style="padding:3px; color:#666666">지난주보다</span>
+        <span style="color: ${deltaColor};">${delta}%</span>
+      </div>
+    </div>
+    `;
+    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    chartOptions.value.series[0].color = deltaColor;
+  }
+
+  return dataArray.map((item) => [item.date, item.close]);
 });
+
+chartOptions.value.series[0].data = parsedData;
 </script>
 
 <style scoped>

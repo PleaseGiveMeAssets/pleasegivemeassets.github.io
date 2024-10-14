@@ -3,7 +3,10 @@
     <button v-if="showBackButton" class="back-button" @click="goBack">
       <img src="@/assets/icons/backButton-icon.svg" alt="Back" />
     </button>
-    <div v-if="stockName != '' || shortCode != ''" class="header-stock-section">
+    <div
+      v-if="isStockPage && stockName != '' && shortCode != ''"
+      class="header-stock-section"
+    >
       <div class="stockRow">
         <div class="stockName">
           {{ stockName }}
@@ -12,6 +15,11 @@
           {{ shortCode }}
         </div>
       </div>
+    </div>
+
+    <!-- 기존의 template 안에 header-title 부분 추가 -->
+    <div class="header-title">
+      <h4>{{ pageTitle }}</h4>
     </div>
 
     <div class="header-actions"></div>
@@ -49,7 +57,9 @@ import { useHeaderStore } from "@/stores/headerStore";
 const router = useRouter();
 const route = useRoute();
 const isHomePage = ref(false);
-
+const isStockPage = computed(() => {
+  return route.name === "stockPage" || route.name === "stockPortfolioPage";
+});
 const headerStore = useHeaderStore();
 
 const showBackButton = computed(() => {
@@ -60,6 +70,16 @@ const stockName = computed(() => headerStore.stockName);
 const shortCode = computed(() => headerStore.shortCode);
 const isStockPortfolioPage = computed(() => headerStore.isStockPortfolioPage);
 const isModalVisible = ref(false);
+
+const pageTitle = computed(() => {
+  if (route.name === "survey") {
+    return "설문조사";
+  }
+  if (route.name === "survey-result") {
+    return "투자유형 분석";
+  }
+  return "";
+});
 
 const toggleModal = () => {
   isModalVisible.value = !isModalVisible.value;
@@ -112,10 +132,10 @@ p {
 }
 
 .header-title {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500; /* Pretendard medium */
-  font-size: 20px;
+  font-family: "Pretendard-Bold", sans-serif;
+  margin-top: 10px;
   position: absolute;
+  font-size: 14px;
   left: 50%;
   transform: translateX(-50%); /* 가로 가운데 정렬 */
   padding-bottom: 0; /* 아래 패딩 제거 */

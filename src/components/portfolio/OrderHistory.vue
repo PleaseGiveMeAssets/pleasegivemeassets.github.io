@@ -1,28 +1,27 @@
 <template>
   <div class="card-ui portfolio">
-    <p class="title">매수 내역</p>
+    <p class="title">주문 내역</p>
     <table>
       <tbody>
-        <div
+        <template
           v-for="(order, index) in Object.values(data)"
           :key="order.orderId"
-          class="orderItem"
         >
           <tr>
             <td>
-              <span v-if="!isSameAsPrevious(index)">
+              <span v-show="!isSameAsPrevious(index)" class="date">
                 {{ formatDate(order.orderedAt) }}
               </span>
-              <span v-else></span>
+              <span v-show="isSameAsPrevious(index)" class="date"></span>
             </td>
             <td>
               <span
                 :class="{
-                  sellText: order.orderType === 'B',
-                  buyText: order.orderType !== 'B',
+                  sellText: order.orderType !== 'B',
+                  buyText: order.orderType === 'B',
                 }"
               >
-                {{ order.orderType == "B" ? "매도" : "매수" }}
+                {{ order.orderType == "B" ? "매수" : "매도" }}
                 {{ order.quantity }}주
               </span>
             </td>
@@ -35,7 +34,8 @@
             <td>{{ (order.price || 0).toLocaleString() }}원</td>
             <td>메모</td>
           </tr>
-        </div>
+          <span style="margin: 6px" />
+        </template>
       </tbody>
     </table>
   </div>
@@ -65,9 +65,7 @@ const isSameAsPrevious = (index) => {
     formatDate(previousOrder.orderedAt) === formatDate(currentOrder.orderedAt)
   );
 };
-onMounted(() => {
-  console.log(props.data);
-});
+onMounted(() => {});
 </script>
 
 <style scoped>
@@ -90,7 +88,7 @@ th,
 td {
   line-height: 1.6;
 }
-.totalPrice {
+.total-price {
   letter-spacing: -0.3px;
 }
 .price {
@@ -98,31 +96,28 @@ td {
 }
 td:nth-child(1) {
   width: 50px;
-  text-align: left;
+  text-align: center;
 }
 td:nth-child(2) {
   width: 170px;
-  white-space: nowrap; /* 줄 바꿈 방지 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* ...으로 표시 */
-  text-align: right;
-  padding-right: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  padding-left: 22px;
 }
 td:nth-child(3) {
   width: 200px;
-  white-space: nowrap; /* 줄 바꿈 방지 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* ...으로 표시 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-align: right;
 }
 .sellText {
   color: var(--bear-color);
 }
-.orderItem {
+.order-item {
   font-size: 14px;
-  margin-bottom: 6px;
-}
-.buyText {
-  /* color: var(--bull-color); */
+  margin-bottom: 8px;
 }
 </style>
