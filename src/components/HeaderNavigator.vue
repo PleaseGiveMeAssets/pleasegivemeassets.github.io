@@ -24,7 +24,7 @@
 
     <div class="header-actions"></div>
     <button
-      v-if="isStockPortfolioPage == true"
+      v-if="isStockPortfolioPage"
       class="stock-edit-icon"
       @click="toggleModal"
     >
@@ -36,24 +36,12 @@
       src="@/assets/icons/notification-icon.svg"
     />
   </header>
-  <div v-if="isModalVisible" class="modal-overlay" @click="toggleModal">
-    <div class="modal-content" @click.stop>
-      <button class="modal-button" @click="handleEdit">수정하기</button>
-      <button class="modal-button" @click="handleSelectDelete">
-        선택 삭제하기
-      </button>
-      <button class="modal-button" @click="handleDeleteAll">
-        모두 삭제하기
-      </button>
-    </div>
-  </div>
 </template>
 
 <script setup>
 import { ref, computed, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useHeaderStore } from "@/stores/headerStore";
-
 const router = useRouter();
 const route = useRoute();
 const isHomePage = ref(false);
@@ -68,8 +56,12 @@ const showBackButton = computed(() => {
 
 const stockName = computed(() => headerStore.stockName);
 const shortCode = computed(() => headerStore.shortCode);
-const isStockPortfolioPage = computed(() => headerStore.isStockPortfolioPage);
-const isModalVisible = ref(false);
+const toggleModal = () => {
+  headerStore.triggerEditFunction();
+};
+const isStockPortfolioPage = computed(() => {
+  return route.name === "stockPortfolioPage";
+});
 
 const pageTitle = computed(() => {
   if (route.name === "survey") {
@@ -80,23 +72,6 @@ const pageTitle = computed(() => {
   }
   return "";
 });
-
-const toggleModal = () => {
-  isModalVisible.value = !isModalVisible.value;
-  headerStore.setStockButtonVisible();
-};
-
-const handleEdit = () => {
-  console.log("수정하기 클릭됨");
-};
-
-const handleSelectDelete = () => {
-  console.log("선택 삭제하기 클릭됨");
-};
-
-const handleDeleteAll = () => {
-  console.log("모두 삭제하기 클릭됨");
-};
 
 const goBack = () => router.back();
 
@@ -177,55 +152,6 @@ p {
   right: 10%;
   background: none;
   border: none;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-/* 슬라이드 효과가 있는 모달 창 */
-.modal-content {
-  justify-content: center;
-  background-color: white;
-  width: 100%;
-  max-width: 400px;
-  height: 450px;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  transform: translateY(100%);
-  transition: transform 10s ease-in-out; /* 슬라이드 애니메이션을 더 길게 */
-}
-
-.modal-overlay .modal-content {
-  transform: translateY(0); /* 모달이 올라오는 애니메이션 */
-}
-.modal-button {
-  width: 100%;
-  padding: 14px;
-  font-size: 20px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  color: #000000;
-
-  margin-bottom: 30px;
-}
-.modal-content button:nth-child(2) {
-  background-color: var(--warning-color);
-  color: #ffffff;
-}
-.modal-content button:nth-child(3) {
-  background-color: var(--warning-color);
-  color: #ffffff;
 }
 .notification-icon {
   position: absolute;

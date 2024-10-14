@@ -158,13 +158,13 @@ const parsedData = computed(() => {
     chartOptions.value.subtitle.text = `
     <div>
       <div style="text-align: center;">
-        <span style="display: inline-block; margin-right: 10px;">
+        <span style="display: inline-block; margin-right: 8px;">
           <span style="padding:2px; color:#666666">시</span> ${lastData.open.toLocaleString()}
         </span>
-        <span style="display: inline-block; margin-right: 10px;">
+        <span style="display: inline-block; margin-right: 8px;">
           <span style="padding:2px; color:#666666">종</span> ${lastData.close.toLocaleString()}
         </span>
-        <span style="display: inline-block; margin-right: 10px;">
+        <span style="display: inline-block; margin-right: 8px;">
           <span style="padding:2px; color:#666666">저</span> ${lastData.low.toLocaleString()}
         </span>
         <span style="display: inline-block;">

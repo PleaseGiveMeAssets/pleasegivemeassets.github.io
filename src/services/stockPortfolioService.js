@@ -48,6 +48,53 @@ class StockPortfolioService {
       return null;
     }
   }
+
+  async deleteAllOrder(stockId) {
+    if (import.meta.env.VITE_API_URL != 0) {
+      try {
+        const response = await axiosInstance.delete(`portfolio/${stockId}`);
+        return response.data;
+      } catch (error) {
+        console.error("API fetch error, using mock data", error);
+        return this.getStockOrder();
+      }
+    } else {
+      return this.getStockOrder();
+    }
+  }
+
+  async editOrder(orderId, stockOrderData) {
+    if (import.meta.env.VITE_API_URL != 0) {
+      try {
+        const response = await axiosInstance.put(
+          `portfolio/order/${orderId}`,
+          stockOrderData,
+        );
+        return response.data;
+      } catch (error) {
+        console.error("API fetch error, using mock data", error);
+        return this.getStockOrder();
+      }
+    } else {
+      return this.getStockOrder();
+    }
+  }
+
+  async deleteAllOrder(stockOrderIds) {
+    if (import.meta.env.VITE_API_URL != 0) {
+      try {
+        const response = await axiosInstance.delete(
+          `portfolio/order`,
+          stockOrderIds,
+        );
+        return response.data;
+      } catch (error) {
+        console.error("API fetch error", error);
+      }
+    } else {
+      console.error("API fetch error", error);
+    }
+  }
   getStockOrder() {
     return {
       name: "신라섬유",

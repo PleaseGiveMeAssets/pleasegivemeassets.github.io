@@ -1,36 +1,18 @@
 <template>
   <div class="chart-wrapper">
-    <canvas ref="lineChart"></canvas>
+    <highcharts
+      ref="highchartsRef"
+      class=""
+      :options="chartOptions"
+    ></highcharts>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineController,
-} from "chart.js";
-
-// ChartJS 등록
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineController,
-);
-
-// props로 차트 데이터를 받아옴
+import { ref, reactive, onMounted, watch } from "vue";
+const primaryColor = getComputedStyle(document.documentElement)
+  .getPropertyValue("--primary-color")
+  .trim();
 const props = defineProps({
   chartData: {
     type: Object,
@@ -38,87 +20,93 @@ const props = defineProps({
   },
 });
 
-// lineChart를 담을 ref 변수
-const lineChart = ref(null);
-
-// 차트 인스턴스를 저장할 변수
-let chartInstance = null;
-
-// 차트 초기화 함수
-const initializeChart = () => {
-  console.log("!!", props.chartData);
-  const ctx = lineChart.value.getContext("2d");
-
-  // 기존 차트가 있으면 파괴
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
-
-  // 새로운 차트 생성
-  chartInstance = new ChartJS(ctx, {
-    type: "line",
-    data: props.chartData,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: false,
-          title: {
-            display: true,
-            text: "수익률 (%)",
-          },
-        },
-        x: {
-          title: {
-            display: false,
-            text: "날짜",
-          },
-          ticks: {
-            callback: function (value) {
-              const label = this.getLabelForValue(value);
-              // 날짜 형식 변환: 20240930 -> 24.09.30
-              return (
-                label.slice(2, 4) +
-                "." +
-                label.slice(4, 6) +
-                "." +
-                label.slice(6, 8)
-              );
-            },
-          },
-        },
+const chartOptions = ref({
+  chart: {
+    height: 300,
+    animation: false,
+  },
+  title: {
+    text: "",
+  },
+  subtitle: {
+    align: "center",
+    style: {
+      fontFamily: "Pretendard-Bold",
+      fontSize: "12px",
+      color: "#000000",
+    },
+    useHTML: true,
+  },
+  credits: {
+    enabled: false,
+  },
+  xAxis: {
+    type: "category",
+    labels: {
+      enabled: true,
+      rotation: -10, // 라벨을 수평으로 설정
+      style: {
+        fontSize: "10px",
       },
     },
-  });
-};
 
-// 컴포넌트가 마운트된 후 차트를 초기화
-onMounted(() => {
-  console.log("Chart Data on Mount:", props.chartData);
-  initializeChart();
+    lineWidth: 0,
+    tickLength: 0,
+    gridLineWidth: 0,
+  },
+  yAxis: {
+    labels: {
+      enabled: false,
+    },
+    tickLength: 0,
+    gridLineWidth: 0,
+    title: {
+      text: null,
+    },
+  },
+  plotOptions: {
+    series: {
+      animation: false,
+    },
+  },
+  rangeSelector: {
+    selected: 1,
+  },
+  series: [
+    {
+      name: "가격",
+      data: [],
+      color: primaryColor,
+    },
+  ],
+  legend: {
+    enabled: false,
+  },
 });
 
-// chartData가 변경될 때마다 차트를 업데이트
-watch(
-  () => props.chartData,
-  () => {
-    console.log("@@@", lineChart.value);
+onMounted(() => {
+  const parsedData = props.chartData.datasets[0].data.map((value, index) => {
+    const dateStr = props.chartData.labels[index]; // labels에서 날짜를 가져옴
+    const year = parseInt(dateStr.slice(0, 4), 10);
+    const month = parseInt(dateStr.slice(4, 6), 10) - 1; // JavaScript의 month는 0부터 시작
+    const day = parseInt(dateStr.slice(6, 8), 10);
 
-    if (lineChart.value) {
-      initializeChart();
-    }
-  },
-  { deep: true },
-);
+    return [Date.UTC(year, month, day), value];
+  });
+
+  chartOptions.value.series[0].data = parsedData;
+});
+
+// Chart.js 구성 요소 등록
 </script>
 
 <style scoped>
 .chart-wrapper {
-  position: relative;
-  width: 300px;
   height: 300px;
   padding-bottom: 20px;
   background-color: #6e2ff4;
+}
+.highcharts {
+  height: 300px;
 }
 </style>
