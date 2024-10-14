@@ -402,7 +402,14 @@ h6 {
   opacity: 1;
   transition: opacity 0.5s ease-out;
 }
+.noUnderline {
+  text-decoration: none; /* 밑줄 제거 */
+  color: inherit;
+}
 
+.noUnderline:hover {
+  color: inherit;
+}
 @keyframes spin {
   from {
     transform: rotate(0deg);

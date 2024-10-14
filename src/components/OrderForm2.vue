@@ -2,7 +2,8 @@
   <div>
     <div class="modal-content" @click="closeTextModal">
       <button class="close-button" @click="emitUpdate">
-        <img src="@/assets/icons/close-form-icon.svg" />
+        <!-- <img src="@/assets/icons/close-form-icon.svg" alt="Save Icon" /> -->
+        뒤로
       </button>
       <div>
         {{
@@ -14,7 +15,11 @@
         }}
       </div>
       <button class="submit-button" type="submit" @click="submitOrderForm">
-        <img src="@/assets/icons/portfolio-form-save-icon.svg" />
+        <!-- <img
+          src="@/assets/icons/portfolio-form-save-icon.svg"
+          alt="Save Icon"
+        /> -->
+        save
       </button>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="data" class="orderForm">
@@ -36,6 +41,7 @@
                   class="quantityInput"
                   inputmode="numeric"
                   type="number"
+                  :max="maxQuantity"
                 />
                 주
               </td>
@@ -88,10 +94,15 @@ const props = defineProps({
 
 const formData = reactive({
   ...props.data,
+  quantity: props.data.quantity || 0,
   date: "",
   time: "",
   memo: "",
 });
+
+const maxQuantity = ref(0);
+const errorMessage = ref("");
+let errorTimeout = null;
 
 const emit = defineEmits(["update", "update-data"]);
 
@@ -100,12 +111,7 @@ const triggerUpdateData = () => {
   console.log("triggerUpdateData");
   emit("update-data"); // 부모에게 update-data 이벤트 발생
 };
-
-const errorMessage = ref("");
-let errorTimeout = null;
 const emitUpdate = () => {
-  console.log("update");
-
   emit("update", true);
 };
 
@@ -127,7 +133,6 @@ const openTextModal = () => {
 const closeTextModal = () => {
   isModalVisible.value = false;
 };
-
 // 매도 데이터를 검증하는 함수
 const validateSellData = async () => {
   try {
@@ -136,9 +141,9 @@ const validateSellData = async () => {
       formData.stockId, // 선택한 stockId
       formData.date, // 선택한 날짜
     );
-    console.log(response);
     // 서버에서 받은 quantity를 formData에 업데이트
-    formData.quantity = response.data.quantity;
+    maxQuantity.value = response.quantity;
+    formData.quantity = response.quantity;
   } catch (error) {
     console.error("데이터 검증 중 오류 발생:", error);
   }
@@ -153,13 +158,28 @@ watch(
     }
   },
 );
+// 사용자가 수량을 입력할 때, maxQuantity를 넘지 않도록 제한
+watch(
+  () => formData.quantity,
+  (newQuantity) => {
+    if (newQuantity > maxQuantity.value) {
+      formData.quantity = maxQuantity.value;
+      errorMessage.value = `수량은 최대 ${maxQuantity.value}까지 입력 가능합니다.`;
+      showErrorForLimitedTime();
+    }
+  },
+);
 
 const validateForm = () => {
-  if (formData.quantity <= 0) {
+  if (formData.quantity == null || formData.quantity <= 0) {
     errorMessage.value = "수량은 0보다 커야 합니다.";
     return false;
   }
-  if (formData.price <= 0) {
+  if (formData.quantity > maxQuantity.value) {
+    errorMessage.value = `수량은 ${maxQuantity.value}을 넘을 수 없습니다.`;
+    return false;
+  }
+  if (formData.price == null || formData.price <= 0) {
     errorMessage.value = "가격은 0보다 커야 합니다.";
     return false;
   }

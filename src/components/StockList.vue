@@ -19,7 +19,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import StockItem from "@/components/StockItem.vue";
-import OrderForm from "@/components/OrderForm.vue";
+import OrderForm from "@/components/OrderForm2.vue";
 
 const props = defineProps({
   stocks: {
