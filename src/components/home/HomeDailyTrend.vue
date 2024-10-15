@@ -6,10 +6,11 @@
     </p>
   </div>
   <div class="card-ui">
-    <section>
+    <section class="card-ui-content">
       <p>{{ dailyTrendSummarized.dailyTrendSummarizedTitle }}</p>
       <p>{{ dailyTrendSummarized.dailyTrendSummarizedContent }}</p>
     </section>
+    <div style="text-align: center; font-size: 24px">. . .</div>
   </div>
 </template>
 
@@ -50,12 +51,18 @@ h2 {
 }
 
 .card-ui {
+  margin-bottom: 16px;
   border: 1px solid #e0e0e0;
   padding: 10px;
   border-radius: 12px;
   box-shadow:
     1px 1px 1px rgba(0, 0, 0, 0.1),
     -1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.card-ui-content {
+  height: 210px;
+  overflow-y: hidden;
 }
 
 .report-time {

@@ -17,20 +17,6 @@
           @click="selectedUnit = 'month'"
         >
           <!-- 날짜 부분 -->
-          <div class="stock-details">
-            <div class="stock-info">
-              <div class="stock-name">{{ rs.stockName }}</div>
-              <div class="short-code">{{ rs.shortCode }}</div>
-            </div>
-            <div class="stock-price-info">
-              <div class="stock-price">{{ rs.price }}원</div>
-              <div v-if="rs.changeAmount > 0" class="stock-change up">
-                <img src="@/assets/icons/price-increase-icon.svg" />
-                {{ Math.abs(rs.changeAmount) }}원
-              </div>
-              <div v-if="rs.changeAmount < 0" class="stock-change down">
-                <img src="@/assets/icons/price-decrease-icon.svg" />
-                {{ Math.abs(rs.changeAmount) }}원
           월
         </div>
       </div>
@@ -75,29 +61,28 @@
               </div>
               <div class="stock-price-info">
                 <div class="stock-price">{{ rs.price }}원</div>
-                <div
-                  :class="
-                    rs.changeAmount > 0
-                      ? 'up'
-                      : rs.changeAmount < 0
-                        ? 'down'
-                        : ''
-                  "
-                >
-                  {{ rs.changeAmount > 0 ? "▲" : rs.changeAmount < 0 ? "▼" : ""
-                  }}{{ Math.abs(rs.changeAmount) }}원
+                <div v-if="rs.changeAmount > 0" class="stock-change up">
+                  <img src="@/assets/icons/price-increase-icon.svg" />
+                  {{ Math.abs(rs.changeAmount) }}원
+                </div>
+                <div v-if="rs.changeAmount < 0" class="stock-change down">
+                  <img src="@/assets/icons/price-decrease-icon.svg" />
+                  {{ Math.abs(rs.changeAmount) }}원
                 </div>
               </div>
-              <div
-                :class="
-                  rs.changeAmountRate > 0
-                    ? 'stock-change-rate up'
-                    : rs.changeAmountRate < 0
-                      ? 'stock-change-rate down'
-                      : 'stock-change-rate'
-                "
-              >
-                {{ rs.changeAmountRate }}%
+
+              <div class="stock-change-rate-wrap">
+                <div
+                  :class="
+                    rs.changeAmountRate > 0
+                      ? 'stock-change-rate up'
+                      : rs.changeAmountRate < 0
+                        ? 'stock-change-rate down'
+                        : 'stock-change-rate'
+                  "
+                >
+                  {{ rs.changeAmountRate }}%
+                </div>
               </div>
             </div>
           </div>
@@ -213,6 +198,12 @@ onMounted(async () => {
   padding-bottom: 30px;
 }
 
+.date-picker > input {
+  width: 130px;
+  font-size: 18px;
+  border: none;
+}
+
 .stock-group {
   margin-bottom: 20px;
 }
@@ -269,9 +260,16 @@ onMounted(async () => {
   color: var(--bear-color);
 }
 
-.stock-change-rate {
-  flex: none;
+.stock-change-rate-wrap {
+  display: flex;
+  align-items: center;
   width: 20%;
+}
+
+.stock-change-rate {
+  /* flex-grow: 1; */
+  width: 100%;
+  height: 30px;
   text-align: right; /* 우측 정렬 */
   font-weight: bold;
   padding: 3px 8px;
