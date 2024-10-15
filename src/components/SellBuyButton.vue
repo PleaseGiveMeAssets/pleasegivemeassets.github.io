@@ -35,6 +35,7 @@ const goToBuyPage = () => {
   color: white;
   border: none;
   border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .sell-button {

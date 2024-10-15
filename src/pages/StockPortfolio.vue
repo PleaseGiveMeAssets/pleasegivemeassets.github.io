@@ -1,54 +1,45 @@
 <template>
   <div class="chart-container">
-    <div v-if="loading">
-      <LoadingComponent />
-    </div>
-
+    <LoadingComponent v-if="loading" />
     <div v-else>
-      <!-- 차트 로딩 애니메이션 적용 -->
-      <div
-        v-if="hasAssetData"
-        :class="['chart-wrapper', { 'chart-visible': chartVisible }]"
-      >
+      <div v-if="hasAssetData" class="chart-wrapper">
+        <!-- 편집 버튼 -->
         <button class="edit-button" @click="goToEditPage">편집</button>
-        <!-- 도넛 차트 -->
-        <div class="chart-content">
+
+        <!-- 도넛 차트 카드 -->
+        <div class="card">
           <DoughnutChart
             v-if="stockData.length > 0"
             :data="stockData"
             :width="390"
             :height="350"
           />
+          <!-- 매도 / 매수 버튼 -->
+          <SellBuyButton />
         </div>
-        <!-- 매도 / 매수 buttons -->
-        <SellBuyButton />
-        <br />
 
-        <!-- 자산 정보 -->
-        <h6>나의 자산</h6>
-        <div class="asset-info">
-          <div class="info-box">
-            <p>매수총액</p>
-            <p>{{ formatCurrency(assetData.purchaseAmount) }}원</p>
-          </div>
-          <div class="info-box">
-            <p>총 수익</p>
-            <p>{{ formatCurrency(assetData.totalProfit) }}원</p>
-          </div>
-          <div class="info-box">
-            <p>평가손익 금액</p>
-            <p>{{ formatCurrency(assetData.evaluationAmount) }}원</p>
-          </div>
-          <div class="info-box">
-            <p>현재 수익률</p>
-            <p>{{ Math.round(assetData.currentYield) }}%</p>
+        <!-- 나의 자산 카드 -->
+        <div class="card">
+          <h6>나의 자산</h6>
+          <div class="asset-info">
+            <div
+              v-for="(label, key) in assetLabels"
+              :key="key"
+              class="info-box"
+            >
+              <p>{{ label }}</p>
+              <p v-if="key === 'currentYield'">
+                {{ formatPercentage(assetData[key]) }}
+              </p>
+              <p v-else>{{ formatCurrency(assetData[key]) }}원</p>
+            </div>
           </div>
         </div>
-        <br />
-        <!-- 상위 5개 종목 표시 -->
-        <h6>주요 투자 종목</h6>
-        <div v-if="topStocks && topStocks.length > 0" class="top-stocks">
-          <ul class="stock-list">
+
+        <!-- 주요 투자 종목 카드 -->
+        <div class="card">
+          <h6>주요 투자 종목</h6>
+          <ul v-if="topStocks.length > 0" class="stock-list">
             <li
               v-for="(stock, index) in topStocks"
               :key="index"
@@ -65,12 +56,12 @@
               </router-link>
             </li>
           </ul>
+          <p v-else>투자 종목 데이터가 없습니다.</p>
         </div>
-        <br />
 
-        <!-- 라인 차트 -->
-        <h6>주간 투자 수익률</h6>
-        <div class="chart-wra">
+        <!-- 주간 투자 수익률 카드 -->
+        <div class="card">
+          <h6>주간 투자 수익률</h6>
           <LineChart
             v-if="lineChartData.labels.length > 0"
             :chart-data="lineChartData"
@@ -78,7 +69,6 @@
           <p v-else>수익률 데이터가 없습니다.</p>
         </div>
       </div>
-
       <!-- 자산 데이터가 없을 경우 EmptyAssetBox 컴포넌트 사용 -->
       <EmptyAssetBox v-else />
     </div>
@@ -86,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import DoughnutChart from "../components/DoughnutChart.vue";
@@ -95,31 +85,17 @@ import EmptyAssetBox from "../components/EmptyAssetBox.vue";
 import SellBuyButton from "../components/SellBuyButton.vue";
 import LoadingComponent from "@/components/LoadingComponent.vue";
 
-const BASE = `${import.meta.env.VITE_API_URL}`;
-// JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    router.push({ path: "/login" }); // 로그인 페이지로 이동
-    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
-  }
-  return token;
-};
-// 라우터 객체 가져오기
+const BASE = import.meta.env.VITE_API_URL;
 const router = useRouter();
-const forceRerender = ref(0);
-// 클릭 시 편집 페이지로 이동 함수
-const goToEditPage = () => {
-  router.push({ path: "/edit" });
-};
 
+const loading = ref(true);
+const hasAssetData = ref(false);
 const assetData = ref({
   purchaseAmount: 0,
   totalProfit: 0,
   evaluationAmount: 0,
   currentYield: 0,
 });
-
 const lineChartData = ref({
   labels: [],
   datasets: [
@@ -132,274 +108,203 @@ const lineChartData = ref({
     },
   ],
 });
-
-const hasAssetData = ref(false);
-const loading = ref(true); // 데이터를 불러오는 중인지 여부를 추적하는 변수
-
-// 차트 데이터를 저장하는 ref
 const stockData = ref([]);
 const topStocks = ref([]);
+const assetLabels = {
+  purchaseAmount: "매수총액",
+  totalProfit: "총 수익",
+  evaluationAmount: "평가손익 금액",
+  currentYield: "현재 수익률",
+};
 
-// 도넛 데이터를 가져오는 함수
+const goToEditPage = () => router.push({ path: "/edit" });
+const formatCurrency = (value) => Math.round(value).toLocaleString();
+const formatPercentage = (value) => `${Math.round(value)}%`;
+
+const getToken = () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    router.push({ path: "/login" });
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
+  }
+  return token;
+};
+
 const fetchPortfolioData = async () => {
-  const token = getToken(); // 토큰 가져오기
-
+  const token = getToken();
   try {
-    const response = await axios.get(`${BASE}/portfolio`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-      },
+    const { data: portfolioData } = await axios.get(`${BASE}/portfolio`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    const portfolioData = response.data;
-
-    // 가져온 데이터를 원하는 형식으로 변환
-    stockData.value = portfolioData.map((item) => ({
-      name: item.stockName,
-      stockId: item.stockId,
-      shortCode: item.shortCode,
-      value: item.totalPrice,
-    }));
-
-    // 상위 5개 종목 추출
+    stockData.value = portfolioData.map(
+      ({ stockName, stockId, shortCode, totalPrice }) => ({
+        name: stockName,
+        stockId,
+        shortCode,
+        value: totalPrice,
+      }),
+    );
     topStocks.value = stockData.value
       .sort((a, b) => b.value - a.value)
-      .slice(0, 3); // 상위 5개 종목만 추출
-
+      .slice(0, 3);
     hasAssetData.value = stockData.value.length > 0;
   } catch (error) {
     console.error("Error fetching portfolio data:", error);
-  } finally {
-    loading.value = false; // 로딩이 완료되었을 때 로딩 상태를 false로 변경
   }
 };
 
-// 수익률 데이터를 가져오는 함수
 const fetchProfitData = async () => {
-  const token = getToken(); // 토큰 가져오기
-
+  const token = getToken();
   try {
-    const response = await axios.get(`${BASE}/stock/total`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-      },
+    const { data: assetDataResponse } = await axios.get(`${BASE}/stock/total`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    const assetDataResponse = response.data;
-    if (assetDataResponse) {
-      assetData.value.purchaseAmount = assetDataResponse.totalInvestedAmount;
-      assetData.value.totalProfit = assetDataResponse.totalProfitLossAmount;
-      assetData.value.evaluationAmount =
+    Object.assign(assetData.value, {
+      purchaseAmount: assetDataResponse.totalInvestedAmount,
+      totalProfit: assetDataResponse.totalProfitLossAmount,
+      evaluationAmount:
         assetDataResponse.totalInvestedAmount +
-        assetDataResponse.totalProfitLossAmount;
-      assetData.value.currentYield =
-        assetDataResponse.totalProfitLossPercentage;
-
-      hasAssetData.value = true;
-    }
+        assetDataResponse.totalProfitLossAmount,
+      currentYield: assetDataResponse.totalProfitLossPercentage,
+    });
+    hasAssetData.value = true;
   } catch (error) {
     console.error("Error fetching profit data:", error);
-    hasAssetData.value = false;
   }
 };
 
-const formatCurrency = (value) => Math.round(value).toLocaleString();
-
-// 그래프 데이터 API 호출 함수
 const fetchWeeklyGraphData = async () => {
-  const token = getToken(); // 토큰 가져오기
-
+  const token = getToken();
   try {
-    const response = await axios.get(`${BASE}/weekly-graph`, {
-      headers: {
-        Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-      },
+    const { data: stockData } = await axios.get(`${BASE}/weekly-graph`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    const stockData = response.data;
-
-    // 차트의 라벨로 사용할 날짜 배열
-    const labels = stockData.map((item) => item.date);
-
-    // 수익률 계산 (수익률 = (totalProfit / totalAmount) * 100)
-    const profitRates = stockData.map((item) => item.ratio);
-    // totalAmount가 0이 아닌 경우에만 수익률 계산
-    // if (item.totalAmount !== 0) {
-    // return (item.totalProfit / item.totalAmount) * 100;
-    // } else {
-    // return 0;
-    // }
-
-    // 차트 데이터 설정
-    lineChartData.value.labels = labels;
-    lineChartData.value.datasets[0].data = profitRates;
-    console.log(lineChartData.value);
+    lineChartData.value.labels = stockData.map((item) => item.date);
+    lineChartData.value.datasets[0].data = stockData.map((item) => item.ratio);
   } catch (error) {
     console.error("Error fetching stock portfolio info:", error);
   }
 };
-const chartVisible = ref(false); // 차트가 로딩 후 나타나는 애니메이션 상태
-// 컴포넌트 마운트 시 호출
-onMounted(async () => {
-  await fetchWeeklyGraphData(); // 데이터를 fetch하는 함수 호출
-  await fetchPortfolioData(); // 추가 데이터 가져오기
-  await fetchProfitData(); // 추가 데이터 가져오기
-});
 
-watch(lineChartData, () => {
-  chartData.datasets[0].data = amountArr;
-  forceRerender.value++;
+onMounted(async () => {
+  await Promise.all([
+    fetchPortfolioData(),
+    fetchProfitData(),
+    fetchWeeklyGraphData(),
+  ]);
+  loading.value = false;
 });
 </script>
 
 <style scoped>
 .chart-container {
-  position: relative; /* 편집 버튼을 절대 위치로 설정하기 위해 부모를 상대 위치로 */
+  position: relative;
   width: 100%;
-  margin: 0 auto;
   text-align: center;
-  padding-left: 0;
+  padding: 10px 0px 48px 0px;
+  background-color: #f5f5f5;
 }
 .chart-wrapper {
-  transform: scale(0.95);
-}
-.chart-wrapper.chart-visible {
   opacity: 1;
   transform: scale(1);
+  transition:
+    opacity 0.5s ease-in-out,
+    transform 0.5s ease-in-out;
 }
-
 .edit-button {
   position: absolute;
-  top: 10px; /* 상단에서의 위치 조정 */
-  right: 10px; /* 우측에서의 위치 조정 */
-  z-index: 10; /* 차트보다 앞에 오도록 z-index를 높게 설정 */
-  background-color: #ccc;
+  top: 30px;
+  right: 30px;
+  z-index: 10;
+  /* background-color: #ccc; */
   color: black;
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
-
 .edit-button:hover {
   background-color: #bbb;
 }
-.edit-button {
-  position: absolute;
-  top: 20px;
-  right: 15px;
-  font-size: 12px;
-  padding: 4px 8px;
-  background-color: #ccc;
-  color: black;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.edit-button:hover {
-  background-color: #bbb;
-}
-.chart-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer; /* 클릭 가능한 마우스 포인터 추가 */
+
+/* 카드 스타일 */
+.card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-.color-box {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 10px;
-}
-
+/* 나의 자산 스타일 */
 .asset-info {
-  width: 350px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   margin-top: 20px;
 }
-
 .info-box {
   padding: 10px;
-  background-color: black;
-  color: #fff;
+  background-color: #fafafa;
+  color: #333;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: left;
+  text-align: center;
+  border: 1px solid #e0e0e0;
 }
-.chart-wra {
-  border-bottom: 50px;
-}
-.top-stocks {
-  margin-top: 0;
-  padding: 0 15px;
+.info-box p {
+  margin: 5px 0;
 }
 
-h6 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: left;
-}
-
+/* 주요 투자 종목 스타일 */
 .stock-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
-
 .stock-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
+  padding: 15px;
   border-bottom: 1px solid #e0e0e0;
 }
-
+.stock-item:last-child {
+  border-bottom: none;
+}
 .stock-info {
   display: flex;
   flex-direction: column;
-  text-align: left;
+  text-align: center;
 }
-
 .stock-name {
   font-size: 16px;
   font-weight: bold;
-  margin: 0;
 }
-
 .stock-shortcode {
   font-size: 14px;
-  color: #888;
-  margin-top: 4px;
+  color: #666;
 }
-
 .stock-market {
   font-size: 16px;
-  color: #000;
   font-weight: bold;
-}
-.loading-image {
-  padding-top: 200px;
-  width: 200px; /* 원하는 크기로 설정 */
-  animation: spin 0.5s linear infinite;
-  opacity: 1;
-  transition: opacity 0.5s ease-out;
+  color: #333;
+  margin-top: 5px;
 }
 .noUnderline {
-  text-decoration: none; /* 밑줄 제거 */
+  text-decoration: none;
   color: inherit;
+  display: block;
 }
 
-.noUnderline:hover {
-  color: inherit;
+/* 제목 스타일 */
+h6 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: left;
+  color: #333;
 }
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+/* 라인 차트 컨테이너 */
+.line-chart-container {
+  margin-top: 20px;
 }
 </style>

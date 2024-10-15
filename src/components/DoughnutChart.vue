@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-container">
+  <div class="doughnut-container">
     <svg v-if="hasData" :width="width" :height="height">
       <defs>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -101,13 +101,20 @@ const props = defineProps({
 
 // 차트의 색상 -> 순서대로 적용 됩니다!
 const COLORS = [
-  "#9A40D6",
-  "#0066FF",
-  "#4d94ff",
-  "#99c2ff",
-  "#ffc6f3",
-  "#e0bff2",
-  "#c28ce6",
+  // "#9A40D6",
+  // "#0066FF",
+  // "#4d94ff",
+  // "#99c2ff",
+  // "#ffc6f3",
+  // "#e0bff2",
+  // "#c28ce6",
+  "#4CAF50",
+  "#FF9800",
+  "#2196F3",
+  "#FFEB3B",
+  "#9C27B0",
+  "#E91E63",
+  "#00BCD4",
 ];
 
 const animationProgress = ref(0);
