@@ -52,13 +52,13 @@
             </div>
             <div class="stock-price-info">
               <div class="stock-price">{{ rs.price }}원</div>
-              <div
-                :class="
-                  rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
-                "
-              >
-                {{ rs.changeAmount > 0 ? "▲" : rs.changeAmount < 0 ? "▼" : ""
-                }}{{ Math.abs(rs.changeAmount) }}원
+              <div v-if="rs.changeAmount > 0" class="stock-change up">
+                <img src="@/assets/icons/price-increase-icon.svg" />
+                {{ Math.abs(rs.changeAmount) }}원
+              </div>
+              <div v-if="rs.changeAmount < 0" class="stock-change down">
+                <img src="@/assets/icons/price-decrease-icon.svg" />
+                {{ Math.abs(rs.changeAmount) }}원
               </div>
             </div>
             <div
@@ -217,32 +217,38 @@ onMounted(() => createRecommendStock(currentDate.value));
 }
 
 .up {
-  color: red;
+  color: var(--bull-color);
 }
 
 .down {
-  color: blue;
+  color: var(--bear-color);
+}
+
+.stock-change.up {
+  color: var(--bull-color); /* 상승 */
+}
+
+.stock-change.down {
+  color: var(--bear-color);
 }
 
 .stock-change-rate {
   flex: none;
+  width: 20%;
   text-align: right; /* 우측 정렬 */
   font-weight: bold;
-  padding: 10px 10px; /* 상하 여백을 줄임 */
-  border-radius: 8px;
-  background-color: gray;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: #929294;
   color: white;
-  min-width: 70px; /* 최소 너비를 설정 (필요에 따라 조정) */
 }
 
 .stock-change-rate.up {
-  background-color: red;
+  background-color: var(--bull-color);
 }
-
 .stock-change-rate.down {
-  background-color: blue;
+  background-color: var(--bear-color);
 }
-
 .short-code {
   color: #888;
   font-size: 14px;

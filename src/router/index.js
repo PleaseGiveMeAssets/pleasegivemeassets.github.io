@@ -11,7 +11,7 @@ import SavedPage from "@/pages/SavedPage.vue";
 import SettingsPage from "@/pages/SettingsPage.vue";
 import DailyReportPage from "@/pages/DailyReportPage.vue";
 import HomePage from "@/pages/HomePage.vue";
-import StockPortfolioPage from "@/pages/StockPortfolio.vue";
+import StockPortfolioPage from "@/pages/StockPortfolioPage.vue";
 import StockSearchPage from "@/pages/StockSearch.vue";
 import MyStockListViewPage from "@/pages/MyStockListViewPage.vue";
 import AccountManagement from "@/pages/AccountManagement.vue";
@@ -50,19 +50,36 @@ const router = createRouter({
     {
       path: "/myProfile", // MyProfile 경로 추가
       component: MyProfilePage,
+      name: "myProfilePage",
       props: true,
     },
-    { path: "/interest", component: InterestPage },
+    { path: "/interest", component: InterestPage, name: "interestPage" },
     { path: "/notifications", component: NotificationsPage },
     { path: "/profile-edit", component: ProfileEditPage },
     { path: "/saved", component: SavedPage },
-    { path: "/settings", component: SettingsPage },
-    { path: "/dailyreport", component: DailyReportPage },
-    { path: "/portfolio", component: StockPortfolioPage },
+    { path: "/settings", component: SettingsPage, name: "settingsPage" },
+    {
+      path: "/dailyreport",
+      component: DailyReportPage,
+      name: "dailyReportPage",
+    },
+    {
+      path: "/portfolio",
+      component: StockPortfolioPage,
+      name: "portfolioPage",
+    },
     { path: "/stocksearch", component: StockSearchPage },
     { path: "/myStocklist", component: MyStockListViewPage },
-    { path: "/account-management", component: AccountManagement },
-    { path: "/recommendstock", component: RecommendStockPage },
+    {
+      path: "/account-management",
+      component: AccountManagement,
+      name: "accountManagementPage",
+    },
+    {
+      path: "/recommendstock",
+      component: RecommendStockPage,
+      name: "recommendStockPage",
+    },
     {
       path: "/login",
       component: LoginPage,

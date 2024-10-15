@@ -202,7 +202,6 @@ onMounted(async () => {
   width: 100%;
   text-align: center;
   padding: 10px 0px 48px 0px;
-  background-color: #f5f5f5;
 }
 .chart-wrapper {
   opacity: 1;
@@ -233,7 +232,7 @@ onMounted(async () => {
   border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
 }
 

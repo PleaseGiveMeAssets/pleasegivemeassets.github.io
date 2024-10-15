@@ -1,7 +1,6 @@
 <template>
   <div class="card-ui">
     <p class="title">관련 뉴스</p>
-
     <div
       v-for="news in Object.values(data)"
       :key="news.newsId"
@@ -52,6 +51,7 @@ function handleImageError(event) {
 
 .news-title {
   flex-grow: 1; /* 제목이 가능한 넓게 차지하도록 설정 */
+  padding: 10px 4px 0px 4px;
   font-size: 14px;
   height: 70px;
   color: #000;
@@ -59,7 +59,10 @@ function handleImageError(event) {
   overflow: hidden; /* 넘치는 텍스트 숨기기 */
   text-overflow: ellipsis;
 }
-
+.news-item {
+  padding: 0px 0px 0px 12px;
+  border-bottom: 1px #d3d3d0 solid;
+}
 .news-image {
   max-width: 100px; /* 이미지의 최대 너비 설정 */
   margin: 10px;

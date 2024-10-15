@@ -26,22 +26,18 @@
             <div class="price-change-container">
               <div class="stock-price">{{ recommendStock.price }}원</div>
               <div
-                class="stock-change"
-                :class="
-                  recommendStock.changeAmount > 0
-                    ? 'up'
-                    : recommendStock.changeAmount < 0
-                      ? 'down'
-                      : ''
-                "
+                v-if="recommendStock.changeAmount > 0"
+                class="stock-change up"
               >
-                {{
-                  recommendStock.changeAmount > 0
-                    ? "▲"
-                    : recommendStock.changeAmount < 0
-                      ? "▼"
-                      : ""
-                }}{{ Math.abs(recommendStock.changeAmount) }}원
+                <img src="@/assets/icons/price-increase-icon.svg" />
+                {{ Math.abs(recommendStock.changeAmount) }}원
+              </div>
+              <div
+                v-if="recommendStock.changeAmount < 0"
+                class="stock-change down"
+              >
+                <img src="@/assets/icons/price-decrease-icon.svg" />
+                {{ Math.abs(recommendStock.changeAmount) }}원
               </div>
             </div>
             <div
@@ -102,12 +98,13 @@ onMounted(async () => {
 
 <style scoped>
 .card-ui {
-  background-color: var(--main-card-color);
-  padding: 15px;
   border: 1px solid #e0e0e0;
+  padding: 10px;
   border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 80px;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
+  font-family: "Pretendard-Bold";
 }
 
 h2 {
@@ -117,6 +114,7 @@ h2 {
 }
 
 .home-recommend-stock {
+  padding: 12px 8px 0px 8px;
   display: flex;
   flex-direction: column;
 }
@@ -134,10 +132,6 @@ h2 {
   text-align: left; /* 좌측 정렬 */
 }
 
-.stock-name {
-  font-weight: bold;
-}
-
 .price-change-container {
   flex: 1;
   text-align: right; /* 가운데 정렬 */
@@ -148,16 +142,12 @@ h2 {
   color: #333;
 }
 
-.stock-change {
-  color: black; /* 기본값 */
-}
-
 .stock-change.up {
-  color: red; /* 상승 */
+  color: var(--bull-color); /* 상승 */
 }
 
 .stock-change.down {
-  color: blue; /* 하락 */
+  color: var(--bear-color);
 }
 
 .stock-change-rate {
@@ -166,17 +156,18 @@ h2 {
   text-align: right; /* 우측 정렬 */
   font-weight: bold;
   padding: 3px 8px;
-  border-radius: 8px;
-  background-color: gray;
+  border-radius: 4px;
+  background-color: #929294;
   color: white;
 }
 
 .stock-change-rate.up {
-  background-color: red;
+  font-family: Arial, sans-serif;
+  background-color: var(--bull-color);
 }
-
 .stock-change-rate.down {
-  background-color: blue;
+  font-family: Arial, sans-serif;
+  background-color: var(--bear-color);
 }
 
 .short-code {

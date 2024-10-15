@@ -1,8 +1,35 @@
 <template>
   <header class="header">
+    <div v-if="!showBackButton" class="logo-section">
+      <img class="logo-img" src="@/assets/images/logo-gray.png" />
+    </div>
     <button v-if="showBackButton" class="back-button" @click="goBack">
       <img src="@/assets/icons/backButton-icon.svg" alt="Back" />
     </button>
+    <div v-if="isDailyReportPage" class="header-title">
+      <div class="title">일일 동향 리포트</div>
+    </div>
+    <div v-if="isRecommendStockPage" class="header-title">
+      <div class="title">AI 추천 종목</div>
+    </div>
+    <div v-if="isPortfolioPage" class="header-title">
+      <div class="title">자산 현황</div>
+    </div>
+    <div v-if="isMyProfilePage" class="header-title">
+      <div class="title">MY페이지</div>
+    </div>
+    <div v-if="isInterestPage" class="header-title">
+      <div class="title">관심항목</div>
+    </div>
+    <div v-if="isSettingsPage" class="header-title">
+      <div class="title">설정</div>
+    </div>
+    <div v-if="isAlertPage" class="header-title">
+      <div class="title">관심항목</div>
+    </div>
+    <div v-if="isAccountManagementPage" class="header-title">
+      <div class="title">개인정보</div>
+    </div>
     <div
       v-if="isStockPage && stockName != '' && shortCode != ''"
       class="header-stock-section"
@@ -49,6 +76,7 @@ const isHomePage = ref(false);
 const isStockPage = computed(() => {
   return route.name === "stockPage" || route.name === "stockPortfolioPage";
 });
+
 const headerStore = useHeaderStore();
 
 const showBackButton = computed(() => {
@@ -60,10 +88,27 @@ const shortCode = computed(() => headerStore.shortCode);
 const toggleModal = () => {
   headerStore.triggerEditFunction();
 };
-const isStockPortfolioPage = computed(() => {
-  return route.name === "stockPortfolioPage";
+const isDailyReportPage = computed(() => {
+  return route.name === "dailyReportPage";
 });
-
+const isPortfolioPage = computed(() => {
+  return route.name === "portfolioPage";
+});
+const isMyProfilePage = computed(() => {
+  return route.name === "myProfilePage";
+});
+const isInterestPage = computed(() => {
+  return route.name === "interestPage";
+});
+const isSettingsPage = computed(() => {
+  return route.name === "settingsPage";
+});
+const isAccountManagementPage = computed(() => {
+  return route.name === "accountManagementPage";
+});
+const isRecommendStockPage = computed(() => {
+  return route.name === "recommendStockPage";
+});
 const pageTitle = computed(() => {
   if (route.name === "survey") {
     return "설문조사";
@@ -123,11 +168,18 @@ p {
 .header-stock-section {
   font-family: "Pretendard-Bold", sans-serif;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%); /* 가로 가운데 정렬 */
+  left: 52%;
+  transform: translateX(-52%); /* 가로 가운데 정렬 */
   display: flex;
   flex-direction: row;
-  padding-bottom: 0; /* 아래 패딩 제거 */
+  padding-bottom: 0;
+  /* 아래 패딩 제거 */
+}
+.header-title {
+  font-family: "Pretendard-Bold", sans-serif;
+  position: absolute;
+  left: 52%;
+  transform: translateX(-52%); /* 가로 가운데 정렬 */
 }
 .stockName {
   font-size: 16px;
@@ -161,5 +213,12 @@ p {
 .notification-icon {
   position: absolute;
   left: 89%;
+}
+.logo-section {
+  padding: 20px 0 20px 0;
+}
+
+.logo-section > img {
+  width: 60px;
 }
 </style>

@@ -224,9 +224,12 @@ body {
 }
 
 .nav-item {
-  background-color: white;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
   border-radius: 12px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
   width: 340px;
   margin: 10px 0;
   padding: 18px;
