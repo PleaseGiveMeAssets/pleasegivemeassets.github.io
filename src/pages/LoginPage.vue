@@ -190,10 +190,10 @@ const goToSignUp = () => {
 
 .login-btn {
   width: 100%;
-  height: 42px;
+  height: 50px;
   background-color: var(--primary-color);
   color: white;
-  font-size: 16px;
+  font-size: 18px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
