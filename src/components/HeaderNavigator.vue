@@ -34,6 +34,7 @@
       v-if="isHomePage"
       class="notification-icon"
       src="@/assets/icons/notification-icon.svg"
+      @click="moveNotifications"
     />
   </header>
 </template>
@@ -74,6 +75,10 @@ const pageTitle = computed(() => {
 });
 
 const goBack = () => router.back();
+
+const moveNotifications = () => {
+  router.push("/notifications");
+};
 
 watchEffect(() => {
   isHomePage.value = route.name === "home";

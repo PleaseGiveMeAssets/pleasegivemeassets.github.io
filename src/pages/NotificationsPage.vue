@@ -32,9 +32,7 @@
         <div class="delete-button-container">
           <button
             class="delete-button"
-            @click.stop="
-              deleteNotification(userId, notification.notificationId)
-            "
+            @click.stop="deleteNotification(notification.notificationId)"
           >
             삭제
           </button>
@@ -51,24 +49,52 @@ import axios from "axios";
 import priceIcon from "@/assets/notification-icons/price-change.svg";
 import recommendationIcon from "@/assets/notification-icons/recommendation.svg";
 import reportIcon from "@/assets/notification-icons/report.svg";
+import { useRouter } from "vue-router";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const userId = "testUser1"; // 특정 사용자 ID (예: testUser1)
-
 const notificationEnabled = ref(true);
 const notifications = ref([]);
-onMounted(async () => {
-  notifications.value = await fetchNotifications(userId);
-});
+const router = useRouter();
 
-const fetchNotifications = async (userId) => {
+// 토큰을 가져오는 함수
+const getToken = () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    router.push({ path: "/login" });
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
+  }
+  return token;
+};
+
+const fetchNotifications = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/notifications/${userId}`);
+    const token = getToken();
+    const response = await axios.get(`${API_BASE_URL}/notifications`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    notifications.value = response.data;
     console.log(response.data);
-    return response.data;
   } catch (error) {
     console.error("Failed to fetch notifications:", error);
-    return [];
+  }
+};
+
+const deleteNotification = async (id) => {
+  try {
+    const token = getToken();
+    await axios.delete(`${API_BASE_URL}/notifications/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    notifications.value = notifications.value.filter(
+      (n) => n.notificationId !== id,
+    );
+    console.log(`Notification with ID ${id} deleted.`);
+  } catch (error) {
+    console.error("Failed to delete notification:", error);
   }
 };
 
@@ -105,19 +131,6 @@ const timeAgo = (date) => {
   return days > 0 ? `${days}일 전` : hours > 0 ? `${hours}시간 전` : "방금 전";
 };
 
-const deleteNotification = async (userId, id) => {
-  try {
-    console.log(`Deleting notification with ID: ${id}`);
-    await axios.delete(`${API_BASE_URL}/notifications/${userId}/${id}`);
-    notifications.value = notifications.value.filter(
-      (n) => n.notificationId !== id,
-    );
-    console.log("Updated notifications:", notifications.value);
-  } catch (error) {
-    console.error("Failed to delete notification:", error);
-  }
-};
-
 const startX = ref(0);
 const isSwiping = ref(false);
 
@@ -141,19 +154,19 @@ const handleTouchMove = (event, item) => {
 const handleTouchEnd = () => {
   isSwiping.value = false;
 };
+
+onMounted(async () => {
+  await fetchNotifications();
+});
 </script>
 
 <style scoped>
-body {
-  font-family: "Pretendard Medium", sans-serif;
-}
 p {
   margin: 0;
 }
 .notification-page {
   position: relative;
   padding-top: 20px;
-  width: 100%;
 }
 
 .settings-toggle {
@@ -170,13 +183,12 @@ p {
 .notification-list {
   display: flex;
   flex-direction: column;
-  margin-left: -16px;
+  margin-left: -25px;
   width: 100vw;
 }
 
 .swipeable {
   display: flex;
-  width: 100%;
   overflow: hidden;
   position: relative;
 }

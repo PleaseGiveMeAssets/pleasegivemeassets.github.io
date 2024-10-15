@@ -1,17 +1,7 @@
 <template>
   <div class="chart-container">
-    <div v-if="loading" class="loading-container">
-      <!-- 로딩 중일 때 보여줄 내용 (로딩 스피너나 메시지) -->
-      <img
-        src="/public/images/spinNuguri.png"
-        alt="loading"
-        class="loading-image"
-      />
-      <img
-        src="/public/images/spinNuguri.png"
-        alt="loading"
-        class="loading-image"
-      />
+    <div v-if="loading">
+      <LoadingComponent />
     </div>
 
     <div v-else>
@@ -103,6 +93,7 @@ import DoughnutChart from "../components/DoughnutChart.vue";
 import LineChart from "../components/LineChart.vue";
 import EmptyAssetBox from "../components/EmptyAssetBox.vue";
 import SellBuyButton from "../components/SellBuyButton.vue";
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 const BASE = `${import.meta.env.VITE_API_URL}`;
 // JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
@@ -227,17 +218,16 @@ const fetchWeeklyGraphData = async () => {
     const stockData = response.data;
 
     // 차트의 라벨로 사용할 날짜 배열
-    const labels = stockData.map((item) => item.stockDate);
+    const labels = stockData.map((item) => item.date);
 
     // 수익률 계산 (수익률 = (totalProfit / totalAmount) * 100)
-    const profitRates = stockData.map((item) => {
-      // totalAmount가 0이 아닌 경우에만 수익률 계산
-      if (item.totalAmount !== 0) {
-        return (item.totalProfit / item.totalAmount) * 100;
-      } else {
-        return 0; // totalAmount가 0이면 수익률 0
-      }
-    });
+    const profitRates = stockData.map((item) => item.ratio);
+    // totalAmount가 0이 아닌 경우에만 수익률 계산
+    // if (item.totalAmount !== 0) {
+    // return (item.totalProfit / item.totalAmount) * 100;
+    // } else {
+    // return 0;
+    // }
 
     // 차트 데이터 설정
     lineChartData.value.labels = labels;
@@ -253,13 +243,6 @@ onMounted(async () => {
   await fetchWeeklyGraphData(); // 데이터를 fetch하는 함수 호출
   await fetchPortfolioData(); // 추가 데이터 가져오기
   await fetchProfitData(); // 추가 데이터 가져오기
-
-  forceRerender.value++;
-  // 로딩이 완료된 후 너구리 애니메이션을 멈추고 차트를 보여줍니다.
-  loading.value = false;
-  setTimeout(() => {
-    chartVisible.value = true; // 차트가 서서히 나타나도록 상태 변경
-  }, 100); // 짧은 지연 후 차트 애니메이션 시작
 });
 
 watch(lineChartData, () => {
@@ -345,6 +328,7 @@ watch(lineChartData, () => {
   text-align: left;
 }
 .chart-wra {
+  border-bottom: 50px;
 }
 .top-stocks {
   margin-top: 0;

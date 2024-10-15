@@ -103,10 +103,9 @@ onMounted(() => {
 <style scoped>
 .chart-wrapper {
   height: 300px;
-  padding-bottom: 20px;
   background-color: #6e2ff4;
 }
 .highcharts {
-  height: 300px;
+  height: 200px;
 }
 </style>

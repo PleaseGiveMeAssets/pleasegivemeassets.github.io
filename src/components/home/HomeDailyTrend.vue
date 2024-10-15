@@ -21,6 +21,7 @@ import { onMounted, reactive } from "vue";
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const dailyTrendSummarized = reactive({});
 const token = localStorage.getItem("accessToken");
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 // 동향 요약 데이터 불러오기
 const createDailyTrend = async () => {
@@ -30,12 +31,15 @@ const createDailyTrend = async () => {
     });
     Object.assign(dailyTrendSummarized, response.data);
   } catch (err) {
-    console.error("createDailyTrend 에러: ", err.message);
+    console.error("createDailyTrend err : ", err.message);
   }
 };
 
 // 컴포넌트 마운트 시 API 호출
-onMounted(createDailyTrend);
+onMounted(async () => {
+  await createDailyTrend();
+  emit("loaded");
+});
 </script>
 
 <style scoped>

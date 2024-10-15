@@ -97,12 +97,18 @@ const selectedUnit = ref("day"); // 기본 선택 단위는 '일'
 // 종목 추천 데이터 불러오기
 const createRecommendStock = async (date) => {
   try {
+    recommendStock.splice(0, recommendStock.length);
+
     const response = await axios.get(BASE + `/${date}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     Object.assign(recommendStock, response.data); // 데이터 갱신
   } catch (err) {
-    console.error("createRecommendStock 에러: ", err.message);
+    if (err.response && err.response.status === 400) {
+      recommendStock.splice(0, recommendStock.length);
+    } else {
+      console.error("createRecommendStock err : ", err.message);
+    }
   }
 };
 
@@ -111,6 +117,15 @@ watch(selectedUnit, (newUnit) => {
   createRecommendStock(
     newUnit === "day" ? currentDate.value : currentMonth.value,
   );
+});
+
+// 선택된 날짜와 월이 변경될 때 종목 추천 데이터를 다시 불러오기
+watch([currentDate, currentMonth], ([newDate, newMonth]) => {
+  if (selectedUnit.value === "day") {
+    createRecommendStock(newDate);
+  } else {
+    createRecommendStock(newMonth);
+  }
 });
 
 // 초기 API 호출

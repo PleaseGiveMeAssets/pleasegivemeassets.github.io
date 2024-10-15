@@ -1,11 +1,14 @@
 <template>
   <div>
-    <HomePortfolio />
+    <div v-if="isLoading">
+      <LoadingComponent />
+    </div>
 
-    <HomeDailyTrend />
-
-    <HomeRecommendStock />
-
+    <div v-show="!isLoading">
+      <HomePortfolio @loaded="onComponentLoaded" />
+      <HomeDailyTrend @loaded="onComponentLoaded" />
+      <HomeRecommendStock @loaded="onComponentLoaded" />
+    </div>
     <!-- 설문 상태가 'N'이면 팝업 띄우기 -->
     <div v-if="isSurveyPending" class="survey-popup">
       <div class="popup-content">
@@ -20,28 +23,37 @@
 </template>
 
 <script setup>
-import HomeDailyTrend from '../components/home/HomeDailyTrend.vue';
-import HomePortfolio from '../components/home/HomePortfolio.vue';
-import HomeRecommendStock from '../components/home/HomeRecommendStock.vue';
-
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { checkSurveyStatus } from '../services/surveyService';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { checkSurveyStatus } from "../services/surveyService";
+import HomeDailyTrend from "../components/home/HomeDailyTrend.vue";
+import HomePortfolio from "../components/home/HomePortfolio.vue";
+import HomeRecommendStock from "../components/home/HomeRecommendStock.vue";
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 const isSurveyPending = ref(false);
 const router = useRouter();
+const isLoading = ref(true);
+const loadingCount = ref(3);
+
+const onComponentLoaded = () => {
+  loadingCount.value -= 1;
+  if (loadingCount.value === 0) {
+    isLoading.value = false;
+  }
+};
 
 const checkSurveyStatusAndUpdate = async () => {
   try {
     const surveyStatus = await checkSurveyStatus(); // surveyService 사용
-    isSurveyPending.value = surveyStatus === 'N';
+    isSurveyPending.value = surveyStatus === "N";
   } catch (error) {
-    console.error('Error checking survey status:', error);
+    console.error("Error checking survey status:", error);
   }
 };
 
 const redirectToSurvey = () => {
-  router.push('/survey');
+  router.push("/survey");
 };
 
 onMounted(() => {

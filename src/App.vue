@@ -12,8 +12,22 @@
 import { useRoute } from "vue-router";
 import HeaderNavigator from "./components/HeaderNavigator.vue";
 import BottomNavigator from "./components/BottomNavigator.vue";
+import { onMounted } from "vue";
+import { requestForToken } from "./firebase";
 
 const route = useRoute();
+
+onMounted(() => {
+  requestForToken()
+    .then((token) => {
+      if (token) {
+        console.log("Token acquired on app start:", token);
+      }
+    })
+    .catch((error) => {
+      console.error("Error during token request:", error);
+    });
+});
 </script>
 
 <style scoped>
