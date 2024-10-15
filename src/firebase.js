@@ -19,7 +19,7 @@ export const requestForToken = async () => {
   try {
     const currentToken = await getToken(messaging, {
       vapidKey:
-        "BNCnOqfdBm_KSYG37G7TRtXeXU3TqZybnY9so-jIq3VIf37dVJRJrkveugdXGE8AVnsWTE3wVZ1Ic3Dzcoc8KPM",
+        "BGxwUUGmtEsyOXIbqv_SRtfhhdqLAPa51ZE4YOUGrLNl7_r3fr72fFGjK1hPQcVzTq0x4BhDlJqUKXIHMn84ObU",
     });
     if (currentToken) {
       alert(`발급 성공 : ${currentToken}`);
