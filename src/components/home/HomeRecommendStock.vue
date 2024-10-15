@@ -1,7 +1,7 @@
 <template>
   <div class="recommend-stock">
     <h2>일일추천종목</h2>
-    <p class="ai-stock">AI 추천 종목 현황</p>
+    <p class="ai-stock" @click="moveRecommendStock">AI 추천 종목 현황</p>
     <img
       class="next-button"
       src="@/assets/icons/nextButton-icon.svg"

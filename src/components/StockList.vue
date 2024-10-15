@@ -4,7 +4,7 @@
       v-for="stock in stocks"
       :key="stock.stockId"
       :stock="stock"
-      @click="showForm('S', stock.stockId)"
+      @click="showForm('sell', stock.stockId)"
     />
   </div>
   <OrderForm

@@ -9,7 +9,17 @@
     >
       <a :href="news.link" target="_blank" class="news-link">
         <span class="news-title">{{ news.title }}</span>
-        <img :src="news.image" alt="news image" class="news-image" />
+        <img
+          :src="news.image"
+          alt="news image"
+          class="news-image"
+          @error="
+            (event) => {
+              event.target.style.backgroundColor = 'white'; // 배경을 흰색으로 변경
+              event.target.style.display = 'none';
+            }
+          "
+        />
       </a>
     </div>
   </div>
@@ -22,6 +32,10 @@ const props = defineProps({
     required: true,
   },
 });
+function handleImageError(event) {
+  event.target.style.backgroundColor = "white"; // 배경을 흰색으로 설정
+  event.target.src = "";
+}
 </script>
 
 <style scoped>
@@ -39,6 +53,7 @@ const props = defineProps({
 .news-title {
   flex-grow: 1; /* 제목이 가능한 넓게 차지하도록 설정 */
   font-size: 14px;
+  height: 70px;
   color: #000;
   white-space: nowrap; /* 한 줄로 표시 */
   overflow: hidden; /* 넘치는 텍스트 숨기기 */
