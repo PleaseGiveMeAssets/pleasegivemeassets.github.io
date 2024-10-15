@@ -14,6 +14,7 @@
           class="avatar"
           :style="{ backgroundImage: `url(${userData.profileImageUrl})` }"
         ></div>
+
         <div class="info">
           <p class="nickname">{{ userData.nickname || userData.name }} 님</p>
           <p class="investment-type">
@@ -66,7 +67,10 @@
       </div>
     </div>
   </div>
-  <div v-else-if="isLoading">데이터 로딩 중...</div>
+  <div v-else-if="isLoading">
+    <!-- 로딩 컴포넌트 -->
+    <LoadingComponent />
+  </div>
   <div v-else>사용자 데이터를 불러오지 못했습니다.</div>
 </template>
 
@@ -79,6 +83,7 @@ import heartIcon from "@/assets/icons/heartArrow-icon.svg";
 import investmentIcon from "@/assets/icons/investment-icon.svg";
 import savedIcon from "@/assets/icons/saved-icon.svg";
 import settingsIcon from "@/assets/icons/settings-icon.svg";
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const route = useRoute();
