@@ -1,5 +1,5 @@
 <template>
-  <div class="loading-container" v-if="isLoading">
+  <div v-if="isLoading" class="loading-container">
     <!-- 유저 닉네임을 포함한 로딩 텍스트 -->
     <div class="loading-text">
       <h2>
@@ -21,11 +21,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { fetchSurveyResult } from '../services/surveyService'; // 설문 결과 가져오기 함수
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { fetchSurveyResult } from "../services/surveyService"; // 설문 결과 가져오기 함수
 
-const userNickname = ref('');
+const userNickname = ref("");
 const isLoading = ref(true); // 로딩 상태 변수
 const router = useRouter();
 
@@ -34,7 +34,7 @@ let hasNavigated = false; // 라우팅 중복 방지 플래그
 onMounted(async () => {
   // 로컬 스토리지에서 닉네임을 불러옴
   // userNickname.value = localStorage.getItem('nickname') || '사용자';
-  userNickname.value = sessionStorage.getItem('nickname') || '사용자'; // 세션 스토리지에서 닉네임 불러오기
+  userNickname.value = sessionStorage.getItem("nickname") || "사용자"; // 세션 스토리지에서 닉네임 불러오기
 
   try {
     // 설문 결과를 서버에서 가져오는 동안 로딩 상태 유지
@@ -43,11 +43,11 @@ onMounted(async () => {
     setTimeout(() => {
       // 설문 결과를 성공적으로 가져오면 로딩을 멈추고 결과 페이지로 이동
       isLoading.value = false;
-      router.push('/survey-result');
+      router.push("/survey-result");
       hasNavigated = true;
     }, 3000); // 3초 후 이동
   } catch (error) {
-    console.error('설문 결과를 불러오는 중 오류가 발생했습니다.', error);
+    console.error("설문 결과를 불러오는 중 오류가 발생했습니다.", error);
     // 오류 처리 (예: 오류 페이지로 이동)
   }
 });
@@ -70,7 +70,7 @@ body {
   height: 100vh;
   background-color: var(--primary-color); /* 배경 색 설정 */
   color: var(--main-card-color);
-  font-family: 'Pretendard-Medium', sans-serif;
+  font-family: "Pretendard-Medium", sans-serif;
 }
 
 .loading-text h2 {
@@ -78,7 +78,7 @@ body {
   text-align: center;
   margin-bottom: 60px;
   color: var(--main-card-color);
-  font-family: 'Pretendard-Bold', sans-serif;
+  font-family: "Pretendard-Bold", sans-serif;
 }
 
 .loading-overlay {

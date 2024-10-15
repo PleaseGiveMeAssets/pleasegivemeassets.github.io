@@ -63,7 +63,7 @@
           class="btn next-button w-100"
           @click="nextQuestion"
         >
-          {{ questionId === maxQuestions ? '제출' : '다음' }}
+          {{ questionId === maxQuestions ? "제출" : "다음" }}
         </button>
       </div>
     </div>
@@ -71,20 +71,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // vue-router import
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router"; // vue-router import
 import {
   fetchQuestion,
   submitAnswer,
   submitSurveyResult,
-} from '../services/surveyService';
+} from "../services/surveyService";
 
 // 상태 변수 선언
 const question = ref(null);
 const questionId = ref(1);
 const maxQuestions = 7;
 const selectedOption = ref(null); // 선택된 옵션 상태 초기화
-const userNickname = ref(sessionStorage.getItem('nickname') || '사용자'); // 로컬 스토리지에서 닉네임 불러오기
+const userNickname = ref(sessionStorage.getItem("nickname") || "사용자"); // 로컬 스토리지에서 닉네임 불러오기
 const router = useRouter(); // 라우터 객체
 
 // 진행률 계산
@@ -98,7 +98,7 @@ const loadQuestion = async () => {
     question.value = await fetchQuestion(questionId.value);
     selectedOption.value = null; // 질문이 로드될 때마다 선택 옵션 초기화
   } catch (error) {
-    console.error('질문을 불러오는 중 오류가 발생했습니다.', error);
+    console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
   }
 };
 
@@ -118,10 +118,10 @@ const nextQuestion = async () => {
     if (questionId.value < maxQuestions) {
       questionId.value++;
       await loadQuestion();
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // 페이지 상단으로 스크롤
+      window.scrollTo({ top: 0, behavior: "smooth" }); // 페이지 상단으로 스크롤
     } else {
       await submitSurveyResult(); // 설문 결과 제출
-      router.push('/survey-loading');
+      router.push("/survey-loading");
     }
   }
 };
