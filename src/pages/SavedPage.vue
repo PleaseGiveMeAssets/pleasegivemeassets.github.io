@@ -91,65 +91,98 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import alertIcon from "@/assets/icons/alert-icon.svg";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const activeTab = ref("news");
 const reportList = ref([]);
 const newsList = ref([]);
-const userId = "testUser1";
 
 const setActiveTab = (tab) => {
   activeTab.value = tab;
 };
 
+// JWT 토큰을 가져오는 함수
+const getToken = () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    router.push({ path: "/login" }); // 로그인 페이지로 이동
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
+  }
+  return token;
+};
+
+// 저장된 뉴스를 불러오는 함수
 const fetchSavedNews = async () => {
   try {
-    console.log(`${API_BASE_URL}/saved-news/${userId}`);
-    const response = await axios.get(`${API_BASE_URL}/saved-news/${userId}`);
+    const token = getToken();
+    const response = await axios.get(`${API_BASE_URL}/saved-news`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+      },
+    });
     newsList.value = response.data;
-    console.log(newsList.value);
   } catch (error) {
     console.error("저장된 뉴스를 불러오는데 실패했습니다:", error);
   }
 };
 
+// 저장된 리포트를 불러오는 함수
 const fetchSavedReports = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/saved-reports/${userId}`);
+    const token = getToken();
+    const response = await axios.get(`${API_BASE_URL}/saved-reports`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+      },
+    });
     reportList.value = response.data;
   } catch (error) {
     console.error("저장된 리포트를 불러오는데 실패했습니다:", error);
   }
 };
 
+// 뉴스 삭제 함수
 const deleteSavedNews = async (newsId) => {
   if (!newsId) {
     console.error("Invalid newsId:", newsId);
     return;
   }
   try {
-    await axios.delete(`${API_BASE_URL}/saved-news/${userId}/${newsId}`);
-    fetchSavedNews();
+    const token = getToken();
+    await axios.delete(`${API_BASE_URL}/saved-news/${newsId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+      },
+    });
+    fetchSavedNews(); // 삭제 후 뉴스 목록 다시 불러오기
   } catch (error) {
     console.error("뉴스 삭제에 실패했습니다:", error);
   }
 };
 
+// 리포트 삭제 함수
 const deleteSavedReport = async (dailyReportId) => {
   if (!dailyReportId) {
     console.error("Invalid dailyReportId:", dailyReportId);
     return;
   }
   try {
-    await axios.delete(
-      `${API_BASE_URL}/saved-reports/${userId}/${dailyReportId}`,
-    );
-    fetchSavedReports();
+    const token = getToken();
+    await axios.delete(`${API_BASE_URL}/saved-reports/${dailyReportId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // 요청 헤더에 토큰 추가
+      },
+    });
+    fetchSavedReports(); // 삭제 후 리포트 목록 다시 불러오기
   } catch (error) {
     console.error("리포트 삭제에 실패했습니다:", error);
   }
 };
+
+onMounted(() => {
+  fetchSavedNews();
+  fetchSavedReports();
+});
 
 const startX = ref(0);
 const isSwiping = ref(false);
