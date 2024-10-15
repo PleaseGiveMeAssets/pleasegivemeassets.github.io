@@ -29,9 +29,12 @@ const userNickname = ref('');
 const isLoading = ref(true); // 로딩 상태 변수
 const router = useRouter();
 
+let hasNavigated = false; // 라우팅 중복 방지 플래그
+
 onMounted(async () => {
   // 로컬 스토리지에서 닉네임을 불러옴
-  userNickname.value = localStorage.getItem('nickname') || '사용자';
+  // userNickname.value = localStorage.getItem('nickname') || '사용자';
+  userNickname.value = sessionStorage.getItem('nickname') || '사용자'; // 세션 스토리지에서 닉네임 불러오기
 
   try {
     // 설문 결과를 서버에서 가져오는 동안 로딩 상태 유지
@@ -41,6 +44,7 @@ onMounted(async () => {
       // 설문 결과를 성공적으로 가져오면 로딩을 멈추고 결과 페이지로 이동
       isLoading.value = false;
       router.push('/survey-result');
+      hasNavigated = true;
     }, 3000); // 3초 후 이동
   } catch (error) {
     console.error('설문 결과를 불러오는 중 오류가 발생했습니다.', error);

@@ -6,11 +6,11 @@
           <feDropShadow dx="0" dy="0" stdDeviation="3" flood-opacity="0.3" />
         </filter>
         <filter id="sectionShadow" x="-20%" y="-20%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-opacity="0.3" />
+          <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.5" />
         </filter>
       </defs>
       <!-- 차트 영역 -->
-      <g :transform="`translate(${centerX},${centerY})`" filter="url(#shadow)">
+      <g :transform="`translate(${centerX},${centerY})`">
         <g transform="rotate(-90)">
           <path
             v-for="(section, index) in chartSections"
@@ -220,7 +220,6 @@ function startAnimation() {
       requestAnimationFrame(animate);
     }
   };
-
   requestAnimationFrame(animate);
 }
 </script>

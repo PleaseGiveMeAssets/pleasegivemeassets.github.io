@@ -67,20 +67,20 @@
 </template>
 
 <script setup>
-import { ref, computed, watchEffect } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useHeaderStore } from "@/stores/headerStore";
+import { ref, computed, watchEffect } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useHeaderStore } from '@/stores/headerStore';
 const router = useRouter();
 const route = useRoute();
 const isHomePage = ref(false);
 const isStockPage = computed(() => {
-  return route.name === "stockPage" || route.name === "stockPortfolioPage";
+  return route.name === 'stockPage' || route.name === 'stockPortfolioPage';
 });
 
 const headerStore = useHeaderStore();
 
 const showBackButton = computed(() => {
-  return router.currentRoute.value.name !== "home";
+  return router.currentRoute.value.name !== 'home';
 });
 
 const stockName = computed(() => headerStore.stockName);
@@ -108,25 +108,39 @@ const isAccountManagementPage = computed(() => {
 });
 const isRecommendStockPage = computed(() => {
   return route.name === "recommendStockPage";
+const isStockPortfolioPage = computed(() => {
+  return route.name === 'stockPortfolioPage';
 });
 const pageTitle = computed(() => {
-  if (route.name === "survey") {
-    return "설문조사";
+  if (route.name === 'survey') {
+    return '설문조사';
   }
-  if (route.name === "survey-result") {
-    return "투자유형 분석";
+  if (route.name === 'survey-result') {
+    return '투자유형 분석';
   }
-  return "";
+  if (route.name === 'daily-report') {
+    return '일간 리포트';
+  }
+  if (route.name === 'portfolio') {
+    return '포트폴리오';
+  }
+  if (route.name === 'my-profile') {
+    return '마이페이지';
+  }
+  if (route.name === 'settings') {
+    return '설정';
+  }
+  return '';
 });
 
 const goBack = () => router.back();
 
 const moveNotifications = () => {
-  router.push("/notifications");
+  router.push('/notifications');
 };
 
 watchEffect(() => {
-  isHomePage.value = route.name === "home";
+  isHomePage.value = route.name === 'home';
 });
 </script>
 
@@ -157,7 +171,7 @@ p {
 }
 
 .header-title {
-  font-family: "Pretendard-Bold", sans-serif;
+  font-family: 'Pretendard-Bold', sans-serif;
   margin-top: 10px;
   position: absolute;
   font-size: 14px;
@@ -166,7 +180,7 @@ p {
   padding-bottom: 0; /* 아래 패딩 제거 */
 }
 .header-stock-section {
-  font-family: "Pretendard-Bold", sans-serif;
+  font-family: 'Pretendard-Bold', sans-serif;
   position: absolute;
   left: 52%;
   transform: translateX(-52%); /* 가로 가운데 정렬 */

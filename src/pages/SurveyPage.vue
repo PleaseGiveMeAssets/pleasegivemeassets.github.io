@@ -77,7 +77,6 @@ import {
   fetchQuestion,
   submitAnswer,
   submitSurveyResult,
-  fetchUserNickname,
 } from '../services/surveyService';
 
 // 상태 변수 선언
@@ -85,7 +84,7 @@ const question = ref(null);
 const questionId = ref(1);
 const maxQuestions = 7;
 const selectedOption = ref(null); // 선택된 옵션 상태 초기화
-const userNickname = ref(localStorage.getItem('nickname') || ''); // 로컬 스토리지에서 닉네임 불러오기
+const userNickname = ref(sessionStorage.getItem('nickname') || '사용자'); // 로컬 스토리지에서 닉네임 불러오기
 const router = useRouter(); // 라우터 객체
 
 // 진행률 계산
@@ -136,16 +135,10 @@ const toggleOption = (optionId) => {
   }
 };
 
-// 컴포넌트가 마운트될 때 첫 질문과 닉네임을 로드
+// 설문 페이지에서 닉네임을 세션 스토리지에서 불러오기
 onMounted(async () => {
-  await loadQuestion();
-  try {
-    const nickname = await fetchUserNickname(); // 닉네임 불러오기
-    userNickname.value = nickname;
-    localStorage.setItem('nickname', nickname); // 로컬 스토리지에 닉네임 저장
-  } catch (error) {
-    console.error('닉네임 불러오기 중 오류 발생:', error);
-  }
+  // userNickname.value = sessionStorage.getItem('nickname') || '사용자'; // 세션 스토리지에서 닉네임 불러오기
+  await loadQuestion(); // 질문 로드
 });
 </script>
 

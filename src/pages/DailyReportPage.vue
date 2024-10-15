@@ -1,17 +1,34 @@
 <template>
   <div>
-    <div class="logo-section">
-      <img class="logo-img" src="@/assets/images/logo-gray.png" />
+    <div v-if="isLoading">
+      <LoadingComponent />
     </div>
-    <TrendStock />
-    <div class="gap-div"></div>
-    <RecommendStock />
+    <div v-show="!isLoading">
+      <div class="logo-section">
+        <img class="logo-img" src="@/assets/images/logo-gray.png" />
+      </div>
+      <TrendStock @loaded="onComponentLoaded" />
+      <div class="gap-div"></div>
+      <RecommendStock @loaded="onComponentLoaded" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import TrendStock from "../components/dailyreport/TrendStock.vue";
 import RecommendStock from "../components/dailyreport/RecommendStock.vue";
+import LoadingComponent from "@/components/LoadingComponent.vue";
+import { ref } from "vue";
+
+const isLoading = ref(true);
+const loadingCount = ref(2);
+
+const onComponentLoaded = () => {
+  loadingCount.value -= 1;
+  if (loadingCount.value === 0) {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <style scoped>

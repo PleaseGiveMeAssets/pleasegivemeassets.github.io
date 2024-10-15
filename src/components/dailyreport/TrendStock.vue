@@ -22,32 +22,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const token = localStorage.getItem("accessToken");
 
 const trend = ref([]);
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 const createTrend = async () => {
   try {
-    // 하드 코딩 파트
-    if (BASE.indexOf("localhost:8080")) {
-      Object.assign(trend.value, {
-        recentTrendTitle: "최신 동향",
-        recentTrendContent:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam nisi unde exercitationem velit animi esse tempora, soluta eligendi eaque molestiae natus commodi, aliquid, totam dolorem quis iure ullam quam dolor.",
-        stockTrendTitle: "종목 동향",
-        stockTrendContent:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam nisi unde exercitationem velit animi esse tempora, soluta eligendi eaque molestiae natus commodi, aliquid, totam dolorem quis iure ullam quam dolor.",
-      });
-
-      console.log(trend);
-
-      return;
-    }
-
     const response = await axios.get(BASE, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -60,8 +45,9 @@ const createTrend = async () => {
   }
 };
 
-onMounted(() => {
-  createTrend();
+onMounted(async () => {
+  await createTrend();
+  emit("loaded");
 });
 </script>
 

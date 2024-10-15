@@ -9,21 +9,19 @@
           <div class="card-ui">
             <p class="subject">코스피</p>
             <p class="index">
-              {{ Number(stockIndex.kospi.index).toLocaleString() }}
+              {{ dailyTrend.kospiPrice }}
             </p>
             <p
               class="fluctuation"
-              :class="
-                stockIndex.kospi.fluctuation > 0 ? 'font-red' : 'font-blue'
-              "
+              :class="dailyTrend.kospiProfitRate > 0 ? 'font-red' : 'font-blue'"
             >
-              {{ stockIndex.kospi.fluctuation > 0 ? "+" : ""
-              }}{{ stockIndex.kospi.fluctuation.toFixed(2) }}%
+              {{ dailyTrend.kospiProfitRate > 0 ? "+" : ""
+              }}{{ dailyTrend.kospiProfitRate }}%
             </p>
             <img
               class="index-img"
               :src="
-                stockIndex.kospi.fluctuation > 0
+                dailyTrend.kospiProfitRate > 0
                   ? '/src/assets/images/stock-plus.png'
                   : '/src/assets/images/stock-minus.png'
               "
@@ -32,21 +30,21 @@
           <div class="card-ui">
             <p class="subject">코스닥</p>
             <p class="index">
-              {{ Number(stockIndex.kosdaq.index).toLocaleString() }}
+              {{ dailyTrend.kosdaqPrice }}
             </p>
             <p
               class="fluctuation"
               :class="
-                stockIndex.kosdaq.fluctuation > 0 ? 'font-red' : 'font-blue'
+                dailyTrend.kosdaqProfitRate > 0 ? 'font-red' : 'font-blue'
               "
             >
-              {{ stockIndex.kosdaq.fluctuation > 0 ? "+" : ""
-              }}{{ stockIndex.kosdaq.fluctuation.toFixed(2) }}%
+              {{ dailyTrend.kosdaqProfitRate > 0 ? "+" : ""
+              }}{{ dailyTrend.kosdaqProfitRate }}%
             </p>
             <img
               class="index-img"
               :src="
-                stockIndex.kosdaq.fluctuation > 0
+                stockIndex.kosdaqProfitRate > 0
                   ? '/src/assets/images/stock-plus.png'
                   : '/src/assets/images/stock-minus.png'
               "
@@ -68,13 +66,13 @@
               class="medal-img"
               :src="`/src/assets/images/medal-${index}.png`"
             />
-            <p class="subject">{{ stock.name }}</p>
+            <p class="subject">{{ stock.stockName }}</p>
             <p
               class="fluctuation"
-              :class="stock.fluctuation > 0 ? 'font-red' : 'font-blue'"
+              :class="stock.changeAmountRate > 0 ? 'font-red' : 'font-blue'"
             >
-              {{ stock.fluctuation > 0 ? "+" : ""
-              }}{{ stock.fluctuation.toFixed(2) }}%
+              {{ stock.changeAmountRate > 0 ? "+" : ""
+              }}{{ stock.changeAmountRate }}%
             </p>
             <p class="content">{{ stock.content }}</p>
           </div>
@@ -88,7 +86,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 
-const INDEX_BASE = `${import.meta.env.VITE_API_URL}/dailyindex`;
+const INDEX_BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const RECOMMAND_BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const stockIndex = ref({
   kospi: {
@@ -100,25 +98,12 @@ const stockIndex = ref({
     fluctuation: -1.86,
   },
 });
-const dailyRecommendStock = ref([
-  { name: "kb 금융", fluctuation: 6.07, content: "호실적, 밸류업 기대감" },
-  {
-    name: "유한 양행",
-    fluctuation: -1.03,
-    content: "FDA 신약 허가 신청",
-  },
-  {
-    name: "필옵틱스",
-    fluctuation: 3.05,
-    content: "유리 기판 수혜 기대",
-  },
-]);
+const dailyRecommendStock = ref([]);
+const dailyTrend = ref([]);
 const token = localStorage.getItem("accessToken");
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 const createStockIndex = async () => {
-  // 하드 코딩 파트
-  if (INDEX_BASE.indexOf("localhost:8080")) return;
-
   try {
     const response = await axios.get(INDEX_BASE, {
       headers: {
@@ -126,16 +111,13 @@ const createStockIndex = async () => {
       },
     });
 
-    dailyRecommendStock.value = response.data.slice(0, 3); // 최대 3개의 추천 종목만 표시
+    dailyTrend.value = response.data; // 최대 3개의 추천 종목만 표시
   } catch (err) {
-    console.log("createRecommendStock err : ", err.message);
+    console.log("createStockIndex err : ", err.message);
   }
 };
 
 const createRecommendStock = async () => {
-  // 하드 코딩 파트
-  if (RECOMMAND_BASE.indexOf("localhost:8080")) return;
-
   try {
     const response = await axios.get(RECOMMAND_BASE, {
       headers: {
@@ -143,15 +125,16 @@ const createRecommendStock = async () => {
       },
     });
 
-    dailyRecommendStock.value = response.data.slice(0, 3); // 최대 3개의 추천 종목만 표시
+    dailyRecommendStock.value = response.data[0].dailyRecommendStockDTOList; // 최대 3개의 추천 종목만 표시
   } catch (err) {
     console.log("createRecommendStock err : ", err.message);
   }
 };
 
-onMounted(() => {
-  createStockIndex();
-  createRecommendStock();
+onMounted(async () => {
+  await createStockIndex();
+  await createRecommendStock();
+  emit("loaded");
 });
 </script>
 
