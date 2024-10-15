@@ -142,13 +142,17 @@ const clearSearch = () => {
 }
 
 .search-bar {
+  margin-top: 18px;
+  margin-bottom: 16px;
   display: flex;
   justify-content: space-between; /* 검색어와 버튼 사이 여유 공간 확보 */
   align-items: center;
-  margin-bottom: 0;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 약간의 그림자 추가 */
+  box-shadow:
+    2px 2px 2px rgba(0, 0, 0, 0.1),
+    -2px 2px 2px rgba(0, 0, 0, 0.1),
+    -2px -2px 2px rgba(0, 0, 0, 0.1);
   padding: 0px; /* 내부 패딩 */
 }
 
@@ -174,22 +178,23 @@ button {
 .stock-list {
   list-style-type: none;
   padding: 0;
-  margin-top: 10px;
   width: 100%;
 }
 
 .my-stock-title {
-  width: 100%;
+  width: 100vw;
+  margin-left: -24px;
   height: 30px;
+  line-height: 30px;
   font-size: 14px;
   font-weight: bold;
-  margin-bottom: 8px;
   margin-top: 0;
   padding: 0;
   color: #555;
   background-color: #f0f0f0;
-  padding: 8px;
   border-radius: 4px;
+  padding: 0px 14px;
+  margin-bottom: 0px;
 }
 
 .stock-item {

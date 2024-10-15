@@ -28,23 +28,29 @@
 
     <!-- 주식 세부 정보 -->
     <div class="stock-details">
-      <div class="detail-item">
-        <p class="label">보유 수량</p>
-        <p class="value">{{ stock.quantity }}개</p>
+      <div class="detail-left">
+        <div class="detail-item">
+          <p class="label">보유 수량</p>
+          <p class="value">{{ stock.quantity }}개</p>
+        </div>
+        <div class="detail-item">
+          <p class="label">매수 평균가</p>
+          <p class="value">
+            {{ formatCurrency(stock.averagePurchasePrice) }}원
+          </p>
+        </div>
       </div>
-      <div class="detail-item">
-        <p class="label">매수 평균가</p>
-        <p class="value">{{ formatCurrency(stock.averagePurchasePrice) }}원</p>
-      </div>
-      <div class="detail-item">
-        <p class="label">평가 금액</p>
-        <p class="value">
-          {{ formatCurrency(stock.quantity * stock.closedPrice) }}원
-        </p>
-      </div>
-      <div class="detail-item">
-        <p class="label">매수 금액</p>
-        <p class="value">{{ formatCurrency(stock.totalInvestedAmount) }}원</p>
+      <div class="detail-right">
+        <div class="detail-item">
+          <p class="label">평가 금액</p>
+          <p class="value">
+            {{ formatCurrency(stock.quantity * stock.closedPrice) }}원
+          </p>
+        </div>
+        <div class="detail-item">
+          <p class="label">매수 금액</p>
+          <p class="value">{{ formatCurrency(stock.totalInvestedAmount) }}원</p>
+        </div>
       </div>
     </div>
   </div>
@@ -76,7 +82,6 @@ const formatCurrency = (value) => {
   flex-direction: column;
   padding: 0;
   margin: 0;
-
   border-top: 1px solid #e0e0e0;
 }
 
@@ -85,7 +90,6 @@ const formatCurrency = (value) => {
   justify-content: space-between;
   flex-wrap: wrap;
   margin-top: 10px;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .header-item {
@@ -110,6 +114,7 @@ const formatCurrency = (value) => {
 
 .stock-id {
   font-size: 14px;
+  margin-bottom: 0px;
   color: #888;
 }
 
@@ -154,9 +159,23 @@ const formatCurrency = (value) => {
 
 .stock-details {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 10px;
+  padding-bottom: 10px;
+}
+
+.detail-right {
+  width: 154px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.detail-left {
+  width: 148px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .detail-item {

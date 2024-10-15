@@ -15,14 +15,6 @@
         <p>PBR</p>
         <p>{{ data.pbr }}배</p>
       </div>
-      <!-- <div class="info-box">
-        <p>현재 수익률</p>
-        <p>{{ data.roe }}배</p>
-      </div> -->
-      <!-- <div class="info-box">
-        <p>평가손익 금액</p>
-        <p>{{ data.psr }}</p>
-      </div> -->
       <div class="info-box">
         <p>BPS</p>
         <p>{{ data.bps }}원</p>

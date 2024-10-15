@@ -3,24 +3,24 @@
     <LoadingComponent v-if="loading" />
     <div v-else>
       <div v-if="hasAssetData" class="chart-wrapper">
-        <!-- 편집 버튼 -->
-        <button class="edit-button" @click="goToEditPage">편집</button>
-
         <!-- 도넛 차트 카드 -->
         <div class="card">
-          <DoughnutChart
-            v-if="stockData.length > 0"
-            :data="stockData"
-            :width="390"
-            :height="350"
-          />
+          <h6 class="doughnutTitle">보유 주식 현황</h6>
+          <div class="chart-wrap">
+            <DoughnutChart
+              v-if="stockData.length > 0"
+              :data="stockData"
+              :width="390"
+              :height="350"
+            />
+          </div>
           <!-- 매도 / 매수 버튼 -->
-          <SellBuyButton />
+          <SellBuyButton style="margin-top: -20px" />
         </div>
 
         <!-- 나의 자산 카드 -->
         <div class="card">
-          <h6>나의 자산</h6>
+          <h6 style="margin-bottom: 0px">나의 자산</h6>
           <div class="asset-info">
             <div
               v-for="(label, key) in assetLabels"
@@ -28,10 +28,15 @@
               class="info-box"
             >
               <p>{{ label }}</p>
-              <p v-if="key === 'currentYield'">
+              <p
+                v-if="key === 'currentYield'"
+                style="font-size: 18px; font-weight: 700"
+              >
                 {{ formatPercentage(assetData[key]) }}
               </p>
-              <p v-else>{{ formatCurrency(assetData[key]) }}원</p>
+              <p v-else style="font-size: 18px; font-weight: 700">
+                {{ formatCurrency(assetData[key]) }}원
+              </p>
             </div>
           </div>
         </div>
@@ -46,12 +51,14 @@
               class="stock-item"
             >
               <router-link :to="`/stock/${stock.stockId}`" class="noUnderline">
-                <div class="stock-info">
-                  <p class="stock-name">{{ stock.name }}</p>
-                  <p class="stock-shortcode">{{ stock.shortCode }}</p>
-                </div>
-                <div class="stock-market">
-                  {{ formatCurrency(stock.value) }}원
+                <div class="stock-box">
+                  <div class="stock-info">
+                    <p class="stock-name">{{ stock.name }}</p>
+                    <p class="stock-shortcode">{{ stock.shortCode }}</p>
+                  </div>
+                  <div class="stock-market">
+                    {{ formatCurrency(stock.value) }}원
+                  </div>
                 </div>
               </router-link>
             </li>
@@ -111,9 +118,9 @@ const lineChartData = ref({
 const stockData = ref([]);
 const topStocks = ref([]);
 const assetLabels = {
-  purchaseAmount: "매수총액",
+  purchaseAmount: "매수 총액",
   totalProfit: "총 수익",
-  evaluationAmount: "평가손익 금액",
+  evaluationAmount: "평가 총액",
   currentYield: "현재 수익률",
 };
 
@@ -201,7 +208,8 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   text-align: center;
-  padding: 10px 0px 48px 0px;
+  padding: 0px 0px 100px 0px;
+  /* background-color: #f5f5f5; */
 }
 .chart-wrapper {
   opacity: 1;
@@ -210,6 +218,16 @@ onMounted(async () => {
     opacity 0.5s ease-in-out,
     transform 0.5s ease-in-out;
 }
+.doughnutTitle {
+  font-size: 20px;
+  margin-top: 0px;
+  text-align: center;
+}
+
+.chart-wrap {
+  margin-top: -40px;
+}
+
 .edit-button {
   position: absolute;
   top: 30px;
@@ -228,12 +246,12 @@ onMounted(async () => {
 
 /* 카드 스타일 */
 .card {
-  background-color: white;
+  background-color: #fcfbff;
   border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 16px;
   text-align: center;
+  margin-top: 15px;
 }
 
 /* 나의 자산 스타일 */
@@ -241,11 +259,11 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .info-box {
   padding: 10px;
-  background-color: #fafafa;
+  background-color: white;
   color: #333;
   border-radius: 8px;
   text-align: center;
@@ -268,17 +286,24 @@ onMounted(async () => {
 .stock-item:last-child {
   border-bottom: none;
 }
+.stock-box {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+}
 .stock-info {
   display: flex;
   flex-direction: column;
-  text-align: center;
+  text-align: left;
 }
 .stock-name {
   font-size: 16px;
   font-weight: bold;
+  margin-bottom: 5px;
 }
 .stock-shortcode {
   font-size: 14px;
+  margin-bottom: 0px;
   color: #666;
 }
 .stock-market {
@@ -286,6 +311,7 @@ onMounted(async () => {
   font-weight: bold;
   color: #333;
   margin-top: 5px;
+  text-align: right;
 }
 .noUnderline {
   text-decoration: none;

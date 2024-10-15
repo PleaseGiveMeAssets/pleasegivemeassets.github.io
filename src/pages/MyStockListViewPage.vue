@@ -55,6 +55,7 @@ onMounted(() => {
 
 <style scoped>
 .stock-portfolio {
+  margin-top: 16px;
   padding-right: 8px;
   padding-bottom: 70px;
 }

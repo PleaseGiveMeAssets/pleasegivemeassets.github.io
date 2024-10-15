@@ -119,7 +119,7 @@ const chartOptions = ref({
   },
   series: [
     {
-      name: "가격",
+      name: "수익률",
       data: [],
       color: primaryColor,
     },
