@@ -22,12 +22,10 @@ export const requestForToken = async () => {
         "BGxwUUGmtEsyOXIbqv_SRtfhhdqLAPa51ZE4YOUGrLNl7_r3fr72fFGjK1hPQcVzTq0x4BhDlJqUKXIHMn84ObU",
     });
     if (currentToken) {
-      alert(`발급 성공 : ${currentToken}`);
       console.log("current token for client: ", currentToken);
       // 여기서 토큰을 서버로 전송하는 로직을 추가할 수 있습니다.
       return currentToken;
     } else {
-      alert("발급 실패");
       console.log(
         "No registration token available. Request permission to generate one.",
       );
