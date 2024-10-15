@@ -167,6 +167,7 @@ p {
   background-color: var(--main-card-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: fixed;
+  top: 0px;
   left: 0;
   right: 0;
 }

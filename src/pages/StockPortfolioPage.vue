@@ -65,7 +65,6 @@
           </div>
           <p v-else>투자 종목 데이터가 없습니다.</p>
         </div>
-
         <!-- 주간 투자 수익률 카드 -->
         <div class="card">
           <h6>주간 투자 수익률</h6>
@@ -212,7 +211,6 @@ onMounted(async () => {
   /* background-color: #f5f5f5; */
 }
 .chart-wrapper {
-  opacity: 1;
   transform: scale(1);
   transition:
     opacity 0.5s ease-in-out,
@@ -293,13 +291,13 @@ onMounted(async () => {
 
 .stock-shortcode {
   font-size: 14px;
-  color: #888; /* 주식 코드에 연한 색 적용 */
+  color: #888;
 }
 
 .stock-market {
   display: flex;
-  align-items: center; /* 가격이 가운데 정렬되도록 함 */
-  justify-content: flex-end; /* 오른쪽에 배치 */
+  align-items: center;
+  justify-content: flex-end;
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 16px;
@@ -307,11 +305,10 @@ onMounted(async () => {
 
 .stock-container {
   display: flex;
-  justify-content: space-between; /* 주식 정보와 가격을 좌우로 배치 */
-  border-bottom: 1px solid #ddd; /* 하단에 구분선 추가 */
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
 }
 
-/* 제목 스타일 */
 h6 {
   font-size: 18px;
   font-weight: bold;
@@ -320,7 +317,6 @@ h6 {
   color: #333;
 }
 
-/* 라인 차트 컨테이너 */
 .line-chart-container {
   margin-top: 20px;
 }
