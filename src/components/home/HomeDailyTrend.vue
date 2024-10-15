@@ -1,11 +1,11 @@
 <template>
-  <div class="daily-report">
-    <h2>일일 동향 요약</h2>
-    <p class="report-time">
-      다음 리포트까지 {{ dailyTrendSummarized.hour }}시간 남았어요!
-    </p>
-  </div>
   <div class="card-ui">
+    <div class="daily-report">
+      <h2>일일 동향 요약</h2>
+      <p class="report-time">
+        다음 리포트까지 {{ dailyTrendSummarized.hour }}시간 남았어요!
+      </p>
+    </div>
     <section class="card-ui-content">
       <p>{{ dailyTrendSummarized.dailyTrendSummarizedTitle }}</p>
       <p>{{ dailyTrendSummarized.dailyTrendSummarizedContent }}</p>
@@ -74,5 +74,9 @@ h2 {
 
 .daily-report {
   display: flex;
+}
+.daily-report > h2 {
+  font-family: "Pretendard-Bold";
+  padding-top: 10px;
 }
 </style>

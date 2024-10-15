@@ -8,7 +8,6 @@ dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/main",
   plugins: [
     vue(),
     VitePWA({

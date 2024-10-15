@@ -1,16 +1,21 @@
 <template>
-  <div class="portfolio">
-    <h2>포트폴리오</h2>
-    <img
-      class="next-button"
-      src="@/assets/icons/nextButton-icon.svg"
-      @click="movePortfolio"
-    />
-  </div>
   <div class="card-ui">
+    <div class="portfolio">
+      <h2>포트폴리오</h2>
+      <img
+        class="next-button"
+        src="@/assets/icons/nextButton-icon.svg"
+        @click="movePortfolio"
+      />
+    </div>
     <section>
       <div class="home-portfolio">
-        <DonutChart :data="stockData" :width="390" :height="350" />
+        <DonutChart
+          class="donut-chart"
+          :data="stockData"
+          :width="390"
+          :height="350"
+        />
       </div>
     </section>
   </div>
@@ -82,19 +87,23 @@ onMounted(async () => {
 <style scoped>
 .home-portfolio {
   width: 100%;
-  height: 300px;
+  height: 260px;
+  position: relative;
 }
-
+.donut-chart {
+  position: relative;
+  top: -40px;
+}
 h2 {
   font-size: 18px;
-  margin-bottom: 10px;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 .card-ui {
   margin-bottom: 16px;
   border: 1px solid #e0e0e0;
   padding: 10px;
+  margin-top: 12px;
   border-radius: 12px;
   box-shadow:
     1px 1px 1px rgba(0, 0, 0, 0.1),
@@ -102,12 +111,12 @@ h2 {
 }
 
 .portfolio {
+  font-family: "Pretendard-Bold";
   display: flex;
 }
 
 .next-button {
   margin-left: auto;
   padding-right: 5px;
-  padding-top: 10px;
 }
 </style>
