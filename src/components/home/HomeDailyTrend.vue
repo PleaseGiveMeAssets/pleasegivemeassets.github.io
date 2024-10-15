@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { onMounted, reactive } from "vue";
 
 // 기본 URL과 동향 요약 데이터 설정
