@@ -17,12 +17,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import DonutChart from "@/components/DoughnutChart.vue";
 import RenewToken from "@/services/renewToken";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import MyCookie from "@/services/myCookie";
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 // API URL 및 상태 관리
 const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
@@ -33,7 +34,6 @@ const router = useRouter();
 const renewToken = new RenewToken("/auth/login/renew");
 const myCookie = new MyCookie();
 const refreshToken = myCookie.getCookie("refreshToken");
-const emit = defineEmits(["loaded", "onComponentLoaded"]);
 const movePortfolio = () => {
   router.push("/portfolio");
 };

@@ -104,15 +104,16 @@ function formatLargeNumber(num) {
 .asset-info {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  padding: 10px;
   gap: 10px;
 }
 
 .info-box {
   padding: 10px;
-  background-color: #000;
-  color: #fff;
+  background-color: #f8f9fa;
+  color: #000;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px rgba(0, 0, 0, 0.1) solid;
   text-align: left;
 }
 </style>
