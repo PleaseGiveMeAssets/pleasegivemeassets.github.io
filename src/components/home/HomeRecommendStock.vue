@@ -72,6 +72,7 @@ const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
 const token = localStorage.getItem("accessToken");
 const router = useRouter();
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 const moveRecommendStock = () => {
   router.push("/recommendstock");
@@ -88,12 +89,15 @@ const createRecommendStock = async () => {
 
     Object.assign(dailyRecommendStock, response.data);
   } catch (err) {
-    console.error("createRecommendStock 에러: ", err.message);
+    console.error("createRecommendStock err : ", err.message);
   }
 };
 
 // 컴포넌트 마운트 시 추천 종목 데이터를 불러오기 위한 API 호출
-onMounted(createRecommendStock);
+onMounted(async () => {
+  await createRecommendStock();
+  emit("loaded");
+});
 </script>
 
 <style scoped>

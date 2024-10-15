@@ -53,6 +53,7 @@ import axios from "axios";
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const trend = reactive([]);
 const token = localStorage.getItem("accessToken");
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 const createTrend = async () => {
   try {
@@ -64,12 +65,13 @@ const createTrend = async () => {
 
     Object.assign(trend, response.data);
   } catch (err) {
-    console.log("createTrend err : ", err.message);
+    console.error("createTrend err : ", err.message);
   }
 };
 
-onMounted(() => {
-  createTrend();
+onMounted(async () => {
+  await createTrend();
+  emit("loaded");
 });
 </script>
 

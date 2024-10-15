@@ -22,6 +22,7 @@ import axios from "axios";
 const BASE = `${import.meta.env.VITE_API_URL}/dailyrecommend`;
 const dailyRecommendStock = reactive([]);
 const token = localStorage.getItem("accessToken");
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 const createRecommendStock = async () => {
   try {
@@ -33,12 +34,13 @@ const createRecommendStock = async () => {
 
     Object.assign(dailyRecommendStock, response.data);
   } catch (err) {
-    console.log("createRecommendStock err : ", err.message);
+    console.error("createRecommendStock err : ", err.message);
   }
 };
 
-onMounted(() => {
-  createRecommendStock();
+onMounted(async () => {
+  await createRecommendStock();
+  emit("loaded");
 });
 </script>
 
