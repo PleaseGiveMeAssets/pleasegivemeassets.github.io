@@ -6,11 +6,11 @@
           <feDropShadow dx="0" dy="0" stdDeviation="3" flood-opacity="0.3" />
         </filter>
         <filter id="sectionShadow" x="-20%" y="-20%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-opacity="0.3" />
+          <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.5" />
         </filter>
       </defs>
       <!-- 차트 영역 -->
-      <g :transform="`translate(${centerX},${centerY})`" filter="url(#shadow)">
+      <g :transform="`translate(${centerX},${centerY})`">
         <g transform="rotate(-90)">
           <path
             v-for="(section, index) in chartSections"
@@ -101,20 +101,13 @@ const props = defineProps({
 
 // 차트의 색상 -> 순서대로 적용 됩니다!
 const COLORS = [
-  // "#9A40D6",
-  // "#0066FF",
-  // "#4d94ff",
-  // "#99c2ff",
-  // "#ffc6f3",
-  // "#e0bff2",
-  // "#c28ce6",
-  "#4CAF50",
-  "#FF9800",
-  "#2196F3",
-  "#FFEB3B",
-  "#9C27B0",
-  "#E91E63",
-  "#00BCD4",
+  "#9A40D6",
+  "#0066FF",
+  "#4d94ff",
+  "#99c2ff",
+  "#ffc6f3",
+  "#e0bff2",
+  "#c28ce6",
 ];
 
 const animationProgress = ref(0);
@@ -221,7 +214,6 @@ function startAnimation() {
       requestAnimationFrame(animate);
     }
   };
-
   requestAnimationFrame(animate);
 }
 </script>

@@ -47,10 +47,12 @@ const createPortfolio = async () => {
 
     Object.assign(portfolio, response.data);
 
-    stockData.value = portfolio.map((stock) => ({
-      name: stock.stockName,
-      value: stock.totalPrice,
-    }));
+    stockData.value = portfolio
+      .sort((a, b) => b.totalPrice - a.totalPrice) // totalPrice 값으로 내림차순 정렬
+      .map((stock) => ({
+        name: stock.stockName,
+        value: stock.totalPrice,
+      }));
   } catch (err) {
     console.error("createPortfolio err :", err.message);
 
