@@ -10,7 +10,7 @@
         </filter>
       </defs>
       <!-- 차트 영역 -->
-      <g :transform="`translate(${centerX},${centerY})`">
+      <g :transform="`translate(${centerX + 5},${centerY})`">
         <g transform="rotate(-90)">
           <path
             v-for="(section, index) in chartSections"
@@ -60,14 +60,14 @@
 
       <!-- 항목 영역 -->
       <g
-        :transform="`translate(${width * 0.6}, ${
-          height / 2 - (topChartData.length * 25) / 2 - 10
+        :transform="`translate(${width * 0.67}, ${
+          height / 2 - (topChartData.length * 25) / 2 + 20
         })`"
       >
         <g
           v-for="(item, index) in topChartData"
           :key="index"
-          :transform="`translate(0, ${index * 30})`"
+          :transform="`translate(0, ${index * 20})`"
         >
           <rect :fill="COLORS[index % COLORS.length]" width="20" height="10" />
           <text x="25" y="10" font-size="12">{{ item.name }}</text>
