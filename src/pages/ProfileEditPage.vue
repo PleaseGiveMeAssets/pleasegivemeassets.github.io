@@ -14,6 +14,14 @@
           class="edit-icon"
         />
       </button>
+      <!-- 파일 선택 input -->
+      <input
+        ref="fileInput"
+        type="file"
+        class="hidden-file-input"
+        accept="image/*"
+        @change="handleImageUpload"
+      />
     </div>
     <div class="form-group">
       <label for="name">이름</label>
@@ -39,6 +47,8 @@
         @input="onPhoneInput"
       />
     </div>
+    <!-- 수정하기 버튼 -->
+    <button class="update-button" @click="updateProfile">수정하기</button>
   </div>
   <div v-else-if="isLoading">
     <!-- 로딩 컴포넌트 -->
@@ -146,6 +156,20 @@ const handleImageUpload = (event) => {
     reader.readAsDataURL(file);
   }
 };
+const updateProfile = async () => {
+  try {
+    const token = getToken();
+    await axios.put(`${API_BASE_URL}/users/profile_edit`, userData.value, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    alert("프로필이 성공적으로 업데이트되었습니다.");
+  } catch (error) {
+    console.error("프로필 업데이트 실패:", error);
+    alert("프로필 업데이트에 실패했습니다.");
+  }
+};
 
 onMounted(() => {
   fetchUserData();
@@ -227,5 +251,18 @@ input {
   border: none;
   font-size: 16px;
   cursor: pointer;
+}
+.hidden-file-input {
+  display: none;
+}
+.update-button {
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
 }
 </style>
