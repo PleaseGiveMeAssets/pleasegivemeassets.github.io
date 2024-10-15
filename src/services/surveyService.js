@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // 환경변수에서 API URL 불러오기
 const BASE = `${import.meta.env.VITE_API_URL}`;
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('accessToken');
 
 // 설문 질문 불러오기 함수
 export async function fetchQuestion(questionId) {
@@ -21,6 +21,20 @@ export async function submitAnswer(questionId, optionId) {
       Authorization: `Bearer ${token}`, // Add JWT token here
     },
   });
+}
+
+//추가 수정 부분!!!
+export async function submitSurveyResult() {
+  const response = await axios.post(
+    `${BASE}/survey-result/investment-type`,
+    null, // 요청 바디 필요 시 추가 가능
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // JWT 토큰 추가
+      },
+    }
+  );
+  return response.data;
 }
 
 export async function fetchSurveyResult() {
