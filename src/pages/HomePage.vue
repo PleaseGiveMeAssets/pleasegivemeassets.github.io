@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="homeContainer">
     <div v-if="isLoading">
       <LoadingComponent />
     </div>
@@ -62,6 +62,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.homeContainer {
+  padding: 0px 0px 100px 0px;
+}
 .survey-popup {
   position: fixed;
   top: 0;
@@ -107,5 +110,9 @@ onMounted(() => {
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s;
+}
+
+.margin-10 {
+  margin-bottom: 10px;
 }
 </style>

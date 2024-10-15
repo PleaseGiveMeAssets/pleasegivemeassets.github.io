@@ -60,19 +60,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { fetchSurveyResult } from '../services/surveyService'; // 서버에서 데이터를 가져오는 함수
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { fetchSurveyResult } from "../services/surveyService"; // 서버에서 데이터를 가져오는 함수
 
 // 상태 변수 선언
 const investmentType = ref(null);
-const userNickname = ref('');
+const userNickname = ref("");
 const isLoading = ref(true); // 로딩 상태 변수
 const router = useRouter();
 
 // 로컬 스토리지에서 닉네임 불러오기
 const loadUserNickname = () => {
-  userNickname.value = sessionStorage.getItem('nickname') || '사용자';
+  userNickname.value = sessionStorage.getItem("nickname") || "사용자";
 };
 
 // 투자 유형 ID에 따라 이미지를 동적으로 불러오는 함수
@@ -80,33 +80,33 @@ const getImageByType = (investmentTypeId) => {
   switch (investmentTypeId) {
     case 1:
       return new URL(
-        '@/assets/images/raccoon_investmentType1.png',
-        import.meta.url
+        "@/assets/images/raccoon_investmentType1.png",
+        import.meta.url,
       ).href;
     case 2:
       return new URL(
-        '@/assets/images/raccoon_investmentType2.png',
-        import.meta.url
+        "@/assets/images/raccoon_investmentType2.png",
+        import.meta.url,
       ).href;
     case 3:
       return new URL(
-        '@/assets/images/raccoon_investmentType3.png',
-        import.meta.url
+        "@/assets/images/raccoon_investmentType3.png",
+        import.meta.url,
       ).href;
     case 4:
       return new URL(
-        '@/assets/images/raccoon_investmentType4.png',
-        import.meta.url
+        "@/assets/images/raccoon_investmentType4.png",
+        import.meta.url,
       ).href;
     case 5:
       return new URL(
-        '@/assets/images/raccoon_investmentType5.png',
-        import.meta.url
+        "@/assets/images/raccoon_investmentType5.png",
+        import.meta.url,
       ).href;
     default:
       return new URL(
-        '@/assets/images/raccoon_investmentType1.png',
-        import.meta.url
+        "@/assets/images/raccoon_investmentType1.png",
+        import.meta.url,
       ).href;
   }
 };
@@ -115,17 +115,17 @@ const getImageByType = (investmentTypeId) => {
 const getColorByType = (investmentTypeId) => {
   switch (investmentTypeId) {
     case 1:
-      return 'type-color1';
+      return "type-color1";
     case 2:
-      return 'type-color2';
+      return "type-color2";
     case 3:
-      return 'type-color3';
+      return "type-color3";
     case 4:
-      return 'type-color4';
+      return "type-color4";
     case 5:
-      return 'type-color5';
+      return "type-color5";
     default:
-      return '';
+      return "";
   }
 };
 
@@ -135,7 +135,7 @@ const loadSurveyResult = async () => {
     const result = await fetchSurveyResult(); // 서버에서 설문 결과 불러오기
     investmentType.value = result; // 서버에서 받아온 데이터를 설정
   } catch (error) {
-    console.error('설문 결과를 불러오는 중 오류가 발생했습니다.', error);
+    console.error("설문 결과를 불러오는 중 오류가 발생했습니다.", error);
   } finally {
     isLoading.value = false;
   }
@@ -143,7 +143,7 @@ const loadSurveyResult = async () => {
 
 // 설문 재진행 버튼 클릭 시 호출되는 함수
 const restartSurvey = () => {
-  router.push('/survey');
+  router.push("/survey");
 };
 
 // 컴포넌트가 마운트될 때 설문 결과와 닉네임을 로드

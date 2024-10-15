@@ -83,13 +83,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
-import { fetchUserNickname } from '@/services/surveyService';
+import { ref } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
+import { fetchUserNickname } from "@/services/surveyService";
 
-const userId = ref('');
-const password = ref('');
+const userId = ref("");
+const password = ref("");
 const rememberMe = ref(false);
 const BASE = `${import.meta.env.VITE_API_URL}/auth/login`;
 const kakaoClientId = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -103,31 +103,31 @@ const router = useRouter();
 
 const login = async () => {
   try {
-    sessionStorage.removeItem('nickname');
+    sessionStorage.removeItem("nickname");
     const response = await axios.post(
       BASE,
       {
         userId: userId.value,
         password: password.value,
-        rememberMe: rememberMe.value ? 'Y' : 'N',
+        rememberMe: rememberMe.value ? "Y" : "N",
       },
-      { withCredentials: true }
+      { withCredentials: true },
     );
 
     if (response.status === 200) {
       const accessToken = response.data.accessToken;
-      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem("accessToken", accessToken);
 
       const nickname = await fetchUserNickname(accessToken); // 서버에서 닉네임 받기
 
       if (nickname) {
-        sessionStorage.setItem('nickname', nickname); // 세션 스토리지에 닉네임 저장
+        sessionStorage.setItem("nickname", nickname); // 세션 스토리지에 닉네임 저장
         console.log(`닉네임 저장됨: ${nickname}`);
       } else {
-        console.error('닉네임을 가져오지 못했습니다.');
+        console.error("닉네임을 가져오지 못했습니다.");
       }
 
-      router.push('/');
+      router.push("/");
     }
   } catch (error) {
     alert(error.response.data);
@@ -135,15 +135,15 @@ const login = async () => {
 };
 
 const goToFindId = () => {
-  router.push('/find-id');
+  router.push("/find-id");
 };
 
 const goToFindPassword = () => {
-  router.push('/find-password');
+  router.push("/find-password");
 };
 
 const goToSignUp = () => {
-  router.push('/signup');
+  router.push("/signup");
 };
 </script>
 
@@ -174,7 +174,7 @@ const goToSignUp = () => {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
-  font-family: 'Pretendard-Bold';
+  font-family: "Pretendard-Bold";
 }
 
 .input-group > input {
@@ -264,7 +264,7 @@ const goToSignUp = () => {
 }
 
 .checkmark::after {
-  content: '';
+  content: "";
   position: absolute;
   display: block;
   left: 50%;
