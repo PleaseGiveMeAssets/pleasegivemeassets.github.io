@@ -1,48 +1,20 @@
 <template>
-  <div class="recommendations-page">
-    <!-- 월, 일 선택 박스 -->
-    <div class="unit-selector">
-      <div
-        :class="selectedUnit === 'day' ? 'selected-unit' : 'unit'"
-        @click="selectedUnit = 'day'"
-      >
-        일
-      </div>
-      <div
-        :class="selectedUnit === 'month' ? 'selected-unit' : 'unit'"
-        @click="selectedUnit = 'month'"
-      >
-        월
-      </div>
-    </div>
-
-    <!-- 날짜 선택 부분 -->
-    <div class="date-picker">
-      <!-- 일 선택기 -->
-      <input v-if="selectedUnit === 'day'" v-model="currentDate" type="date" />
-      <!-- 월 선택기 -->
-      <input
-        v-if="selectedUnit === 'month'"
-        v-model="currentMonth"
-        type="month"
-      />
-    </div>
-
-    <!-- 종목 리스트 -->
-    <div class="recommendations">
-      <div
-        v-for="(stock, sIndex) in recommendStock"
-        :key="sIndex"
-        class="stock-group"
-      >
-        <!-- 선택된 단위가 'month'일 때만 날짜 표시 -->
-        <div v-if="selectedUnit === 'month'" class="stock-day">
-          {{ stock.day }}일
+  <div v-if="isLoading">
+    <LoadingComponent />
+  </div>
+  <div v-else>
+    <div class="recommendations-page">
+      <!-- 월, 일 선택 박스 -->
+      <div class="unit-selector">
+        <div
+          :class="selectedUnit === 'day' ? 'selected-unit' : 'unit'"
+          @click="selectedUnit = 'day'"
+        >
+          일
         </div>
         <div
-          v-for="(rs, rsIndex) in stock.dailyRecommendStockDTOList"
-          :key="rsIndex"
-          class="stock-item"
+          :class="selectedUnit === 'month' ? 'selected-unit' : 'unit'"
+          @click="selectedUnit = 'month'"
         >
           <!-- 날짜 부분 -->
           <div class="stock-details">
@@ -52,25 +24,81 @@
             </div>
             <div class="stock-price-info">
               <div class="stock-price">{{ rs.price }}원</div>
+              <div v-if="rs.changeAmount > 0" class="stock-change up">
+                <img src="@/assets/icons/price-increase-icon.svg" />
+                {{ Math.abs(rs.changeAmount) }}원
+              </div>
+              <div v-if="rs.changeAmount < 0" class="stock-change down">
+                <img src="@/assets/icons/price-decrease-icon.svg" />
+                {{ Math.abs(rs.changeAmount) }}원
+          월
+        </div>
+      </div>
+
+      <!-- 날짜 선택 부분 -->
+      <div class="date-picker">
+        <!-- 일 선택기 -->
+        <input
+          v-if="selectedUnit === 'day'"
+          v-model="currentDate"
+          type="date"
+        />
+        <!-- 월 선택기 -->
+        <input
+          v-if="selectedUnit === 'month'"
+          v-model="currentMonth"
+          type="month"
+        />
+      </div>
+
+      <!-- 종목 리스트 -->
+      <div class="recommendations">
+        <div
+          v-for="(stock, sIndex) in recommendStock"
+          :key="sIndex"
+          class="stock-group"
+        >
+          <!-- 선택된 단위가 'month'일 때만 날짜 표시 -->
+          <div v-if="selectedUnit === 'month'" class="stock-day">
+            {{ stock.day }}일
+          </div>
+          <div
+            v-for="(rs, rsIndex) in stock.dailyRecommendStockDTOList"
+            :key="rsIndex"
+            class="stock-item"
+          >
+            <!-- 날짜 부분 -->
+            <div class="stock-details">
+              <div class="stock-info">
+                <div class="stock-name">{{ rs.stockName }}</div>
+                <div class="short-code">{{ rs.shortCode }}</div>
+              </div>
+              <div class="stock-price-info">
+                <div class="stock-price">{{ rs.price }}원</div>
+                <div
+                  :class="
+                    rs.changeAmount > 0
+                      ? 'up'
+                      : rs.changeAmount < 0
+                        ? 'down'
+                        : ''
+                  "
+                >
+                  {{ rs.changeAmount > 0 ? "▲" : rs.changeAmount < 0 ? "▼" : ""
+                  }}{{ Math.abs(rs.changeAmount) }}원
+                </div>
+              </div>
               <div
                 :class="
-                  rs.changeAmount > 0 ? 'up' : rs.changeAmount < 0 ? 'down' : ''
+                  rs.changeAmountRate > 0
+                    ? 'stock-change-rate up'
+                    : rs.changeAmountRate < 0
+                      ? 'stock-change-rate down'
+                      : 'stock-change-rate'
                 "
               >
-                {{ rs.changeAmount > 0 ? "▲" : rs.changeAmount < 0 ? "▼" : ""
-                }}{{ Math.abs(rs.changeAmount) }}원
+                {{ rs.changeAmountRate }}%
               </div>
-            </div>
-            <div
-              :class="
-                rs.changeAmountRate > 0
-                  ? 'stock-change-rate up'
-                  : rs.changeAmountRate < 0
-                    ? 'stock-change-rate down'
-                    : 'stock-change-rate'
-              "
-            >
-              {{ rs.changeAmountRate }}%
             </div>
           </div>
         </div>
@@ -80,6 +108,7 @@
 </template>
 
 <script setup>
+import LoadingComponent from "@/components/LoadingComponent.vue";
 import axios from "axios";
 import { onMounted, reactive, ref, watch } from "vue";
 
@@ -93,16 +122,24 @@ const lastDisplayedDay = ref(0);
 const currentDate = ref(new Date().toISOString().slice(0, 10)); // 기본 현재 날짜
 const currentMonth = ref(new Date().toISOString().slice(0, 7)); // 기본 현재 월
 const selectedUnit = ref("day"); // 기본 선택 단위는 '일'
+const isLoading = ref(true);
+const loadingCount = ref(1);
 
 // 종목 추천 데이터 불러오기
 const createRecommendStock = async (date) => {
   try {
+    recommendStock.splice(0, recommendStock.length);
+
     const response = await axios.get(BASE + `/${date}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     Object.assign(recommendStock, response.data); // 데이터 갱신
   } catch (err) {
-    console.error("createRecommendStock 에러: ", err.message);
+    if (err.response && err.response.status === 400) {
+      recommendStock.splice(0, recommendStock.length);
+    } else {
+      console.error("createRecommendStock err : ", err.message);
+    }
   }
 };
 
@@ -113,8 +150,23 @@ watch(selectedUnit, (newUnit) => {
   );
 });
 
+// 선택된 날짜와 월이 변경될 때 종목 추천 데이터를 다시 불러오기
+watch([currentDate, currentMonth], ([newDate, newMonth]) => {
+  if (selectedUnit.value === "day") {
+    createRecommendStock(newDate);
+  } else {
+    createRecommendStock(newMonth);
+  }
+});
+
 // 초기 API 호출
-onMounted(() => createRecommendStock(currentDate.value));
+onMounted(async () => {
+  await createRecommendStock(currentDate.value);
+  loadingCount.value -= 1;
+  if (loadingCount.value === 0) {
+    isLoading.value = false;
+  }
+});
 </script>
 
 <style scoped>
@@ -202,32 +254,38 @@ onMounted(() => createRecommendStock(currentDate.value));
 }
 
 .up {
-  color: red;
+  color: var(--bull-color);
 }
 
 .down {
-  color: blue;
+  color: var(--bear-color);
+}
+
+.stock-change.up {
+  color: var(--bull-color); /* 상승 */
+}
+
+.stock-change.down {
+  color: var(--bear-color);
 }
 
 .stock-change-rate {
   flex: none;
+  width: 20%;
   text-align: right; /* 우측 정렬 */
   font-weight: bold;
-  padding: 10px 10px; /* 상하 여백을 줄임 */
-  border-radius: 8px;
-  background-color: gray;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: #929294;
   color: white;
-  min-width: 70px; /* 최소 너비를 설정 (필요에 따라 조정) */
 }
 
 .stock-change-rate.up {
-  background-color: red;
+  background-color: var(--bull-color);
 }
-
 .stock-change-rate.down {
-  background-color: blue;
+  background-color: var(--bear-color);
 }
-
 .short-code {
   color: #888;
   font-size: 14px;

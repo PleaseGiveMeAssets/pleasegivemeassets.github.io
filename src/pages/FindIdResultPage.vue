@@ -3,8 +3,7 @@
     <div class="content-wrapper">
       <div class="result-message">
         <template v-if="accountList.length > 0">
-          입력하신 정보와 <br />일치하는 아이디가 {{ accountList.length }}개
-          있습니다.
+          입력하신 정보와 <br />일치하는 아이디가 있습니다.
         </template>
         <template v-else>
           입력하신 정보와 <br />일치하는 아이디가 없습니다.

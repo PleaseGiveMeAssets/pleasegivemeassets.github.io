@@ -17,12 +17,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import DonutChart from "@/components/DoughnutChart.vue";
 import RenewToken from "@/services/renewToken";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import MyCookie from "@/services/myCookie";
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 // API URL 및 상태 관리
 const BASE = `${import.meta.env.VITE_API_URL}/stockportfolio`;
@@ -33,7 +34,6 @@ const router = useRouter();
 const renewToken = new RenewToken("/auth/login/renew");
 const myCookie = new MyCookie();
 const refreshToken = myCookie.getCookie("refreshToken");
-
 const movePortfolio = () => {
   router.push("/portfolio");
 };
@@ -47,12 +47,14 @@ const createPortfolio = async () => {
 
     Object.assign(portfolio, response.data);
 
-    stockData.value = portfolio.map((stock) => ({
-      name: stock.stockName,
-      value: stock.totalPrice,
-    }));
+    stockData.value = portfolio
+      .sort((a, b) => b.totalPrice - a.totalPrice) // totalPrice 값으로 내림차순 정렬
+      .map((stock) => ({
+        name: stock.stockName,
+        value: stock.totalPrice,
+      }));
   } catch (err) {
-    console.error("createPortfolio error:", err.message);
+    console.error("createPortfolio err :", err.message);
 
     if (err.response && err.response.status === 500) {
       renewToken
@@ -71,7 +73,10 @@ const createPortfolio = async () => {
 };
 
 // 컴포넌트가 마운트되면 포트폴리오 데이터 생성
-onMounted(createPortfolio);
+onMounted(async () => {
+  await createPortfolio();
+  emit("loaded");
+});
 </script>
 
 <style scoped>
@@ -87,11 +92,12 @@ h2 {
 }
 
 .card-ui {
-  background-color: var(--main-card-color);
   border: 1px solid #e0e0e0;
-  padding: 20px;
+  padding: 10px;
   border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .portfolio {

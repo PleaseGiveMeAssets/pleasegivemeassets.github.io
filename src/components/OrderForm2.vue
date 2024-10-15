@@ -7,9 +7,9 @@
       </button>
       <div>
         {{
-          data.orderType === "sell"
+          data.orderType === "S"
             ? "매도"
-            : data.orderType === "buy"
+            : data.orderType === "B"
               ? "매수"
               : "수정"
         }}
@@ -41,7 +41,7 @@
                   class="quantityInput"
                   inputmode="numeric"
                   type="number"
-                  :max="maxQuantity"
+                  :min="0"
                 />
                 주
               </td>
@@ -54,6 +54,7 @@
                   class="priceInput"
                   inputmode="numeric"
                   type="number"
+                  :min="0"
                 />
                 원
               </td>
@@ -205,7 +206,7 @@ const submitOrderForm = async () => {
     return;
   }
   const orderedAt = await convertToTimestamp();
-  const orderType = props.data.orderType == "sell" ? "S" : "B";
+  const orderType = props.data.orderType == "S" ? "S" : "B";
   try {
     const response = await stockPortfolioService.postStockOrder(
       props.data.stockId,

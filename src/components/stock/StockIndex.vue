@@ -7,10 +7,10 @@
         <p>시가총액</p>
         <p>{{ (capitalization || 0).toLocaleString() }}</p>
       </div>
-      <!-- <div class="info-box">
-        <p>PER</p>
-        <p>{{ data.per }}배</p>
-      </div> -->
+      <div class="info-box">
+        <p>순자산</p>
+        <p>{{ netAssets }}원</p>
+      </div>
       <div class="info-box">
         <p>PBR</p>
         <p>{{ data.pbr }}배</p>
@@ -43,11 +43,47 @@ const props = defineProps({
     required: true,
   },
 });
+function convertKoreanUnitsToNumber(koreanNumber) {
+  let number = parseFloat(koreanNumber); // 숫자 부분 추출
+
+  if (koreanNumber.includes("조")) {
+    number *= 1e12; // '조'는 10^12
+  } else if (koreanNumber.includes("억")) {
+    number *= 1e8; // '억'은 10^8
+  }
+
+  return number;
+}
+function convertNumberToKoreanUnits(number) {
+  const units = [
+    { name: "조", value: 1e12 },
+    { name: "억", value: 1e8 },
+    // { name: "만원", value: 1e4 },
+  ];
+
+  let result = "";
+
+  for (let unit of units) {
+    if (number >= unit.value) {
+      const unitAmount = Math.floor(number / unit.value);
+      result += `${unitAmount}${unit.name} `;
+      number %= unit.value; // 남은 금액 처리
+    }
+  }
+
+  return result.trim();
+}
 
 const capitalization = computed(() => {
   return formatLargeNumber(props.data.marketCapitalization * 60000);
 });
+const netAssets = computed(() => {
+  console.log(convertKoreanUnitsToNumber(capitalization.value));
 
+  const netAssetPrice =
+    convertKoreanUnitsToNumber(capitalization.value) / props.data.pbr;
+  return convertNumberToKoreanUnits(netAssetPrice);
+});
 function formatLargeNumber(num) {
   if (num >= 1e12) {
     return (num / 1e12).toFixed(2) + "조";
@@ -103,16 +139,19 @@ function formatLargeNumber(num) {
 
 .asset-info {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+  margin-top: 20px;
 }
-
 .info-box {
   padding: 10px;
-  background-color: #000;
-  color: #fff;
+  background-color: #fafafa;
+  color: #333;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: left;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}
+.info-box p {
+  margin: 5px 0;
 }
 </style>

@@ -21,6 +21,7 @@ import { onMounted, reactive } from "vue";
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
 const dailyTrendSummarized = reactive({});
 const token = localStorage.getItem("accessToken");
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 // 동향 요약 데이터 불러오기
 const createDailyTrend = async () => {
@@ -30,12 +31,15 @@ const createDailyTrend = async () => {
     });
     Object.assign(dailyTrendSummarized, response.data);
   } catch (err) {
-    console.error("createDailyTrend 에러: ", err.message);
+    console.error("createDailyTrend err : ", err.message);
   }
 };
 
 // 컴포넌트 마운트 시 API 호출
-onMounted(createDailyTrend);
+onMounted(async () => {
+  await createDailyTrend();
+  emit("loaded");
+});
 </script>
 
 <style scoped>
@@ -46,11 +50,12 @@ h2 {
 }
 
 .card-ui {
-  background-color: var(--main-card-color);
-  padding: 15px;
   border: 1px solid #e0e0e0;
+  padding: 10px;
   border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .report-time {

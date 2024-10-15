@@ -1,12 +1,7 @@
 <template>
   <div class="stock-portfolio">
-    <div v-if="loading" class="loading-containerList">
-      <!-- 로딩 중일 때 보여줄 내용 (로딩 스피너나 메시지) -->
-      <img
-        src="/public/images/spinNuguri.png"
-        alt="loading"
-        class="loading-image"
-      />
+    <div v-if="loading">
+      <LoadingComponent />
     </div>
 
     <div v-else>
@@ -21,6 +16,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import StockList from "@/components/StockList.vue";
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 // JWT 토큰을 가져오는 함수 (토큰이 없을 경우 로그인 페이지로 이동)
 const getToken = () => {

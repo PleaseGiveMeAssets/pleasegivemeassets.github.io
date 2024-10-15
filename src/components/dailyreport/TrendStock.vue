@@ -1,58 +1,35 @@
 <template>
-  <div class="card-ui">
-    <section>
-      <img class="logo" src="@/assets/icons/report-logo.svg" />
-      <img class="cover" src="@/assets/icons/report-cover.svg" />
-    </section>
-  </div>
-
-  <div class="card-ui">
-    <section>
-      <img class="logo" src="@/assets/icons/report-logo.svg" />
-      <h3>{{ trend.recentTrendTitle }}</h3>
-      <p>
-        {{ trend.recentTrendContent }}
-      </p>
-    </section>
-
-    <section>
-      <h3>{{ trend.stockTrendTitle }}</h3>
-      <p>
-        {{ trend.stockTrendContent }}
-      </p>
-    </section>
-  </div>
-
-  <div class="card-ui">
-    <section>
-      <img class="logo" src="@/assets/icons/report-logo.svg" />
-      <div class="index-cards">
-        <div class="index-card">
-          <h4>코스닥</h4>
-          <p class="price">{{ trend.kosdaqPrice }}</p>
-          <p class="change" :class="trend.kosdaqProfitRate < 0 ? 'down' : 'up'">
-            {{ trend.kosdaqProfitRate }}%
-          </p>
-        </div>
-        <div class="index-card">
-          <h4>코스피</h4>
-          <p class="price">{{ trend.kospiPrice }}</p>
-          <p class="change" :class="trend.kospiProfitRate < 0 ? 'down' : 'up'">
-            {{ trend.kospiProfitRate }}%
-          </p>
-        </div>
+  <div class="trend">
+    <div class="latest-trend">
+      <div class="subject">
+        <p>{{ trend.recentTrendTitle }}</p>
+        <img src="@/assets/images/raccoon_investmentType3_no_bg.png" />
       </div>
-    </section>
+      <div class="card-ui">
+        {{ trend.recentTrendContent }}
+      </div>
+    </div>
+    <div class="stock-trend">
+      <div class="subject">
+        <p>{{ trend.stockTrendTitle }}</p>
+        <img src="@/assets/images/raccoon_investmentType_no_bg.png" />
+      </div>
+      <div class="card-ui">
+        {{ trend.stockTrendContent }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const BASE = `${import.meta.env.VITE_API_URL}/dailytrend`;
-const trend = reactive([]);
 const token = localStorage.getItem("accessToken");
+
+const trend = ref([]);
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 
 const createTrend = async () => {
   try {
@@ -62,63 +39,73 @@ const createTrend = async () => {
       },
     });
 
-    Object.assign(trend, response.data);
+    Object.assign(trend.value, response.data);
   } catch (err) {
     console.log("createTrend err : ", err.message);
   }
 };
 
-onMounted(() => {
-  createTrend();
+onMounted(async () => {
+  await createTrend();
+  emit("loaded");
 });
 </script>
 
 <style scoped>
-.card-ui {
-  background-color: var(--main-card-color);
-  padding: 10px;
+.trend {
+  background-color: #fcfbff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-}
-
-.index-cards {
-  display: flex;
-  justify-content: space-between;
-}
-
-.index-card {
-  border: 1px solid #ccc;
   padding: 10px;
-  text-align: center;
-  width: 45%;
+  border-radius: 12px;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.price {
-  font-size: 24px;
-  font-weight: bold;
+.card-ui {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.change.up {
-  color: green;
+.latest-trend .subject {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.change.down {
-  color: red;
+.latest-trend .subject p {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 0px;
 }
 
-.logo {
-  height: 50px;
-  width: 50px;
-  margin-bottom: 20px;
+.latest-trend .subject img {
+  width: 38px;
 }
 
-.cover {
-  height: 60px;
-  width: auto;
-  display: block;
-  margin: 0 auto;
-  margin-top: 10px;
+.stock-trend {
+  margin-top: 20px;
+}
+
+.stock-trend .subject {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
+}
+
+.stock-trend .subject p {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 0px;
+}
+
+.stock-trend .subject img {
+  width: 38px;
 }
 </style>

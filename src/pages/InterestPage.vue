@@ -68,10 +68,11 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const userId = "testUser1";
+const router = useRouter();
 
 import accomodationIcon from "@/assets/interest-icons/accomodation-icon.svg";
 import energyIcon from "@/assets/interest-icons/energy-icon.svg";
@@ -100,8 +101,17 @@ const mainCategories = ref([]);
 const subCategories = ref([]);
 const showCategories = ref(false);
 const selectedCategory = ref(null);
-const selectedSubcategory = ref([]); // 선택 상태를 저장하는 배열
-const savedSubCategories = ref([]); // 저장된 세부 카테고리 목록
+const selectedSubcategory = ref([]);
+const savedSubCategories = ref([]);
+
+const getToken = () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    router.push("/login");
+    throw new Error("토큰이 없습니다. 로그인 페이지로 이동합니다.");
+  }
+  return token;
+};
 
 const toggleCategories = () => {
   if (selectedCategory.value) {
@@ -148,7 +158,6 @@ const loadSubCategories = async (mainCategoryId) => {
       name: subCategory.subCategoryName,
     }));
 
-    // 저장된 세부 카테고리 상태를 유지하기 위해 selectedSubcategory 업데이트
     selectedSubcategory.value = savedSubCategories.value.map(
       (saved) => saved.subCategoryId,
     );
@@ -159,7 +168,6 @@ const loadSubCategories = async (mainCategoryId) => {
 
 const toggleSubcategorySelect = async (subcategoryId) => {
   if (selectedSubcategory.value.includes(subcategoryId)) {
-    // 선택된 상태에서 다시 클릭하면 삭제
     await deleteSubcategory(subcategoryId);
     selectedSubcategory.value = selectedSubcategory.value.filter(
       (id) => id !== subcategoryId,
@@ -172,11 +180,9 @@ const toggleSubcategorySelect = async (subcategoryId) => {
       (saved) => saved.subCategoryId === subcategoryId,
     )
   ) {
-    // 중복이 아닐 경우에만 저장
     selectedSubcategory.value.push(subcategoryId);
-    await saveSubcategory(subcategoryId); // 백엔드 저장 요청
+    await saveSubcategory(subcategoryId);
 
-    // 바로 저장된 목록에 추가
     const newSubcategory = subCategories.value.find(
       (sub) => sub.id === subcategoryId,
     );
@@ -189,11 +195,16 @@ const toggleSubcategorySelect = async (subcategoryId) => {
   }
 };
 
-// 선택된 세부 카테고리 저장하기
+// 세부 카테고리 저장하기
 const saveSubcategory = async (subcategoryId) => {
   try {
+    const token = getToken();
     await axios.post(
-      `${API_BASE_URL}/category/interest/${userId}/${subcategoryId}`,
+      `${API_BASE_URL}/category/interest/${subcategoryId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
     );
     console.log("세부 카테고리가 저장되었습니다:", subcategoryId);
   } catch (error) {
@@ -201,14 +212,14 @@ const saveSubcategory = async (subcategoryId) => {
   }
 };
 
-// 저장된 세부 카테고리 불러오기
+// 저장된 세부 카테고리 목록 불러오기
 const loadSavedSubcategories = async () => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}/category/interest/${userId}`,
-    );
+    const token = getToken();
+    const response = await axios.get(`${API_BASE_URL}/category/interest`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     savedSubCategories.value = response.data;
-    console.log(savedSubCategories.value);
   } catch (error) {
     console.error("저장된 세부 카테고리 불러오기 실패:", error);
   }
@@ -217,8 +228,12 @@ const loadSavedSubcategories = async () => {
 // 세부 카테고리 삭제하기
 const deleteSubcategory = async (subCategoryId) => {
   try {
+    const token = getToken();
     const response = await axios.delete(
-      `${API_BASE_URL}/category/${userId}/${subCategoryId}`,
+      `${API_BASE_URL}/category/interest/${subCategoryId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
     );
     if (response.data === "삭제 성공") {
       savedSubCategories.value = savedSubCategories.value.filter(
@@ -232,6 +247,7 @@ const deleteSubcategory = async (subCategoryId) => {
   }
 };
 
+// 컴포넌트 마운트 시 실행
 onMounted(() => {
   loadMainCategories();
   loadSavedSubcategories();

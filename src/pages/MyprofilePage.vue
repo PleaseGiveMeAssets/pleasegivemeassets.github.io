@@ -14,8 +14,9 @@
           class="avatar"
           :style="{ backgroundImage: `url(${userData.profileImageUrl})` }"
         ></div>
+
         <div class="info">
-          <p class="nickname">{{ userData.nickname || userData.name }} 님</p>
+          <p class="nickname">{{ userData.nickname || userData.name }}님</p>
           <p class="investment-type">
             당신의 투자성향은 {{ userData.investmentTypeName }}입니다.
           </p>
@@ -66,7 +67,10 @@
       </div>
     </div>
   </div>
-  <div v-else-if="isLoading">데이터 로딩 중...</div>
+  <div v-else-if="isLoading">
+    <!-- 로딩 컴포넌트 -->
+    <LoadingComponent />
+  </div>
   <div v-else>사용자 데이터를 불러오지 못했습니다.</div>
 </template>
 
@@ -79,6 +83,7 @@ import heartIcon from "@/assets/icons/heartArrow-icon.svg";
 import investmentIcon from "@/assets/icons/investment-icon.svg";
 import savedIcon from "@/assets/icons/saved-icon.svg";
 import settingsIcon from "@/assets/icons/settings-icon.svg";
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const route = useRoute();
@@ -219,9 +224,12 @@ body {
 }
 
 .nav-item {
-  background-color: white;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
   border-radius: 12px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
   width: 340px;
   margin: 10px 0;
   padding: 18px;

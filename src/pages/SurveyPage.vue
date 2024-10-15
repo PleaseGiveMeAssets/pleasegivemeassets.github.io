@@ -63,7 +63,7 @@
           class="btn next-button w-100"
           @click="nextQuestion"
         >
-          {{ questionId === maxQuestions ? "제출" : "다음" }}
+          {{ questionId === maxQuestions ? '제출' : '다음' }}
         </button>
       </div>
     </div>
@@ -71,15 +71,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router"; // vue-router import
-import { fetchQuestion, submitAnswer } from "../services/surveyService";
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // vue-router import
+import {
+  fetchQuestion,
+  submitAnswer,
+  submitSurveyResult,
+} from '../services/surveyService';
 
 // 상태 변수 선언
 const question = ref(null);
 const questionId = ref(1);
 const maxQuestions = 7;
 const selectedOption = ref(null); // 선택된 옵션 상태 초기화
+const userNickname = ref(sessionStorage.getItem('nickname') || '사용자'); // 로컬 스토리지에서 닉네임 불러오기
 const router = useRouter(); // 라우터 객체
 
 // 진행률 계산
@@ -93,7 +98,7 @@ const loadQuestion = async () => {
     question.value = await fetchQuestion(questionId.value);
     selectedOption.value = null; // 질문이 로드될 때마다 선택 옵션 초기화
   } catch (error) {
-    console.error("질문을 불러오는 중 오류가 발생했습니다.", error);
+    console.error('질문을 불러오는 중 오류가 발생했습니다.', error);
   }
 };
 
@@ -113,12 +118,10 @@ const nextQuestion = async () => {
     if (questionId.value < maxQuestions) {
       questionId.value++;
       await loadQuestion();
-      window.scrollTo({ top: 0, behavior: "smooth" }); // 페이지 상단으로 스크롤
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // 페이지 상단으로 스크롤
     } else {
-      router.push("/survey-loading");
-      setTimeout(() => {
-        router.push("/survey-result");
-      }, 3000);
+      await submitSurveyResult(); // 설문 결과 제출
+      router.push('/survey-loading');
     }
   }
 };
@@ -132,9 +135,10 @@ const toggleOption = (optionId) => {
   }
 };
 
-// 컴포넌트가 마운트될 때 첫 질문을 로드
-onMounted(() => {
-  loadQuestion();
+// 설문 페이지에서 닉네임을 세션 스토리지에서 불러오기
+onMounted(async () => {
+  // userNickname.value = sessionStorage.getItem('nickname') || '사용자'; // 세션 스토리지에서 닉네임 불러오기
+  await loadQuestion(); // 질문 로드
 });
 </script>
 
@@ -142,16 +146,16 @@ onMounted(() => {
 .survey-container {
   max-width: 600px;
   margin: 0 auto;
-  padding-top: 20px; /* 헤더 밑 여백 */
-  height: 120vh; /* 전체 화면 높이 */
+  padding-top: 20px;
+  height: 120vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* 스크롤 추가 */
+  overflow-y: auto;
 }
 
 .progress-label-container {
   display: flex;
-  justify-content: flex-start; /* 왼쪽 정렬 */
+  justify-content: flex-start;
   margin-bottom: 10px;
   font-weight: bold;
 }
@@ -161,33 +165,31 @@ onMounted(() => {
   transition: width 0.4s ease;
 }
 
-/* 질문 텍스트와 옵션 컨테이너 간격 추가 */
 .question-wrapper {
-  margin-bottom: 40px; /* 질문과 옵션 사이 간격 */
+  margin-bottom: 40px;
 }
 
 .question-container {
   padding: 20px;
   background-color: #fff;
-  border: 1px solid #ddd; /* 테두리 추가 */
+  border: 1px solid #ddd;
   border-radius: 8px;
   font-weight: bold;
-  margin-bottom: 50px; /* 질문과 옵션 컨테이너 간격 */
-  padding-top: 35px; /* 텍스트를 컨테이너 안에서 아래로 내리기 위한 추가 패딩 */
+  margin-bottom: 50px;
+  padding-top: 35px;
 }
 
-/* 옵션 리스트 */
 .options {
   padding: 10px;
-  margin-top: 20px; /* 질문과 옵션 리스트 간격 */
+  margin-top: 20px;
 }
 
 .list-group-item {
-  border: 1px solid #ddd; /* 배경색 제거하고 테두리만 남김 */
+  border: 1px solid #ddd;
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 8px;
-  background-color: transparent; /* 배경색 투명 */
+  background-color: transparent;
   cursor: pointer;
   text-align: center;
   font-weight: bold;
@@ -195,17 +197,15 @@ onMounted(() => {
 }
 
 .list-group-item:hover {
-  background-color: white; /* Hover 시 배경색 */
+  background-color: white;
 }
 
-/* 선택된 옵션에 대한 스타일 */
 .selected-option {
-  background-color: #e8e8fc !important; /* 연보라색 배경 */
-  color: #000000 !important; /* 검정색 글자 */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  background-color: #e8e8fc !important;
+  color: #000000 !important;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 이전 및 다음 버튼 */
 .prev-button {
   background-color: #4f4f4f !important;
   color: white !important;

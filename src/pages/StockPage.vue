@@ -4,7 +4,7 @@
     <StockChart :data="stockPriceData" />
     <router-link
       :to="`/stock/${stockId}/portfolio`"
-      class="my-portfolio-container"
+      class="my-portfolio-container stock"
     >
       <MyPortfolio :data="portfolioData" />
     </router-link>
@@ -72,23 +72,26 @@ onMounted(async () => {
 
 <style scoped>
 .stock {
-  padding: 14px 0px 48px 0px;
+  padding: 18px 0px 70px 0px;
 }
-
+.stock > * {
+  margin-bottom: 20px;
+}
 .my-portfolio-container {
   text-decoration: none;
   color: black;
 }
+
 .card-ui {
-  background-color: var(--main-card-color);
-  border-radius: 12px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
-  gap: 10px;
-  transition: transform 0.2s;
-  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
   padding: 10px;
+  border-radius: 12px;
+  box-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.1),
+    -1px 1px 1px rgba(0, 0, 0, 0.1);
   font-family: "Pretendard-Bold";
 }
+
 .title {
   font-family: "Pretendard-Bold";
   font-size: 18px;
