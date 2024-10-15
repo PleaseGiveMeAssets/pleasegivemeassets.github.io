@@ -33,7 +33,7 @@ const router = useRouter();
 const renewToken = new RenewToken("/auth/login/renew");
 const myCookie = new MyCookie();
 const refreshToken = myCookie.getCookie("refreshToken");
-
+const emit = defineEmits(["loaded", "onComponentLoaded"]);
 const movePortfolio = () => {
   router.push("/portfolio");
 };
@@ -52,7 +52,7 @@ const createPortfolio = async () => {
       value: stock.totalPrice,
     }));
   } catch (err) {
-    console.error("createPortfolio error:", err.message);
+    console.error("createPortfolio err :", err.message);
 
     if (err.response && err.response.status === 500) {
       renewToken
@@ -71,7 +71,10 @@ const createPortfolio = async () => {
 };
 
 // 컴포넌트가 마운트되면 포트폴리오 데이터 생성
-onMounted(createPortfolio);
+onMounted(async () => {
+  await createPortfolio();
+  emit("loaded");
+});
 </script>
 
 <style scoped>
