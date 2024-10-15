@@ -50,7 +50,7 @@ export async function fetchSurveyResult() {
 }
 
 // 사용자 닉네임 불러오기 함수 (JWT 토큰 필요)
-export const fetchUserNickname = async () => {
+export const fetchUserNickname = async (token) => {
   try {
     const response = await axios.get(`${BASE}/survey-result/user-nickname`, {
       headers: {

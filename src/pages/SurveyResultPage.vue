@@ -72,7 +72,7 @@ const router = useRouter();
 
 // 로컬 스토리지에서 닉네임 불러오기
 const loadUserNickname = () => {
-  userNickname.value = localStorage.getItem('nickname') || '사용자';
+  userNickname.value = sessionStorage.getItem('nickname') || '사용자';
 };
 
 // 투자 유형 ID에 따라 이미지를 동적으로 불러오는 함수
