@@ -78,7 +78,7 @@
       </template>
       <div v-else class="empty-state">
         <img
-          src="@/assets/icons/alert-icon.svg"
+          src="@/assets/icons/empty-icon.svg"
           alt="알림 아이콘"
           class="empty-icon"
         />

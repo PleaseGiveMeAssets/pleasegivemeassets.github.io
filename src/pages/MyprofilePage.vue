@@ -16,7 +16,7 @@
         ></div>
 
         <div class="info">
-          <p class="nickname">{{ userData.nickname || userData.name }} 님</p>
+          <p class="nickname">{{ userData.nickname || userData.name }}님</p>
           <p class="investment-type">
             당신의 투자성향은 {{ userData.investmentTypeName }}입니다.
           </p>
