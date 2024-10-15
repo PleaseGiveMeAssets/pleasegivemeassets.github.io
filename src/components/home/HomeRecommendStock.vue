@@ -1,14 +1,14 @@
 <template>
-  <div class="recommend-stock">
-    <h2>일일추천종목</h2>
-    <p class="ai-stock" @click="moveRecommendStock">AI 추천 종목 현황</p>
-    <img
-      class="next-button"
-      src="@/assets/icons/nextButton-icon.svg"
-      @click="moveRecommendStock"
-    />
-  </div>
   <div class="card-ui">
+    <div class="recommend-stock">
+      <h2>일일 추천 종목</h2>
+      <p class="ai-stock" @click="moveRecommendStock">AI 추천 종목 현황</p>
+      <img
+        class="next-button"
+        src="@/assets/icons/nextButton-icon.svg"
+        @click="moveRecommendStock"
+      />
+    </div>
     <section>
       <div class="home-recommend-stock">
         <div v-for="(stock, sIndex) in dailyRecommendStock" :key="sIndex">
@@ -152,7 +152,7 @@ h2 {
 
 .stock-change-rate {
   flex: none;
-  width: 20%;
+  width: 22%;
   text-align: right; /* 우측 정렬 */
   font-weight: bold;
   padding: 3px 8px;

@@ -44,14 +44,14 @@
         <!-- 주요 투자 종목 카드 -->
         <div class="card">
           <h6>주요 투자 종목</h6>
-          <ul v-if="topStocks.length > 0" class="stock-list">
-            <li
+          <div v-if="topStocks.length > 0" class="stock-list">
+            <div
               v-for="(stock, index) in topStocks"
               :key="index"
               class="stock-item"
             >
               <router-link :to="`/stock/${stock.stockId}`" class="noUnderline">
-                <div class="stock-box">
+                <div class="stock-container">
                   <div class="stock-info">
                     <p class="stock-name">{{ stock.name }}</p>
                     <p class="stock-shortcode">{{ stock.shortCode }}</p>
@@ -61,8 +61,8 @@
                   </div>
                 </div>
               </router-link>
-            </li>
-          </ul>
+            </div>
+          </div>
           <p v-else>투자 종목 데이터가 없습니다.</p>
         </div>
 
@@ -254,7 +254,10 @@ onMounted(async () => {
   margin-top: 15px;
 }
 
-/* 나의 자산 스타일 */
+.noUnderline {
+  text-decoration: none;
+  color: inherit;
+}
 .asset-info {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -269,54 +272,43 @@ onMounted(async () => {
   text-align: center;
   border: 1px solid #e0e0e0;
 }
+
 .info-box p {
   margin: 5px 0;
 }
-
-/* 주요 투자 종목 스타일 */
 .stock-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-.stock-item {
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-}
-.stock-item:last-child {
-  border-bottom: none;
-}
-.stock-box {
-  display: flex;
-  justify-content: space-between;
-  /* align-items: center; */
+  padding: 8px;
 }
 .stock-info {
   display: flex;
   flex-direction: column;
-  text-align: left;
+  align-items: flex-start;
 }
+
 .stock-name {
   font-size: 16px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
+
 .stock-shortcode {
   font-size: 14px;
-  margin-bottom: 0px;
-  color: #666;
+  color: #888; /* 주식 코드에 연한 색 적용 */
 }
+
 .stock-market {
+  display: flex;
+  align-items: center; /* 가격이 가운데 정렬되도록 함 */
+  justify-content: flex-end; /* 오른쪽에 배치 */
   font-size: 16px;
   font-weight: bold;
-  color: #333;
-  margin-top: 5px;
-  text-align: right;
+  margin-bottom: 16px;
 }
-.noUnderline {
-  text-decoration: none;
-  color: inherit;
-  display: block;
+
+.stock-container {
+  display: flex;
+  justify-content: space-between; /* 주식 정보와 가격을 좌우로 배치 */
+  border-bottom: 1px solid #ddd; /* 하단에 구분선 추가 */
 }
 
 /* 제목 스타일 */

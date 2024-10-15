@@ -30,6 +30,9 @@
     <div v-if="isAccountManagementPage" class="header-title">
       <div class="title">개인정보</div>
     </div>
+    <div v-if="isMyStockListPage" class="header-title">
+      <div class="title">자산 보유 현황</div>
+    </div>
     <div
       v-if="isStockPage && stockName != '' && shortCode != ''"
       class="header-stock-section"
@@ -50,13 +53,13 @@
     </div>
 
     <div class="header-actions"></div>
-    <button
+    <!-- <button
       v-if="isStockPortfolioPage"
       class="stock-edit-icon"
       @click="toggleModal"
     >
       <img src="@/assets/icons/edit-form-icon.svg" />
-    </button>
+    </button> -->
     <img
       v-if="isHomePage"
       class="notification-icon"
@@ -111,6 +114,9 @@ const isRecommendStockPage = computed(() => {
 });
 const isStockPortfolioPage = computed(() => {
   return route.name === "stockPortfolioPage";
+});
+const isMyStockListPage = computed(() => {
+  return route.name === "myStockListPage";
 });
 const pageTitle = computed(() => {
   if (route.name === "survey") {

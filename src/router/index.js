@@ -69,7 +69,11 @@ const router = createRouter({
       name: "portfolioPage",
     },
     { path: "/stocksearch", component: StockSearchPage },
-    { path: "/myStocklist", component: MyStockListViewPage },
+    {
+      path: "/myStocklist",
+      component: MyStockListViewPage,
+      name: "myStockListPage",
+    },
     {
       path: "/account-management",
       component: AccountManagement,
