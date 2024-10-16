@@ -256,7 +256,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   width: 330px;
-  height: 70px;
+  height: 80px;
   background-color: #ffffff;
   padding: 10px;
   border-bottom: 1px solid #ddd;
@@ -315,7 +315,7 @@ onMounted(() => {
 .text-content {
   flex-grow: 1;
   width: 246px;
-  height: 51px;
+  height: 55px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -344,5 +344,6 @@ onMounted(() => {
   border-radius: 10px;
   object-fit: cover;
   margin-left: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
