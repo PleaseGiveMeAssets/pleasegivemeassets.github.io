@@ -19,7 +19,7 @@
         v-for="(stock, index) in stocks"
         :key="index"
         class="stock-item"
-        @click="showForm('buy', stock.stockId)"
+        @click="showForm('B', stock.stockId)"
       >
         <div class="stock-name">
           {{ stock.stockName }}

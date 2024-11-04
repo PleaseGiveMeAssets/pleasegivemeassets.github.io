@@ -19,7 +19,7 @@
           src="@/assets/icons/portfolio-form-save-icon.svg"
           alt="Save Icon"
         /> -->
-        save
+        +
       </button>
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="data" class="orderForm">

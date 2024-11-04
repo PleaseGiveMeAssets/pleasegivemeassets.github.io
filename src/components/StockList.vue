@@ -4,7 +4,7 @@
       v-for="stock in stocks"
       :key="stock.stockId"
       :stock="stock"
-      @click="showForm('sell', stock.stockId)"
+      @click="showForm('S', stock.stockId)"
     />
   </div>
   <OrderForm
@@ -19,7 +19,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import StockItem from "@/components/StockItem.vue";
-import OrderForm from "@/components/OrderForm2.vue";
+import OrderForm from "@/components/OrderForm.vue";
 
 const props = defineProps({
   stocks: {
